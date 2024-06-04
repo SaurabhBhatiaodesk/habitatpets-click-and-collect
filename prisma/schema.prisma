@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Note that some adapters may set a maximum length for the String type by default, please ensure your strings are long
+// enough when changing adapters.
+// See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
+datasource db {
+  provider = "sqlite"
+  url      = "file:dev.sqlite"
+}
+
+model Session {
+  id          String    @id
+  shop        String
+  state       String
+  isOnline    Boolean   @default(false)
+  scope       String?
+  expires     DateTime?
+  accessToken String
+  userId      BigInt?
+}
+
+model GoogleApi {
+  id          Int       @id @default(autoincrement())
+  shop        String
+  apikey      String
+}
+
+model UserConnection {
+    id                   Int      @id @default(autoincrement())
+    shop                 String    @unique
+    connection_id        String?
+    uid                  String?
+    user_id              String?
+    plan_id              String?
+    custom_name          String?
+    custom_note          String?
+    sync_type            String?
+    configured           Boolean?  @default(false)
+    is_sync_enabled      Boolean?  @default(false)
+    is_plugins_connected Boolean?  @default(false)
+    config               String?
+    created_at           DateTime?
+    updated_at           DateTime?
+    status               String?
+    active_subscription_id String?
+    token                String
+}

@@ -1,0 +1,29 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "599e38a5b5f504f91478a174bb336da3"
+name = "C&C-N"
+handle = "c-c-n"
+application_url = "https://clothing-workforce-intent-because.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "deepakb2b.myshopify.com"
+include_config_on_deploy = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_content, write_content, read_discounts, write_discounts, read_inventory, write_inventory, read_locales, write_locales, write_locations, read_locations, read_metaobjects, write_metaobjects, read_products, write_products, read_product_listings, read_script_tags, write_script_tags,read_shipping"
+
+[auth]
+redirect_urls = [
+  "https://clothing-workforce-intent-because.trycloudflare.com/auth/callback",
+  "https://clothing-workforce-intent-because.trycloudflare.com/auth/shopify/callback",
+  "https://clothing-workforce-intent-because.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-04"
+
+[pos]
+embedded = false

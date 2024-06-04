@@ -1,0 +1,29 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "09dc121319ef7392f030002e2af5caeb"
+name = "clickcollect"
+handle = "clickcollect-2"
+application_url = "https://invasion-rule-pairs-decent.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "saurabh-click-collect.myshopify.com"
+include_config_on_deploy = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = ""
+
+[auth]
+redirect_urls = [
+  "https://invasion-rule-pairs-decent.trycloudflare.com/auth/callback",
+  "https://invasion-rule-pairs-decent.trycloudflare.com/auth/shopify/callback",
+  "https://invasion-rule-pairs-decent.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-04"
+
+[pos]
+embedded = false

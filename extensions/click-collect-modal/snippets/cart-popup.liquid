@@ -1,0 +1,119 @@
+<div class="cart-popup" style="display:none;">
+  <h2>Click & Collect Cart</h2>
+  <div class="cart-box">
+      <div class="cart-left">
+        <div class="cart-popup-box">
+        <a href="#" class="cross">
+          <img class="cross" width="50px" height="25px" src="https://cdn.shopify.com/s/files/1/0596/5450/4518/files/crossed.png?v=1712042181" alt="crossed" />
+        </a>
+        <p>To Suburb or Postcode</p>
+        <div class="check-btn">
+          <input class="location"  type="text" placeholder="SYDNEY NSW 2000">
+          <button type="button" class="check-btn">Check</button>
+        </div>
+      
+        <div class="address-popup">
+          <h4><img src="https://cdn.shopify.com/s/files/1/0596/5450/4518/files/store.png?v=1712042180" width="50px" height="50px" alt="store">Select Store</h4>
+        </div>  
+    <div class="address-popup11" style="display:none">
+          <div class="radio-cart locationss">
+            <div class="radio-btn"> 
+                <input type="radio" id="broadway" name="brand" value="Broadway" checked> 
+                <label for="Broadway"><b>Broadway</b></label> 
+            </div> 
+          
+          </div>
+      </div>
+        </div> 
+      </div>
+
+      <div class="cart-right" >
+       <p>Click & Collect Cart Items</p>
+        <div class="cart-border">
+
+            {%- for item in cart.items -%}
+              <div class="cart-grid" data-id="{{ item.variant_id }}">
+                <div class="cart-body">
+                  <img         src="{{ item.image | image_url }}"
+                              width="50px" height="50px"
+                                class="cart-item__image11"
+                                alt="{{ item.image.alt | escape }}"
+                                loading="lazy"
+                              >
+                  <!-- <img src="https://cdn.shopify.com/s/files/1/0596/5450/4518/files/theme_cover_image.jpg?v=1711719251" alt=""/> -->
+                    <div class="quantity-row">
+                    <h3><a href="{{ item.url }}" class="cart-item__name h4 break">{{ item.product.title | escape }}</a></h3>
+                      <!-- <quantity-input class="quantity"> -->
+                  <div class="item-quantities">
+                      <label> Quantity: </label>  <span><b>{{ item.quantity }}</b></span> 
+                  </div>
+                      <!-- </quantity-input> -->
+                  </div>
+                </div>
+                       <span>{%- if item.original_line_price != item.final_line_price -%}
+                        <dl class="cart-item__discounted-prices">
+                          <dt class="visually-hidden">
+                            {{ 'Regular price'  }}
+                          </dt>
+                          <dd>
+                            <s class="cart-item__old-price price price--end">
+                              {{ item.original_line_price | money }}
+                            </s>
+                          </dd>
+                          <dt class="visually-hidden">
+                            {{ 'sale price'  }}
+                          </dt>
+                          <dd class="price price--end">
+                            {{ item.final_line_price | money }}
+                          </dd>
+                        </dl>
+                      {%- else -%}
+                        <span class="price price--end">
+                         <b> {{ item.original_line_price | money }}
+                         </b></span>
+                      {%- endif -%}</span>
+
+                      <cart-remove-button
+                        id="Remove-{{ item.index | plus: 1 }}"
+                        data-index="{{ item.index | plus: 1 }}"
+                      >
+                        <a
+                          href="{{ item.url_to_remove }}"
+                          class="button button--tertiary"
+                        >
+                          {% render 'icon-remove' %}
+                        </a>
+                      </cart-remove-button>
+          
+ 
+                    <p class="error-massage" style="display:none;"><span class="redish"><b>Not avaialable on click & collect at </b></span> <span class="locationsname">Broadway</span></p>
+                    </div>
+                 {% endfor %}
+
+        </div>
+        <div class="remove-allitem" >
+        <p>Remove all unavailable items</p><span> 
+          <cart-remove-button>
+            <a
+                href=""
+              class="button button--tertiary" 
+              aria-label="{{ item.title }}"
+            >
+              {% render 'icon-remove' %}
+            </a>
+          </cart-remove-button></span>
+        </div>
+        <div class="sub-total">
+        <b>Subtotal</b><span class="price"><p class="totals__subtotal-value">{{ cart.total_price | money_with_currency }}</p></span>          
+        </div>
+        <hr/>
+        
+        <p class="note"><span class="redish">Note:</span> Please select the same location for pickup on checkout page as well. </p>
+     
+         <button type="submit" class="cart-btn gotocheckout checkoutbtn">Checkout With Click & Collect</button>
+         <button type="submit" class="cart-btn gotocheckout checkoutbtn1">Checkout</button>
+
+      </div>
+    
+  </div>
+</div>
