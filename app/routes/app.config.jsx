@@ -283,7 +283,7 @@ export default function configPage() {
     };
     console.log(`Item clicked: ${itemContent}`);
     try {
-      /******************************************************************************************** */
+      /**************************************  Preference  ****************************************************** */
       const response = await fetch(`https://main.dev.saasintegrator.online/api/v1/${itemContent}/preference`, requestOptions);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -291,7 +291,7 @@ export default function configPage() {
       let preference = await response.json();
       console.log('preference ', preference)
       setPreference(preference)
-      /******************************************************************************************** */
+      /****************************************** config-form  ************************************************** */
       const response2 = await fetch(`https://main.dev.saasintegrator.online/api/v1/${itemContent}/config-form`, requestOptions);
       if (!response2.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -299,7 +299,7 @@ export default function configPage() {
       let configform = await response2.json();
       console.log('config ', configform)
       setConfig(configform)
-      /******************************************************************************************** */
+      /**************************************** Mapping **************************************************** */
       const response3 = await fetch(`https://main.dev.saasintegrator.online/api/v1/${itemContent}/mapping`, requestOptions);
       if (!response3.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
