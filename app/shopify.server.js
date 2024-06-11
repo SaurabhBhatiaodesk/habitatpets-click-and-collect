@@ -55,8 +55,7 @@ export const registerWebhooks = shopify.registerWebhooks;
 export const sessionStorage = shopify.sessionStorage;
 
 async function getAuthToken(session) {
-
-
+  try {
     console.log(session,'session');
     var myHeaders2 = new Headers();
     myHeaders2.append("X-Shopify-Access-Token", session.accessToken);
@@ -103,16 +102,14 @@ async function getAuthToken(session) {
         createOrUpdateUserConnection(data)
             .then(result => {
                 console.log("User connection created or updated:", result);
-            })
-            .catch(error => {
-                console.error("Error creating or updating user connection:", error);
             });
-        })
-        .catch((error) => console.error(error));
+        });
 
-    })
-
-  .catch((error) => console.error(error));
+    });
+  }
+  catch(error){
+    console.log('error',error);
+  }
 
 }
 
