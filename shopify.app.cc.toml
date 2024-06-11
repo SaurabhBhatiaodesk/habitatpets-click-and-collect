@@ -3,7 +3,7 @@
 client_id = "00acc71cc4a9ebda96c2ebab615a1358"
 name = "c&c"
 handle = "c-c"
-application_url = "https://scott-pray-amino-population.trycloudflare.com"
+application_url = "https://actively-considered-angela-heritage.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_inventory,read_locations,read_product_listings,read_products,writ
 
 [auth]
 redirect_urls = [
-  "https://scott-pray-amino-population.trycloudflare.com/auth/callback",
-  "https://scott-pray-amino-population.trycloudflare.com/auth/shopify/callback",
-  "https://scott-pray-amino-population.trycloudflare.com/api/auth/callback"
+  "https://actively-considered-angela-heritage.trycloudflare.com/auth/callback",
+  "https://actively-considered-angela-heritage.trycloudflare.com/auth/shopify/callback",
+  "https://actively-considered-angela-heritage.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
