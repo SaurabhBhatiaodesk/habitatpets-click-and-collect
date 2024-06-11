@@ -76,7 +76,7 @@ export const loader = async ({ request }) => {
 
     data.plugin_form.map((item, index) => {
       if (item?.fields?.base_url) {
-        data.plugin_form[index].fields.base_url.value = "https://"+auth.shop
+        data.plugin_form[index].fields.base_url.value = "https://" + auth.shop
         data.plugin_form[index].fields.base_url.type = "text"
       }
       if (item?.fields?.token) {
@@ -107,6 +107,10 @@ export default function configPage() {
   const [preference, setPreference] = useState();
   const [configform, setConfig] = useState();
   const [mapping, setMapping] = useState();
+  const [credentialFormStatus, setCredentialFormStatus] = useState(null);
+  const [prefEnableDisable, setPrefEnableDisable] = useState(null);
+  const [selectedValue, setSelectedValue] = useState();
+
   const data = useLoaderData();
   console.log("dataaaaaaaa ::", data);
   const [formData, setFormData] = useState({
@@ -119,74 +123,6 @@ export default function configPage() {
       [platformName]: newValue
     }));
   }, []);
-
-  // const handleChange = useCallback((value, name) => {
-  //   setInputValues(prevState => ({
-  //     ...prevState,
-  //     [name]: value
-  //   }));
-
-
-  //   if (name === "rex_domain_url") {
-  //     setFormData((prevState) => ({
-  //       ...prevState,
-  //       domain_url: value
-  //     }))
-  //   }
-
-  //   else if (name === "soap_username") {
-  //     setFormData((prevState) => ({
-  //       ...prevState,
-  //       username: value
-  //     }))
-  //   }
-
-  //   else if (name === "soap_password") {
-  //     setFormData((prevState) => ({
-  //       ...prevState,
-  //       password: value
-  //     }))
-  //   }
-  //   else if (name === "soap_client_id") {
-  //     setFormData((prevState) => ({
-  //       ...prevState,
-  //       client_id: value
-  //     }))
-  //   }
-  //   else if (name === "channel_id") {
-  //     setFormData((prevState) => ({
-  //       ...prevState,
-  //       channel_id: value
-  //     }))
-  //   }
-  //   else if (name === "primary_key") {
-  //     setFormData((prevState) => ({
-  //       ...prevState,
-  //       primary_key: value
-  //     }))
-  //   }
-  //   else if (name === "secondary_key") {
-  //     setFormData((prevState) => ({
-  //       ...prevState,
-  //       secondary_key: value
-  //     }))
-  //   }
-  //   else if (name === "base_url") {
-  //     setFormData((prevState) => ({
-  //       ...prevState,
-  //       base_url: value
-  //     }))
-  //   }
-  //   else if (name === "token") {
-  //     setFormData((prevState) => ({
-  //       ...prevState,
-  //       token: value
-  //     }))
-  //   }
-
-  //   console.log("value :::::::::::", value)
-  //   console.log("name :::::::::::", name)
-  // }, []);
 
   const handleSelectChange = useCallback((name, value) => {
     setInputValues(prevState => ({
@@ -333,6 +269,18 @@ export default function configPage() {
     }
   }, [product]);
 
+
+  useEffect(() => {
+    const initialSelectedValue = preference?.form.find(option => option?.is_default_hide === true)?.value || 0;
+    setSelectedValue(initialSelectedValue);
+    console.log("initialSelectedValue :::", initialSelectedValue)
+    if (initialSelectedValue === 0) {
+      setPrefEnableDisable(false);
+    } else if (initialSelectedValue === 1) {
+      setPrefEnableDisable(true);
+    }
+  }, [preference]);
+
   // console.log("formData ::::", formData)
 
   const handleChange = useCallback((value, name) => {
@@ -347,17 +295,13 @@ export default function configPage() {
     event.preventDefault();
 
     if (navbar === null || navbar === false) {
-      checkData(formData, data?.data?.plugin_form);
+      checkData(formData, data);
     }
-    // const formData = {
-    //   ...inputValues,
-    //   ...radioValues
-    // };
-    // console.log("submit formData ::::", formData);
   };
 
   const checkData = (formData, apiData) => {
-    let transformedData = apiData?.map(plugin => {
+
+    let transformedData = apiData?.data?.plugin_form?.map(plugin => {
       let credential_values = {};
       for (let key in plugin.fields) {
         credential_values[key] = formData[key] || null;
@@ -367,7 +311,7 @@ export default function configPage() {
         "credential_values": credential_values
       };
     });
-    
+
     transformedData.push({
       "plugin_id": "general",
       "credential_values": {
@@ -377,28 +321,60 @@ export default function configPage() {
 
 
     const myHeaders = new Headers();
-  myHeaders.append("Authorization", "Bearer "+ apiData?.store?.token);
-  myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", "Bearer " + apiData?.store?.token);
+    myHeaders.append("Content-Type", "application/json");
 
-  const raw = JSON.stringify(transformedData);
+    const raw = JSON.stringify(transformedData);
 
-  const requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow"
-  };
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+    let responseData = {};
 
-fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOptions)
-  .then((response) => response.text())
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+    // fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOptions)
+    //   .then((response) => response.json())
+    //   .then((result) => {
+    //     responseData = result;
+    //     console.log(result);
+    //     console.log("responseData ::", responseData?.data);
 
-    console.log("Transformed Data ::", transformedData);
-    return transformedData;
+    //     // console.log("checkData apiData ::", apiData);
+    //   })
+    //   .catch((error) => console.error(error));
+    // // return result;
 
-    console.log("checkData formData ::", apiData.store);
-    // console.log("checkData apiData ::", apiData);
+
+    fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        responseData = result?.data;
+        console.log("result ::", result);
+        console.log("responseData ::", responseData);
+
+        // let allValid = true;
+        // Iterate over each key in the data object
+        for (let key in responseData) {
+          if (responseData.hasOwnProperty(key)) {
+            if (responseData[key].credentials_is_valid !== true) {
+              // allValid = false;
+              setCredentialFormStatus(false);
+              break;
+            }
+          }
+        }
+
+        setTimeout(() => {
+          setCredentialFormStatus(null);
+        }, 5000)
+
+        // console.log("allValid ::", allValid)
+        console.log("credentialFormStatus ::", credentialFormStatus)
+      })
+      .catch((error) => console.error(error));
+
   }
 
 
@@ -437,14 +413,39 @@ fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOp
   }
 
 
-  const savePreference = (label) => {
-    const isEnabled = label === 'Enable' ? 1 : 0;
-    setPredData(isEnabled)
-    console.log('Selected label:', label);
-    console.log('Is enabled:', isEnabled);
+  // const savePreference = (label) => {
+  //   const isEnabled = label === 'Enable' ? 1 : 0;
+  //   setPredData(isEnabled)
+  //   console.log('Selected label:', label);
+  //   console.log('Is enabled:', isEnabled);
+  // };
+
+  const handlePrefEnableDisable = (value, label) => {
+    setSelectedValue(value);
+    if (value === 1 && label === "Enable") {
+      console.log('if value ::', value);
+      console.log('if label ::', label);
+      setPrefEnableDisable(true);
+    }
+    else if (value === 0 && label === "Disable") {
+      console.log('else if value ::', value);
+      console.log('else if label ::', label);
+      setPrefEnableDisable(false);
+    }
   };
 
-
+  const successStyle = {
+    background: "#c4f1c4",
+    padding: "12px",
+    borderRadius: "8px",
+    marginBottom: "1rem",
+  }
+  const errorStyle = {
+    background: "#ff9e9e",
+    padding: "12px",
+    borderRadius: "8px",
+    marginBottom: "1rem",
+  }
 
 
   return (
@@ -465,6 +466,9 @@ fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOp
               Save
             </button>
           </ui-title-bar>
+
+          {credentialFormStatus != null && <div style={!credentialFormStatus ? errorStyle : successStyle}>{!credentialFormStatus ? "Connection not connected" : "Connection is connected"}</div>}
+
           <Layout>
             <Layout.Section>
               <Text as="h1" variant="headingMd">
@@ -541,24 +545,15 @@ fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOp
                                         {field.description}
                                       </Text>
                                       {field?.options?.map((option) => (
-
                                         <RadioButton
-                                          // label={option.label}
-                                          // // helpText={field.label}
-                                          // // checked={option.value === 'disabled'}
-                                          // id={field.id}
-                                          // name={field.name}
-                                          // value={option.value}
-                                          // // onChange={handleChange}
-
-
                                           key={option.value}
                                           label={option.label}
                                           id={field.id}
                                           name={field.name}
                                           value={option.value}
-                                          // checked={selectedValue === option.value}
-                                          onChange={(e) => savePreference(e, option.label)}
+                                          // checked={option?.is_default_hide === true}
+                                          checked={selectedValue === option.value}
+                                          onChange={() => handlePrefEnableDisable(option.value, option.label)}
                                         />
                                       ))}
                                     </>
@@ -577,19 +572,10 @@ fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOp
                 </Layout.Section>
 
 
-
-
-
-
-
-
-
-
-
-
-
                 {/* ))} */}
-                {configform?.config_form?.map((mango) => (
+
+
+                {prefEnableDisable !== false && configform?.config_form?.map((mango) => (
                   <>
                     {mango?.fields.length > 0 && (
                       <Layout.Section>
@@ -683,55 +669,6 @@ fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOp
             ) : (
 
               <>
-                {/* <FormLayout>
-                  {product?.plugin_form?.map((plugin, index) => (
-                    <Layout.Section key={index}>
-                      <Card title={plugin.label}>
-
-                        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }} >
-                          {Object.entries(plugin.fields).map(([fieldKey, field]) => (
-                            <div style={{ width: '48%' }}>
-                              {(() => {
-                                switch (field.type) {
-                                  case 'url':
-                                    return (
-                                      <TextField
-                                        label={field.label}
-                                        value={inputValues[field.name] || field.value}
-                                        onChange={(value) => handleChange(value, field.name)}
-                                        name={field.name}
-                                        type="url"
-                                        required={field.required}
-                                        helpText={field.description}
-                                      />
-                                    );
-                                  case 'text':
-                                  case 'password':
-                                    return (
-                                      <TextField
-                                        label={field.label}
-                                        value={inputValues[field.name] || field.value}
-                                        onChange={(value) => handleChange(value, field.name)}
-                                        name={field.name}
-                                        type={field.type}
-                                        required={field.required}
-                                        helpText={field.description}
-                                      />
-                                    );
-                                  default:
-                                    return null;
-                                }
-                              })()}
-                            </div>
-                          ))}
-                        </div>
-
-
-                      </Card>
-                    </Layout.Section>
-                  ))}
-                </FormLayout> */}
-
                 <FormLayout>
                   {product?.plugin_form?.map((plugin, index) => {
                     // console.log("plugin?.fields?.token :::", plugin?.fields?.token)
