@@ -55,6 +55,7 @@ export const registerWebhooks = shopify.registerWebhooks;
 export const sessionStorage = shopify.sessionStorage;
 
 async function getAuthToken(session) {
+  console.log("getAuthToken ------------------->")
   try {
     console.log(session,'session');
     var myHeaders2 = new Headers();

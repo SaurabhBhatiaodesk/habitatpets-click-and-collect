@@ -22,6 +22,13 @@ model Session {
   expires     DateTime?
   accessToken String
   userId      BigInt?
+  firstName   String?
+  lastName    String?
+  email       String?
+  accountOwner Boolean?
+  locale      String?
+  collaborator Boolean?
+  emailVerified Boolean?
 }
 
 model GoogleApi {

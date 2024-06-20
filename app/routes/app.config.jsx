@@ -109,7 +109,7 @@ export default function configPage() {
   const [mapping, setMapping] = useState();
   const [credentialFormStatus, setCredentialFormStatus] = useState(null);
   const [prefEnableDisable, setPrefEnableDisable] = useState(null);
-  const [selectedValue, setSelectedValue] = useState();
+  const [preCheckedEnableDisable, setPreCheckedEnableDisable] = useState();
 
   const data = useLoaderData();
   console.log("dataaaaaaaa ::", data);
@@ -271,13 +271,13 @@ export default function configPage() {
 
 
   useEffect(() => {
-    const initialSelectedValue = preference?.form.find(option => option?.is_default_hide === true)?.value || 0;
-    setSelectedValue(initialSelectedValue);
+    const initialSelectedValue = preference?.form.find(option => option?.is_default_hide === true)?.value || false;
+    setPreCheckedEnableDisable(initialSelectedValue ? 0 : 1);
     console.log("initialSelectedValue :::", initialSelectedValue)
-    if (initialSelectedValue === 0) {
-      setPrefEnableDisable(false);
-    } else if (initialSelectedValue === 1) {
-      setPrefEnableDisable(true);
+    if (initialSelectedValue === false) {
+      setPrefEnableDisable(1);
+    } else if (initialSelectedValue === true) {
+      setPrefEnableDisable(0);
     }
   }, [preference]);
 
@@ -362,13 +362,11 @@ export default function configPage() {
               // allValid = false;
               setCredentialFormStatus(false);
               break;
+            } else {
+              setCredentialFormStatus(true);
             }
           }
         }
-
-        setTimeout(() => {
-          setCredentialFormStatus(null);
-        }, 5000)
 
         // console.log("allValid ::", allValid)
         console.log("credentialFormStatus ::", credentialFormStatus)
@@ -421,16 +419,16 @@ export default function configPage() {
   // };
 
   const handlePrefEnableDisable = (value, label) => {
-    setSelectedValue(value);
+    setPreCheckedEnableDisable(value);
     if (value === 1 && label === "Enable") {
       console.log('if value ::', value);
       console.log('if label ::', label);
-      setPrefEnableDisable(true);
+      setPrefEnableDisable(1);
     }
     else if (value === 0 && label === "Disable") {
       console.log('else if value ::', value);
       console.log('else if label ::', label);
-      setPrefEnableDisable(false);
+      setPrefEnableDisable(0);
     }
   };
 
@@ -528,6 +526,7 @@ export default function configPage() {
 
 
                                         <Select
+                                          name= {field.name}
                                           label={field.label}
                                           options={field.options}
                                         // onChange={handleSelectChange}
@@ -544,15 +543,15 @@ export default function configPage() {
                                       <Text as="h2" variant="bodyMd">
                                         {field.description}
                                       </Text>
-                                      {field?.options?.map((option) => (
+                                      {field?.options?.map((option, index) => (
                                         <RadioButton
-                                          key={option.value}
+                                          key={index}
                                           label={option.label}
                                           id={field.id}
                                           name={field.name}
                                           value={option.value}
                                           // checked={option?.is_default_hide === true}
-                                          checked={selectedValue === option.value}
+                                          checked={preCheckedEnableDisable === option.value}
                                           onChange={() => handlePrefEnableDisable(option.value, option.label)}
                                         />
                                       ))}
@@ -575,7 +574,7 @@ export default function configPage() {
                 {/* ))} */}
 
 
-                {prefEnableDisable !== false && configform?.config_form?.map((mango) => (
+                {prefEnableDisable !== 0 && configform?.config_form?.map((mango) => (
                   <>
                     {mango?.fields.length > 0 && (
                       <Layout.Section>
@@ -619,6 +618,7 @@ export default function configPage() {
 
 
                                               <Select
+                                                name= {field.name}
                                                 label={field.label}
                                                 options={field.options}
                                               // onChange={handleSelectChange}
@@ -693,7 +693,7 @@ export default function configPage() {
                                           return (
                                             <TextField
                                               label={field.label}
-                                              value={formData[fieldKey] || field.value}
+                                              value={formData[fieldKey]}
                                               onChange={(value) => handleChange(value, fieldKey)}
                                               name={fieldKey}
                                               type={field.type}
