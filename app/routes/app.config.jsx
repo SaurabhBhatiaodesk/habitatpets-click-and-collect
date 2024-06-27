@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from "react";
 import {
   Tooltip,
   Icon,
@@ -20,19 +20,19 @@ import {
   ActionList,
   Thumbnail,
   Avatar,
-  Form
+  Form,
 } from "@shopify/polaris";
-import { useLoaderData } from '@remix-run/react';
+import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 import db from "../db.server";
-import { ChevronRightIcon } from '@shopify/polaris-icons';
+import { ChevronRightIcon } from "@shopify/polaris-icons";
 import Cards from "../components/cards";
 
 // Handles form submission
 export const action = async ({ request }) => {
   const formData = await request.formData();
-  console.log(formData);
+  console.log("ffoorrmmddatataq", formData);
 
   for (const [key, value] of formData.entries()) {
     console.log(`Key: ${key}, Value: ${value}`);
@@ -68,7 +68,10 @@ export const loader = async ({ request }) => {
   };
 
   try {
-    const response = await fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOptions);
+    const response = await fetch(
+      "https://main.dev.saasintegrator.online/api/v1/credential-form",
+      requestOptions,
+    );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -76,21 +79,24 @@ export const loader = async ({ request }) => {
 
     data.plugin_form.map((item, index) => {
       if (item?.fields?.base_url) {
-        data.plugin_form[index].fields.base_url.value = "https://" + auth.shop
-        data.plugin_form[index].fields.base_url.type = "text"
+        data.plugin_form[index].fields.base_url.value = "https://" + auth.shop;
+        data.plugin_form[index].fields.base_url.type = "text";
       }
       if (item?.fields?.token) {
-        data.plugin_form[index].fields.token.value = auth.accessToken
-        data.plugin_form[index].fields.token.type = 'text'
+        data.plugin_form[index].fields.token.value = auth.accessToken;
+        data.plugin_form[index].fields.token.type = "text";
       }
-    })
+    });
     // console.log(data, "data changed")
-    const form = await fetch("https://main.dev.saasintegrator.online/api/v1/menus", requestOptions);
+    const form = await fetch(
+      "https://main.dev.saasintegrator.online/api/v1/menus",
+      requestOptions,
+    );
     if (!form.ok) {
       throw new Error(`HTTP error! status: ${form.status}`);
     }
     const form_data = await form.json();
-    console.log('form_data ', form_data);
+    console.log("form_data ", form_data);
 
     return { form: form_data, data: data, auth: auth, store: store };
   } catch (error) {
@@ -98,7 +104,6 @@ export const loader = async ({ request }) => {
     throw error;
   }
 };
-
 
 export default function configPage() {
   const [isFirstButtonActive, setIsFirstButtonActive] = useState(true);
@@ -113,21 +118,20 @@ export default function configPage() {
 
   const data = useLoaderData();
   console.log("dataaaaaaaa ::", data);
-  const [formData, setFormData] = useState({
-  });
-
+  const [formData, setFormData] = useState({});
 
   const handleChangeRadio = useCallback((platformName, newValue) => {
-    setRadioValues(prevState => ({
+    setRadioValues((prevState) => ({
       ...prevState,
-      [platformName]: newValue
+      [platformName]: newValue,
     }));
   }, []);
 
   const handleSelectChange = useCallback((name, value) => {
-    setInputValues(prevState => ({
+    console.log("handleSelectChange");
+    setInputValues((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   }, []);
 
@@ -138,7 +142,7 @@ export default function configPage() {
   const store = data.store;
 
   const handleFirstButtonClick = useCallback(() => {
-    console.log('datadatadatadatadata ', data)
+    console.log("datadatadatadatadata ", data);
     setProduct(data.data);
     setNavbar(null);
     if (isFirstButtonActive) return;
@@ -203,10 +207,10 @@ export default function configPage() {
     var jj = {
       content: item.name,
       suffix: <Icon source={ChevronRightIcon} />,
-      onAction: () => handleItemClick(item.module)
-    }
+      onAction: () => handleItemClick(item.module),
+    };
     items.push(jj);
-  })
+  });
 
   async function handleItemClick(itemContent) {
     const myHeaders = new Headers();
@@ -220,34 +224,42 @@ export default function configPage() {
     console.log(`Item clicked: ${itemContent}`);
     try {
       /**************************************  Preference  ****************************************************** */
-      const response = await fetch(`https://main.dev.saasintegrator.online/api/v1/${itemContent}/preference`, requestOptions);
+      const response = await fetch(
+        `https://main.dev.saasintegrator.online/api/v1/${itemContent}/preference`,
+        requestOptions,
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       let preference = await response.json();
-      console.log('preference ', preference)
-      setPreference(preference)
+      console.log("preference ", preference);
+      setPreference(preference);
       /****************************************** config-form  ************************************************** */
-      const response2 = await fetch(`https://main.dev.saasintegrator.online/api/v1/${itemContent}/config-form`, requestOptions);
+      const response2 = await fetch(
+        `https://main.dev.saasintegrator.online/api/v1/${itemContent}/config-form`,
+        requestOptions,
+      );
       if (!response2.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       let configform = await response2.json();
-      console.log('config ', configform)
-      setConfig(configform)
+      console.log("config ", configform);
+      setConfig(configform);
       /**************************************** Mapping **************************************************** */
-      const response3 = await fetch(`https://main.dev.saasintegrator.online/api/v1/${itemContent}/mapping`, requestOptions);
+      const response3 = await fetch(
+        `https://main.dev.saasintegrator.online/api/v1/${itemContent}/mapping`,
+        requestOptions,
+      );
       if (!response3.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       let mapping = await response3.json();
-      console.log('mapping ', mapping)
-      setMapping(mapping)
+      console.log("mapping ", mapping);
+      setMapping(mapping);
     } catch (error) {
       console.error("Error fetching config-form:", error);
       throw error;
     }
-
 
     // You can add any other logic you need here
   }
@@ -255,25 +267,26 @@ export default function configPage() {
   useEffect(() => {
     if (product && product.plugin_form) {
       const preFilledData = {};
-      product.plugin_form.forEach(plugin => {
+      product.plugin_form.forEach((plugin) => {
         Object.entries(plugin.fields).forEach(([fieldKey, field]) => {
           if (field.value && !formData[fieldKey]) {
             preFilledData[fieldKey] = field.value;
           }
         });
       });
-      setFormData(prevState => ({
+      setFormData((prevState) => ({
         ...prevState,
-        ...preFilledData
+        ...preFilledData,
       }));
     }
   }, [product]);
 
-
   useEffect(() => {
-    const initialSelectedValue = preference?.form.find(option => option?.is_default_hide === true)?.value || false;
+    const initialSelectedValue =
+      preference?.form.find((option) => option?.is_default_hide === true)
+        ?.value || false;
     setPreCheckedEnableDisable(initialSelectedValue ? 0 : 1);
-    console.log("initialSelectedValue :::", initialSelectedValue)
+    console.log("initialSelectedValue :::", initialSelectedValue);
     if (initialSelectedValue === false) {
       setPrefEnableDisable(1);
     } else if (initialSelectedValue === true) {
@@ -284,14 +297,24 @@ export default function configPage() {
   // console.log("formData ::::", formData)
 
   const handleChange = useCallback((value, name) => {
-    setFormData(prevState => ({
+    console.log("handleChange values", value, "::", name);
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   }, []);
 
+  const handleconfigChange = useCallback((value, field) => {
+    console.log("handleconfigChange Value :", value);
+    console.log("fieldfield", field);
+    // console.log(`Config Change - Field: ${field.name}, Value: ${value}`);
+    setInputValues((prev) => ({ ...prev, [field]: value }));
+    // You can use 'value' and 'field' here as needed for further operations
+  }, []);
+  console.log("inputValuesinputValues", inputValues);
 
   const handleSubmit = (event) => {
+    console.log("inputValues in handlesubmit", inputValues);
     event.preventDefault();
 
     if (navbar === null || navbar === false) {
@@ -300,25 +323,26 @@ export default function configPage() {
   };
 
   const checkData = (formData, apiData) => {
+    console.log("formData ::", formData);
+    console.log("apiData ::", apiData);
 
-    let transformedData = apiData?.data?.plugin_form?.map(plugin => {
+    let transformedData = apiData?.data?.plugin_form?.map((plugin) => {
       let credential_values = {};
       for (let key in plugin.fields) {
         credential_values[key] = formData[key] || null;
       }
       return {
-        "plugin_id": plugin.plugin_id,
-        "credential_values": credential_values
+        plugin_id: plugin.plugin_id,
+        credential_values: credential_values,
       };
     });
 
     transformedData.push({
-      "plugin_id": "general",
-      "credential_values": {
-        "custom_name": apiData?.store?.shop
-      }
+      plugin_id: "general",
+      credential_values: {
+        custom_name: apiData?.store?.shop,
+      },
     });
-
 
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + apiData?.store?.token);
@@ -330,7 +354,7 @@ export default function configPage() {
       method: "POST",
       headers: myHeaders,
       body: raw,
-      redirect: "follow"
+      redirect: "follow",
     };
     let responseData = {};
 
@@ -346,8 +370,10 @@ export default function configPage() {
     //   .catch((error) => console.error(error));
     // // return result;
 
-
-    fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOptions)
+    fetch(
+      "https://main.dev.saasintegrator.online/api/v1/credential-form",
+      requestOptions,
+    )
       .then((response) => response.json())
       .then((result) => {
         responseData = result?.data;
@@ -369,47 +395,43 @@ export default function configPage() {
         }
 
         // console.log("allValid ::", allValid)
-        console.log("credentialFormStatus ::", credentialFormStatus)
+        console.log("credentialFormStatus ::", credentialFormStatus);
       })
       .catch((error) => console.error(error));
-
-  }
-
-
-
-
+  };
 
   async function savePrference(label) {
     try {
-      console.log('Selected label:', label);
-      const isEnabled = label === 'Enable' ? 1 : 0
-      console.log('Is enabled:', isEnabled);
-
+      console.log("Selected label:", label);
+      const isEnabled = label === "Enable" ? 1 : 0;
+      console.log("Is enabled:", isEnabled);
 
       const myHeaders = new Headers();
       myHeaders.append("Authorization", "Bearer " + data.store.token);
       myHeaders.append("Content-Type", "application/json");
 
       const raw = JSON.stringify({
-        "enable": isEnabled,
-        "main_plugin": "sid_9o92t6cjz6wnw78vji4ld"
+        enable: isEnabled,
+        main_plugin: "sid_9o92t6cjz6wnw78vji4ld",
       });
 
       const requestOptions = {
         method: "POST",
         headers: myHeaders,
         body: raw,
-        redirect: "follow"
+        redirect: "follow",
       };
 
-      const response = await fetch("https://main.dev.saasintegrator.online/api/v1/category/save-preference", requestOptions);
+      const response = await fetch(
+        "https://main.dev.saasintegrator.online/api/v1/category/save-preference",
+        requestOptions,
+      );
       const result = await response.text();
       console.log(result, "checking");
     } catch (error) {
-      console.error('SavePreference Error : ', error);
+      console.error("SavePreference Error : ", error);
     }
   }
-
 
   // const savePreference = (label) => {
   //   const isEnabled = label === 'Enable' ? 1 : 0;
@@ -421,13 +443,12 @@ export default function configPage() {
   const handlePrefEnableDisable = (value, label) => {
     setPreCheckedEnableDisable(value);
     if (value === 1 && label === "Enable") {
-      console.log('if value ::', value);
-      console.log('if label ::', label);
+      console.log("if value ::", value);
+      console.log("if label ::", label);
       setPrefEnableDisable(1);
-    }
-    else if (value === 0 && label === "Disable") {
-      console.log('else if value ::', value);
-      console.log('else if label ::', label);
+    } else if (value === 0 && label === "Disable") {
+      console.log("else if value ::", value);
+      console.log("else if label ::", label);
       setPrefEnableDisable(0);
     }
   };
@@ -437,24 +458,19 @@ export default function configPage() {
     padding: "12px",
     borderRadius: "8px",
     marginBottom: "1rem",
-  }
+  };
   const errorStyle = {
     background: "#ff9e9e",
     padding: "12px",
     borderRadius: "8px",
     marginBottom: "1rem",
-  }
-
+  };
 
   return (
-    <div style={{ display: 'flex', gap: '2rem', marginLeft: '1.9rem' }}>
-
+    <div style={{ display: "flex", gap: "2rem", marginLeft: "1.9rem" }}>
       {navbar && (
         <>
-          <ActionList
-            actionRole="menuitem"
-            items={items}
-          />
+          <ActionList actionRole="menuitem" items={items} />
         </>
       )}
       <form onSubmit={handleSubmit}>
@@ -465,7 +481,13 @@ export default function configPage() {
             </button>
           </ui-title-bar>
 
-          {credentialFormStatus != null && <div style={!credentialFormStatus ? errorStyle : successStyle}>{!credentialFormStatus ? "Connection not connected" : "Connection is connected"}</div>}
+          {credentialFormStatus != null && (
+            <div style={!credentialFormStatus ? errorStyle : successStyle}>
+              {!credentialFormStatus
+                ? "Connection not connected"
+                : "Connection is connected"}
+            </div>
+          )}
 
           <Layout>
             <Layout.Section>
@@ -475,44 +497,67 @@ export default function configPage() {
             </Layout.Section>
             <Layout.Section>
               <ButtonGroup variant="segmented">
-                <Button pressed={isFirstButtonActive} onClick={handleFirstButtonClick}>
+                <Button
+                  pressed={isFirstButtonActive}
+                  onClick={handleFirstButtonClick}
+                >
                   General
                 </Button>
-                <Button pressed={!isFirstButtonActive} onClick={handleSecondButtonClick}>
+                <Button
+                  pressed={!isFirstButtonActive}
+                  onClick={handleSecondButtonClick}
+                >
                   Module Configuration
                 </Button>
               </ButtonGroup>
             </Layout.Section>
 
-            {preference && preference != undefined && configform != null && navbar ? (
+            {preference &&
+            preference != undefined &&
+            configform != null &&
+            navbar ? (
               <>
                 <Layout.Section>
                   <Card title="PReference">
                     <FormLayout>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }} >
+                      <div
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          justifyContent: "space-between",
+                        }}
+                      >
                         {preference?.form?.map((field) => (
-                          <div style={{ width: '48%' }}>
+                          <div style={{ width: "48%" }}>
                             {(() => {
                               switch (field.input_type) {
-                                case 'url':
+                                case "url":
                                   return (
                                     <TextField
                                       label={field.label}
-                                      value={inputValues[field.name] || field.value}
-                                      onChange={(value) => handleChange(value, field.name)}
+                                      value={
+                                        inputValues[field.name] || field.value
+                                      }
+                                      onChange={(value) =>
+                                        handleChange(value, field.name)
+                                      }
                                       name={field.name}
                                       type="url"
                                       required={field.required}
                                       helpText={field.description}
                                     />
                                   );
-                                case 'text':
-                                case 'password':
+                                case "text":
+                                case "password":
                                   return (
                                     <TextField
                                       label={field.label}
-                                      value={inputValues[field.name] || field.value}
-                                      onChange={(value) => handleChange(value, field.name)}
+                                      value={
+                                        inputValues[field.name] || field.value
+                                      }
+                                      onChange={(value) =>
+                                        handleChange(value, field.name)
+                                      }
                                       name={field.name}
                                       type={field.type}
                                       required={field.required}
@@ -522,19 +567,15 @@ export default function configPage() {
                                 case "select":
                                   return (
                                     <>
-                                      {field?.options.length > 0 &&
-
-
+                                      {field?.options.length > 0 && (
                                         <Select
-                                          name= {field.name}
+                                          name={field.name}
                                           label={field.label}
                                           options={field.options}
-                                        // onChange={handleSelectChange}
-                                        // value={selected}
+                                          // onChange={handleSelectChange}
+                                          // value={selected}
                                         />
-
-
-                                      }
+                                      )}
                                     </>
                                   );
                                 case "radio":
@@ -551,8 +592,16 @@ export default function configPage() {
                                           name={field.name}
                                           value={option.value}
                                           // checked={option?.is_default_hide === true}
-                                          checked={preCheckedEnableDisable === option.value}
-                                          onChange={() => handlePrefEnableDisable(option.value, option.label)}
+                                          checked={
+                                            preCheckedEnableDisable ===
+                                            option.value
+                                          }
+                                          onChange={() =>
+                                            handlePrefEnableDisable(
+                                              option.value,
+                                              option.label,
+                                            )
+                                          }
                                         />
                                       ))}
                                     </>
@@ -565,160 +614,200 @@ export default function configPage() {
                           </div>
                         ))}
                       </div>
-
                     </FormLayout>
                   </Card>
                 </Layout.Section>
 
-
                 {/* ))} */}
 
-
-                {prefEnableDisable !== 0 && configform?.config_form?.map((mango) => (
-                  <>
-                    {mango?.fields.length > 0 && (
-                      <Layout.Section>
-                        <Card title="configform">
-                          <FormLayout>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }} >
-                              {mango?.fields?.map((field) => (
-                                // <Card type={field.input_type} field={field} />
-                                <div style={{ width: '48%' }}>
-                                  {(() => {
-                                    switch (field.input_type) {
-                                      case 'url':
-                                        return (
-                                          <TextField
-                                            label={field.label}
-                                            value={inputValues[field.name] || field.value}
-                                            onChange={(value) => handleChange(value, field.name)}
-                                            name={field.name}
-                                            type="url"
-                                            required={field.required}
-                                            helpText={field.description}
-                                          />
-                                        );
-                                      case 'text':
-                                      case 'password':
-                                        return (
-                                          <TextField
-                                            label={field.label}
-                                            value={inputValues[field.name] || field.value}
-                                            onChange={(value) => handleChange(value, field.name)}
-                                            name={field.name}
-                                            type={field.type}
-                                            required={field.required}
-                                            helpText={field.description}
-                                          />
-                                        );
-                                      case "select":
-                                        return (
-                                          <>
-                                            {field?.options.length > 0 &&
-
-
-                                              <Select
-                                                name= {field.name}
+                {prefEnableDisable !== 0 &&
+                  configform?.config_form?.map((mango) => {
+                    console.log("mango :::", mango);
+                    return (
+                      <>
+                        {mango?.fields.length > 0 && (
+                          <Layout.Section>
+                            <Card title="configform">
+                              <FormLayout>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  {mango?.fields?.map((field) => (
+                                    // <Card type={field.input_type} field={field} />
+                                    <div style={{ width: "48%" }}>
+                                      {(() => {
+                                        switch (field.input_type) {
+                                          case "url":
+                                            return (
+                                              <TextField
                                                 label={field.label}
-                                                options={field.options}
-                                              // onChange={handleSelectChange}
-                                              // value={selected}
-                                              />
-
-
-                                            }
-                                          </>
-                                        );
-                                      case "radio":
-                                        return (
-                                          <>
-                                            <Text as="h2" variant="bodyMd">
-                                              {field.label}
-                                            </Text>
-                                            {field?.options?.map((option) => (
-                                              <RadioButton
-                                                label={option.label}
-                                                // helpText={field.label}
-                                                // checked={option.value === 'disabled'}
-                                                id={field.id}
+                                                value={
+                                                  inputValues[field.name] ||
+                                                  field.value
+                                                }
+                                                onChange={(value) =>
+                                                  handleconfigChange(
+                                                    value,
+                                                    field.name,
+                                                  )
+                                                }
                                                 name={field.name}
-                                                value={option.value}
-                                              // onChange={handleChange}
+                                                type="url"
+                                                required={field.required}
+                                                helpText={field.description}
                                               />
-                                            ))}
-                                          </>
-                                        );
+                                            );
+                                          case "text":
+                                          case "password":
+                                            return (
+                                              <TextField
+                                                label={field.label}
+                                                value={
+                                                  inputValues[field.name] ||
+                                                  field.value
+                                                }
+                                                // onChange={(value) => handleChange(value, field.name)}
+                                                onChange={(value) =>
+                                                  handleconfigChange(
+                                                    value,
+                                                    field.name,
+                                                  )
+                                                }
+                                                name={field.name}
+                                                type={field.type}
+                                                required={field.required}
+                                                helpText={field.description}
+                                              />
+                                            );
+                                          case "select":
+                                            return (
+                                              <>
+                                                {field?.options.length > 0 && (
+                                                  <Select
+                                                    name={field.name}
+                                                    label={field.label}
+                                                    options={field.options}
+                                                    onChange={(value) =>
+                                                      handleconfigChange(
+                                                        value,
+                                                        field.name,
+                                                      )
+                                                    }
+                                                  />
+                                                )}
+                                              </>
+                                            );
+                                          case "radio":
+                                            return (
+                                              <>
+                                                <Text as="h2" variant="bodyMd">
+                                                  {field.label}
+                                                </Text>
+                                                {field?.options?.map(
+                                                  (option) => (
+                                                    <RadioButton
+                                                      label={option.label}
+                                                      // helpText={field.label}
+                                                      // checked={option.value === 'disabled'}
+                                                      id={field.id}
+                                                      name={field.name}
+                                                      value={option.value}
+                                                      // onChange={handleChange}
+                                                      onChange={(value) =>
+                                                        handleconfigChange(
+                                                          option.value,
+                                                          field.name,
+                                                        )
+                                                      }
+                                                    />
+                                                  ),
+                                                )}
+                                              </>
+                                            );
 
-                                      default:
-                                        return null;
-                                    }
-                                  })()}
+                                          default:
+                                            return null;
+                                        }
+                                      })()}
+                                    </div>
+                                  ))}
                                 </div>
-                              ))}
-                            </div>
-
-                          </FormLayout>
-                        </Card>
-                      </Layout.Section>
-                    )}
-                  </>
-                ))}
-
-
+                              </FormLayout>
+                            </Card>
+                          </Layout.Section>
+                        )}
+                      </>
+                    );
+                  })}
               </>
             ) : (
-
               <>
                 <FormLayout>
                   {product?.plugin_form?.map((plugin, index) => {
                     // console.log("plugin?.fields?.token :::", plugin?.fields?.token)
                     return (
-                      <div style={{ display: plugin.fields?.token != undefined || plugin?.fields?.token != null ? "none" : "block" }}>
+                      <div
+                        style={{
+                          display:
+                            plugin.fields?.token != undefined ||
+                            plugin?.fields?.token != null
+                              ? "none"
+                              : "block",
+                        }}
+                      >
                         <Layout.Section key={index}>
                           <Card title={plugin.label}>
-
-                            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }} >
-                              {Object.entries(plugin.fields).map(([fieldKey, field]) => {
-                                // console.log("fieldKey :::", fieldKey)
-                                return (
-                                  <div style={{ width: '48%' }}>
-
-
-                                    {(() => {
-                                      switch (field.type) {
-                                        case 'url':
-                                        case 'text':
-                                        case 'hidden':
-                                        case 'password':
-                                          return (
-                                            <TextField
-                                              label={field.label}
-                                              value={formData[fieldKey]}
-                                              onChange={(value) => handleChange(value, fieldKey)}
-                                              name={fieldKey}
-                                              type={field.type}
-                                              required={field.required}
-                                              helpText={field.description}
-                                            />
-                                          );
-                                        default:
-                                          return null;
-                                      }
-                                    })()}
-                                  </div>
-                                )
-                              })}
+                            <div
+                              style={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              {Object.entries(plugin.fields).map(
+                                ([fieldKey, field]) => {
+                                  // console.log("fieldKey :::", fieldKey)
+                                  return (
+                                    <div style={{ width: "48%" }}>
+                                      {(() => {
+                                        switch (field.type) {
+                                          case "url":
+                                          case "text":
+                                          case "hidden":
+                                          case "password":
+                                            return (
+                                              <TextField
+                                                label={field.label}
+                                                value={formData[fieldKey]}
+                                                onChange={(value) =>
+                                                  handleChange(value, fieldKey)
+                                                }
+                                                name={fieldKey}
+                                                type={field.type}
+                                                required={field.required}
+                                                helpText={field.description}
+                                              />
+                                            );
+                                          default:
+                                            return null;
+                                        }
+                                      })()}
+                                    </div>
+                                  );
+                                },
+                              )}
                             </div>
-
-
                           </Card>
                         </Layout.Section>
                       </div>
-                    )
+                    );
                   })}
                 </FormLayout>
               </>
-
             )}
           </Layout>
         </Page>
