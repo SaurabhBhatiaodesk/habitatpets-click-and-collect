@@ -2,6 +2,7 @@
   "name": "click-c",
   "private": true,
   "scripts": {
+    "predev": "prisma generate && prisma migrate deploy",
     "build": "vite build && vite build --ssr",
     "dev": "shopify app dev",
     "config:link": "shopify app config link",
