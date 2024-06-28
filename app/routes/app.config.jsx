@@ -59,6 +59,7 @@ export const loader = async ({ request }) => {
   });
   //  console.log("authauthauthauthauth",store);
   const myHeaders = new Headers();
+  if(store?.token){
   myHeaders.append("Authorization", "Bearer " + store.token);
 
   const requestOptions = {
@@ -102,6 +103,11 @@ export const loader = async ({ request }) => {
   } catch (error) {
     console.error("Error fetching config-form:", error);
     throw error;
+  }
+  }
+  else
+  {
+    return { form: [], data: [], auth: [], store: [] };
   }
 };
 

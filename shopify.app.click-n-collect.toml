@@ -3,7 +3,7 @@
 client_id = "ac9b99f068b4a8d49a05a3d2b3988c76"
 name = "click-n-collect"
 handle = "click-n-collect-6"
-application_url = "https://tournaments-resistant-advancement-judy.trycloudflare.com"
+application_url = "https://beginning-parcel-squad-set.trycloudflare.com"
 embedded = true
 
 [build]
@@ -12,14 +12,13 @@ dev_store_url = "saurabh-click-collect.myshopify.com"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_content, write_content, read_discounts, write_discounts, read_inventory, write_inventory, read_locales, write_locales, write_locations, read_locations, read_metaobjects, write_metaobjects, read_products, write_products, read_product_listings, read_script_tags, write_script_tags,read_shipping"
-
+scopes = ""
 
 [auth]
 redirect_urls = [
-  "https://tournaments-resistant-advancement-judy.trycloudflare.com/auth/callback",
-  "https://tournaments-resistant-advancement-judy.trycloudflare.com/auth/shopify/callback",
-  "https://tournaments-resistant-advancement-judy.trycloudflare.com/api/auth/callback"
+  "https://beginning-parcel-squad-set.trycloudflare.com/auth/callback",
+  "https://beginning-parcel-squad-set.trycloudflare.com/auth/shopify/callback",
+  "https://beginning-parcel-squad-set.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
