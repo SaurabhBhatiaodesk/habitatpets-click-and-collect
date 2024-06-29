@@ -11,7 +11,7 @@ async function fetchData(url) {
 
 async function fetchAccessToken() {
     try {
-        const response = await fetch(`https://brandon-assembled-here-oxide.trycloudflare.com/api/get?shop=${location.hostname}`, {
+        const response = await fetch(`https://clickncollect-12d7088d53ee.herokuapp.com/api/get?shop=${location.hostname}`, {
             headers: { "Content-Type": "application/json", Accept: "application/json" }
         });
         if (!response.ok) throw new Error("Network response was not ok.");
@@ -54,7 +54,7 @@ async function getLocations(accessToken, selectedLocation = "") {
             const customerLocation = getCookie("customerlocation");
             document.querySelector(".location").value = customerLocation;
 
-            const mapUrl = `https://brandon-assembled-here-oxide.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${destinationsArr.join("|")}&shop=${location.hostname}`;
+            const mapUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&destinations=${destinationsArr.join("|")}&shop=${location.hostname}`;
             const res = await fetchData(mapUrl);
 
             if (res) {

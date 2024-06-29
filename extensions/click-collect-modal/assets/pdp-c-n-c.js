@@ -1,6 +1,6 @@
 async function fetchAccessToken() {
     try {
-      let t = await fetch( `https://brandon-assembled-here-oxide.trycloudflare.com/api/get?shop=${location.hostname}`, {
+      let t = await fetch( `https://clickncollect-12d7088d53ee.herokuapp.com/api/get?shop=${location.hostname}`, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json"
@@ -51,7 +51,7 @@ async function fetchAccessToken() {
       if ( i.innerHTML = "", a.length > 0 ) {
         let s = getCookie( "customerlocation" );
         document.querySelector( ".location" ).value = s;
-        let r = `https://brandon-assembled-here-oxide.trycloudflare.com/api/distance?customerlocation=${s}&destinations=${a.join("|")}&shop=${location.host}`,
+        let r = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${s}&destinations=${a.join("|")}&shop=${location.host}`,
           c = await fetchData( r ),
           l = n.locations.map( ( t, e ) => {
             if ( "OK" === c.rows[ 0 ].elements[ e ].status ) {

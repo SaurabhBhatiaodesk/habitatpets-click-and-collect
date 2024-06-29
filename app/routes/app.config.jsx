@@ -1,33 +1,11 @@
 import React, { useState, useCallback, useEffect } from "react";
-import {
-  Tooltip,
-  Icon,
-  Box,
-  Card,
-  Layout,
-  Link,
-  List,
-  Page,
-  Text,
-  BlockStack,
-  Button,
-  ButtonGroup,
-  Checkbox,
-  TextField,
-  Select,
-  RadioButton,
-  FormLayout,
-  ActionList,
-  Thumbnail,
-  Avatar,
-  Form,
-} from "@shopify/polaris";
+import { Icon, Card, Layout, Page, Text, Button, ButtonGroup, TextField, Select, RadioButton, FormLayout, ActionList } from "@shopify/polaris";
 import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 import db from "../db.server";
 import { ChevronRightIcon } from "@shopify/polaris-icons";
-import Cards from "../components/cards";
+import NotificationBar from "../components/NotificationBar";
 
 // Handles form submission
 export const action = async ({ request }) => {
@@ -57,11 +35,8 @@ export const loader = async ({ request }) => {
   const store = await db.userConnection.findFirst({
     where: { shop },
   });
-  //  console.log("authauthauthauthauth",store);
   const myHeaders = new Headers();
-  if(store?.token){
   myHeaders.append("Authorization", "Bearer " + store.token);
-
   const requestOptions = {
     method: "GET",
     headers: myHeaders,
@@ -104,11 +79,6 @@ export const loader = async ({ request }) => {
     console.error("Error fetching config-form:", error);
     throw error;
   }
-  }
-  else
-  {
-    return { form: [], data: [], auth: [], store: [] };
-  }
 };
 
 export default function configPage() {
@@ -121,10 +91,17 @@ export default function configPage() {
   const [credentialFormStatus, setCredentialFormStatus] = useState(null);
   const [prefEnableDisable, setPrefEnableDisable] = useState(null);
   const [preCheckedEnableDisable, setPreCheckedEnableDisable] = useState();
+  const [notificationMessage, setNotificationMessage] = useState("");
 
-  const data = useLoaderData();
-  console.log("dataaaaaaaa ::", data);
+  const [navbar, setNavbar] = useState(null);
   const [formData, setFormData] = useState({});
+  const data = useLoaderData();
+  const [product, setProduct] = useState(data.data);
+  const form = data?.form;
+  const store = data?.store;
+  const items = [];
+
+  console.log("dataaaaaaaa ::", data);
 
   const handleChangeRadio = useCallback((platformName, newValue) => {
     setRadioValues((prevState) => ({
@@ -141,14 +118,8 @@ export default function configPage() {
     }));
   }, []);
 
-  const [product, setProduct] = useState(data.data);
-  const [navbar, setNavbar] = useState(null);
-  // console.log('testubgssss ', data)
-  const form = data.form;
-  const store = data.store;
-
   const handleFirstButtonClick = useCallback(() => {
-    console.log("datadatadatadatadata ", data);
+    console.log("handleFirstButtonClick ", data);
     setProduct(data.data);
     setNavbar(null);
     if (isFirstButtonActive) return;
@@ -164,51 +135,6 @@ export default function configPage() {
     setIsFirstButtonActive(false);
   }, [isFirstButtonActive]);
 
-  // useEffect(() => {
-  //   if (isFirstButtonActive && data) {
-  //     // Call your function here when isFirstButtonActive is true
-  //     calltogeneral(data);
-  //   }
-  // }, [isFirstButtonActive, data]);
-
-  // const calltogeneral = async (formdatas) => {
-  //   // console.log('testings', formdatas.store.token)
-  //   const myHeaders = new Headers();
-  //   myHeaders.append("Authorization", "Bearer " + formdatas.store.token);
-
-  //   const requestOptions = {
-  //     method: "GET",
-  //     headers: myHeaders,
-  //     redirect: "follow",
-  //   };
-
-  //   try {
-  //     const response = await fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOptions);
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! status: ${response.status}`);
-  //     }
-  //     let data = await response.json();
-  //     console.log('data ', data);
-
-  //     data.plugin_form.map((item, index) => {
-  //       if (item?.fields?.base_url) {
-  //         data.plugin_form[index].fields.base_url.value = formdatas.auth.shop;
-  //         data.plugin_form[index].fields.base_url.type = "hidden";
-  //       }
-  //       if (item?.fields?.token) {
-  //         data.plugin_form[index].fields.token.value = formdatas.auth.accessToken;
-  //         data.plugin_form[index].fields.token.type = 'hidden';
-  //       }
-  //     });
-  //     setProduct(data);
-  //     console.log('productssss   ', product);
-
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //   }
-  // };
-
-  const items = [];
   form.map((item) => {
     var jj = {
       content: item.name,
@@ -300,7 +226,6 @@ export default function configPage() {
     }
   }, [preference]);
 
-  // console.log("formData ::::", formData)
 
   const handleChange = useCallback((value, name) => {
     console.log("handleChange values", value, "::", name);
@@ -310,13 +235,25 @@ export default function configPage() {
     }));
   }, []);
 
-  const handleconfigChange = useCallback((value, field) => {
+  const handleconfigChange = useCallback((value, field, plugin_id) => {
     console.log("handleconfigChange Value :", value);
-    console.log("fieldfield", field);
-    // console.log(`Config Change - Field: ${field.name}, Value: ${value}`);
-    setInputValues((prev) => ({ ...prev, [field]: value }));
+    console.log(plugin_id, "fieldfield", field);
+
+    setInputValues((prev) => {
+      // If the plugin_id is 'general', update the 'general' section
+
+      return {
+        ...prev,
+        [plugin_id]: {
+          ...prev[plugin_id],
+          [field]: value,
+        },
+      };
+    });
+
     // You can use 'value' and 'field' here as needed for further operations
   }, []);
+
   console.log("inputValuesinputValues", inputValues);
 
   const handleSubmit = (event) => {
@@ -329,26 +266,25 @@ export default function configPage() {
   };
 
   const checkData = (formData, apiData) => {
-    console.log("formData ::", formData);
-    console.log("apiData ::", apiData);
 
-    let transformedData = apiData?.data?.plugin_form?.map((plugin) => {
+    let transformedData = apiData?.data?.plugin_form?.map(plugin => {
       let credential_values = {};
       for (let key in plugin.fields) {
         credential_values[key] = formData[key] || null;
       }
       return {
-        plugin_id: plugin.plugin_id,
-        credential_values: credential_values,
+        "plugin_id": plugin.plugin_id,
+        "credential_values": credential_values
       };
     });
 
     transformedData.push({
-      plugin_id: "general",
-      credential_values: {
-        custom_name: apiData?.store?.shop,
-      },
+      "plugin_id": "general",
+      "credential_values": {
+        "custom_name": apiData?.store?.shop
+      }
     });
+
 
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + apiData?.store?.token);
@@ -360,7 +296,7 @@ export default function configPage() {
       method: "POST",
       headers: myHeaders,
       body: raw,
-      redirect: "follow",
+      redirect: "follow"
     };
     let responseData = {};
 
@@ -376,10 +312,8 @@ export default function configPage() {
     //   .catch((error) => console.error(error));
     // // return result;
 
-    fetch(
-      "https://main.dev.saasintegrator.online/api/v1/credential-form",
-      requestOptions,
-    )
+
+    fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOptions)
       .then((response) => response.json())
       .then((result) => {
         responseData = result?.data;
@@ -401,10 +335,41 @@ export default function configPage() {
         }
 
         // console.log("allValid ::", allValid)
-        console.log("credentialFormStatus ::", credentialFormStatus);
+        console.log("credentialFormStatus ::", credentialFormStatus)
       })
       .catch((error) => console.error(error));
+
+  }
+
+  const handleConfigSubmit = () => {
+    console.log("inputValues in handleConfigSubmit", inputValues);
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer " + data?.store?.token);
+
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify(inputValues);
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+
+    fetch("https://main.dev.saasintegrator.online/api/v1/product/config", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log("config result:::::::", result)
+        setNotificationMessage(result?.message);
+        setTimeout(() => {
+          setNotificationMessage("")
+        }, 5000);
+      })
+      .catch((error) => console.error(error));
+
   };
+
 
   async function savePrference(label) {
     try {
@@ -439,13 +404,6 @@ export default function configPage() {
     }
   }
 
-  // const savePreference = (label) => {
-  //   const isEnabled = label === 'Enable' ? 1 : 0;
-  //   setPredData(isEnabled)
-  //   console.log('Selected label:', label);
-  //   console.log('Is enabled:', isEnabled);
-  // };
-
   const handlePrefEnableDisable = (value, label) => {
     setPreCheckedEnableDisable(value);
     if (value === 1 && label === "Enable") {
@@ -457,6 +415,35 @@ export default function configPage() {
       console.log("else if label ::", label);
       setPrefEnableDisable(0);
     }
+    console.log("preCheckedEnableDisable ::", preCheckedEnableDisable);
+
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer " + data?.store?.token);
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      "enable": value === 0 ? false : true,
+      "main_plugin": "sid_9o92t6cjz6wnw78vji4ld"
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+
+    fetch("https://main.dev.saasintegrator.online/api/v1/category/save-preference", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log("save-preference result: ", result);
+        setNotificationMessage(result?.message);
+        setTimeout(() => {
+          setNotificationMessage("")
+        }, 5000);
+      })
+      .catch((error) => console.error(error));
+
   };
 
   const successStyle = {
@@ -465,6 +452,7 @@ export default function configPage() {
     borderRadius: "8px",
     marginBottom: "1rem",
   };
+
   const errorStyle = {
     background: "#ff9e9e",
     padding: "12px",
@@ -488,11 +476,12 @@ export default function configPage() {
           </ui-title-bar>
 
           {credentialFormStatus != null && (
-            <div style={!credentialFormStatus ? errorStyle : successStyle}>
-              {!credentialFormStatus
-                ? "Connection not connected"
-                : "Connection is connected"}
-            </div>
+            <NotificationBar title={!credentialFormStatus
+              ? "Connection not connected"
+              : "Connection is connected"} style={!credentialFormStatus ? errorStyle : successStyle} />
+          )}
+          {notificationMessage !== "" && (
+            <NotificationBar title={notificationMessage} style={successStyle} />
           )}
 
           <Layout>
@@ -519,9 +508,9 @@ export default function configPage() {
             </Layout.Section>
 
             {preference &&
-            preference != undefined &&
-            configform != null &&
-            navbar ? (
+              preference != undefined &&
+              configform != null &&
+              navbar ? (
               <>
                 <Layout.Section>
                   <Card title="PReference">
@@ -533,6 +522,7 @@ export default function configPage() {
                           justifyContent: "space-between",
                         }}
                       >
+                        {console.log("preference :::", preference)}
                         {preference?.form?.map((field) => (
                           <div style={{ width: "48%" }}>
                             {(() => {
@@ -578,8 +568,8 @@ export default function configPage() {
                                           name={field.name}
                                           label={field.label}
                                           options={field.options}
-                                          // onChange={handleSelectChange}
-                                          // value={selected}
+                                        // onChange={handleSelectChange}
+                                        // value={selected}
                                         />
                                       )}
                                     </>
@@ -659,6 +649,7 @@ export default function configPage() {
                                                   handleconfigChange(
                                                     value,
                                                     field.name,
+                                                    mango?.plugin_id
                                                   )
                                                 }
                                                 name={field.name}
@@ -681,6 +672,7 @@ export default function configPage() {
                                                   handleconfigChange(
                                                     value,
                                                     field.name,
+                                                    mango?.plugin_id
                                                   )
                                                 }
                                                 name={field.name}
@@ -701,6 +693,7 @@ export default function configPage() {
                                                       handleconfigChange(
                                                         value,
                                                         field.name,
+                                                        mango?.plugin_id
                                                       )
                                                     }
                                                   />
@@ -727,6 +720,7 @@ export default function configPage() {
                                                         handleconfigChange(
                                                           option.value,
                                                           field.name,
+                                                          mango?.plugin_id
                                                         )
                                                       }
                                                     />
@@ -760,7 +754,7 @@ export default function configPage() {
                         style={{
                           display:
                             plugin.fields?.token != undefined ||
-                            plugin?.fields?.token != null
+                              plugin?.fields?.token != null
                               ? "none"
                               : "block",
                         }}
@@ -817,6 +811,7 @@ export default function configPage() {
             )}
           </Layout>
         </Page>
+        <button type="button" onClick={handleConfigSubmit}>Save Config</button>
       </form>
     </div>
   );

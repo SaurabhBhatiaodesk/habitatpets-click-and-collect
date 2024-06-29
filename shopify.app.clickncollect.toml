@@ -3,7 +3,7 @@
 client_id = "c2aef3cf60c016454d3da1bc06566b9e"
 name = "clickncollect"
 handle = "clickncollect-1"
-application_url = "https://red-beauty-happy-dec.trycloudflare.com"
+application_url = "https://terrible-authentication-ist-io.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://red-beauty-happy-dec.trycloudflare.com/auth/callback",
-  "https://red-beauty-happy-dec.trycloudflare.com/auth/shopify/callback",
-  "https://red-beauty-happy-dec.trycloudflare.com/api/auth/callback"
+  "https://terrible-authentication-ist-io.trycloudflare.com/auth/callback",
+  "https://terrible-authentication-ist-io.trycloudflare.com/auth/shopify/callback",
+  "https://terrible-authentication-ist-io.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
