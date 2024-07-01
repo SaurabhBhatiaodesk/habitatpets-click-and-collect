@@ -6,6 +6,9 @@ import { authenticate } from "../shopify.server";
 import db from "../db.server";
 import { ChevronRightIcon } from "@shopify/polaris-icons";
 import NotificationBar from "../components/NotificationBar";
+import RadioGroupComponent from "../components/radioGroupComponent";
+import TextFieldComponent from "../components/textFieldComponent";
+import SelectComponent from "../components/selectComponent";
 
 // Handles form submission
 export const action = async ({ request }) => {
@@ -92,9 +95,11 @@ export default function configPage() {
   const [prefEnableDisable, setPrefEnableDisable] = useState(null);
   const [preCheckedEnableDisable, setPreCheckedEnableDisable] = useState();
   const [notificationMessage, setNotificationMessage] = useState("");
+  const [preferenceActiveTab, setPreferenceActiveTab] = useState("");
 
   const [navbar, setNavbar] = useState(null);
   const [formData, setFormData] = useState({});
+  const [configPreFill, setConfigPreFill] = useState({});
   const data = useLoaderData();
   const [product, setProduct] = useState(data.data);
   const form = data?.form;
@@ -102,6 +107,56 @@ export default function configPage() {
   const items = [];
 
   console.log("dataaaaaaaa ::", data);
+
+
+
+  useEffect(() => {
+    if (product && product.plugin_form) {
+      const preFilledData = {};
+      product.plugin_form.forEach((plugin) => {
+        Object.entries(plugin.fields).forEach(([fieldKey, field]) => {
+          if (field.value && !formData[fieldKey]) {
+            preFilledData[fieldKey] = field.value;
+          }
+        });
+      });
+      setFormData((prevState) => ({
+        ...prevState,
+        ...preFilledData,
+      }));
+    }
+  }, [product]);
+
+  // useEffect to prefill data
+  useEffect(() => {
+    if (configform) {
+      const initialValues = {};
+
+      configform.config_form.forEach((item) => {
+        const { plugin_id, saved_values } = item;
+        console.log("forEach item :::::", item);
+        console.log("forEach saved_values :::::", saved_values);
+
+        if (saved_values) {
+          console.log("forEach plugin_id :::::", plugin_id);
+          Object.entries(saved_values).forEach(([name, value]) => {
+            if (!initialValues[plugin_id]) {
+              initialValues[plugin_id] = {};
+            }
+            initialValues[plugin_id][name] = value || '';
+          });
+        }
+      });
+
+      console.log("prefilled initialValues", initialValues);
+      setInputValues(initialValues);
+    }
+  }, [configform]);
+
+  useEffect(() => {
+    console.log("prefilled inputValues", inputValues);
+  }, [inputValues]);
+
 
   const handleChangeRadio = useCallback((platformName, newValue) => {
     setRadioValues((prevState) => ({
@@ -145,6 +200,7 @@ export default function configPage() {
   });
 
   async function handleItemClick(itemContent) {
+    setPreferenceActiveTab(itemContent);
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + data.store.token);
 
@@ -197,23 +253,6 @@ export default function configPage() {
   }
 
   useEffect(() => {
-    if (product && product.plugin_form) {
-      const preFilledData = {};
-      product.plugin_form.forEach((plugin) => {
-        Object.entries(plugin.fields).forEach(([fieldKey, field]) => {
-          if (field.value && !formData[fieldKey]) {
-            preFilledData[fieldKey] = field.value;
-          }
-        });
-      });
-      setFormData((prevState) => ({
-        ...prevState,
-        ...preFilledData,
-      }));
-    }
-  }, [product]);
-
-  useEffect(() => {
     const initialSelectedValue =
       preference?.form.find((option) => option?.is_default_hide === true)
         ?.value || false;
@@ -254,7 +293,6 @@ export default function configPage() {
     // You can use 'value' and 'field' here as needed for further operations
   }, []);
 
-  console.log("inputValuesinputValues", inputValues);
 
   const handleSubmit = (event) => {
     console.log("inputValues in handlesubmit", inputValues);
@@ -357,7 +395,7 @@ export default function configPage() {
       redirect: "follow"
     };
 
-    fetch("https://main.dev.saasintegrator.online/api/v1/product/config", requestOptions)
+    fetch(`https://main.dev.saasintegrator.online/api/v1/${preferenceActiveTab}/config`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         console.log("config result:::::::", result)
@@ -433,7 +471,7 @@ export default function configPage() {
       redirect: "follow"
     };
 
-    fetch("https://main.dev.saasintegrator.online/api/v1/category/save-preference", requestOptions)
+    fetch(`https://main.dev.saasintegrator.online/api/v1/${preferenceActiveTab}/save-preference`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         console.log("save-preference result: ", result);
@@ -638,97 +676,39 @@ export default function configPage() {
                                       {(() => {
                                         switch (field.input_type) {
                                           case "url":
-                                            return (
-                                              <TextField
-                                                label={field.label}
-                                                value={
-                                                  inputValues[field.name] ||
-                                                  field.value
-                                                }
-                                                onChange={(value) =>
-                                                  handleconfigChange(
-                                                    value,
-                                                    field.name,
-                                                    mango?.plugin_id
-                                                  )
-                                                }
-                                                name={field.name}
-                                                type="url"
-                                                required={field.required}
-                                                helpText={field.description}
-                                              />
-                                            );
                                           case "text":
                                           case "password":
                                             return (
-                                              <TextField
-                                                label={field.label}
-                                                value={
-                                                  inputValues[field.name] ||
-                                                  field.value
-                                                }
-                                                // onChange={(value) => handleChange(value, field.name)}
-                                                onChange={(value) =>
-                                                  handleconfigChange(
-                                                    value,
-                                                    field.name,
-                                                    mango?.plugin_id
-                                                  )
-                                                }
-                                                name={field.name}
-                                                type={field.type}
-                                                required={field.required}
-                                                helpText={field.description}
+                                              <TextFieldComponent
+                                                key={field.name}
+                                                field={field}
+                                                inputValues={inputValues}
+                                                handleconfigChange={handleconfigChange}
+                                                mango={{ plugin_id: mango?.plugin_id }}
                                               />
                                             );
                                           case "select":
                                             return (
                                               <>
-                                                {field?.options.length > 0 && (
-                                                  <Select
-                                                    name={field.name}
-                                                    label={field.label}
-                                                    options={field.options}
-                                                    onChange={(value) =>
-                                                      handleconfigChange(
-                                                        value,
-                                                        field.name,
-                                                        mango?.plugin_id
-                                                      )
-                                                    }
-                                                  />
-                                                )}
+                                                <SelectComponent
+                                                  key={field.name}
+                                                  field={field}
+                                                  inputValues={inputValues}
+                                                  handleconfigChange={handleconfigChange}
+                                                  mango={mango}
+                                                />
                                               </>
                                             );
                                           case "radio":
-                                            return (
-                                              <>
-                                                <Text as="h2" variant="bodyMd">
-                                                  {field.label}
-                                                </Text>
-                                                {field?.options?.map(
-                                                  (option) => (
-                                                    <RadioButton
-                                                      label={option.label}
-                                                      // helpText={field.label}
-                                                      // checked={option.value === 'disabled'}
-                                                      id={field.id}
-                                                      name={field.name}
-                                                      value={option.value}
-                                                      // onChange={handleChange}
-                                                      onChange={(value) =>
-                                                        handleconfigChange(
-                                                          option.value,
-                                                          field.name,
-                                                          mango?.plugin_id
-                                                        )
-                                                      }
-                                                    />
-                                                  ),
-                                                )}
-                                              </>
-                                            );
-
+                                           return (
+                                              <RadioGroupComponent
+                                                key={field.name}
+                                                field={field}
+                                                inputValues={inputValues}
+                                                handleconfigChange={handleconfigChange}
+                                                mango={{ plugin_id: mango?.plugin_id }}
+                                              />
+                                           );
                                           default:
                                             return null;
                                         }
