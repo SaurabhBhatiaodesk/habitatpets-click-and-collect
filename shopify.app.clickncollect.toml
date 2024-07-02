@@ -3,7 +3,7 @@
 client_id = "c2aef3cf60c016454d3da1bc06566b9e"
 name = "clickncollect"
 handle = "clickncollect-1"
-application_url = "https://hat-mortality-tel-laptop.trycloudflare.com"
+application_url = "https://read-sleeve-aged-throws.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://hat-mortality-tel-laptop.trycloudflare.com/auth/callback",
-  "https://hat-mortality-tel-laptop.trycloudflare.com/auth/shopify/callback",
-  "https://hat-mortality-tel-laptop.trycloudflare.com/api/auth/callback"
+  "https://read-sleeve-aged-throws.trycloudflare.com/auth/callback",
+  "https://read-sleeve-aged-throws.trycloudflare.com/auth/shopify/callback",
+  "https://read-sleeve-aged-throws.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

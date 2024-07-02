@@ -24,6 +24,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango }) => {
       value={selectedValue}
       required={field.required}
       helpText={field.description}
+      requiredIndicator
     />
   );
 };

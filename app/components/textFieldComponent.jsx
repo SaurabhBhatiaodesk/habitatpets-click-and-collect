@@ -24,6 +24,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango }) =
       type={field.input_type}
       required={field.required}
       helpText={field.description}
+      requiredIndicator
     />
   );
 };

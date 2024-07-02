@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Icon, Card, Layout, Page, Text, Button, ButtonGroup, TextField, Select, RadioButton, FormLayout, ActionList } from "@shopify/polaris";
+import { LegacyCard,Icon, Card, Layout, Page, Text, Button, ButtonGroup, TextField, Select, RadioButton, FormLayout, ActionList } from "@shopify/polaris";
 import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
@@ -94,8 +94,10 @@ export default function configPage() {
   const [credentialFormStatus, setCredentialFormStatus] = useState(null);
   const [prefEnableDisable, setPrefEnableDisable] = useState(null);
   const [preCheckedEnableDisable, setPreCheckedEnableDisable] = useState();
+  const [preCheckedED,setPreCheckedED] = useState();
   const [notificationMessage, setNotificationMessage] = useState("");
   const [preferenceActiveTab, setPreferenceActiveTab] = useState("");
+  const [selectedValue, setSelectedValue] = useState('');
 
   const [navbar, setNavbar] = useState(null);
   const [formData, setFormData] = useState({});
@@ -158,21 +160,6 @@ export default function configPage() {
   }, [inputValues]);
 
 
-  const handleChangeRadio = useCallback((platformName, newValue) => {
-    setRadioValues((prevState) => ({
-      ...prevState,
-      [platformName]: newValue,
-    }));
-  }, []);
-
-  const handleSelectChange = useCallback((name, value) => {
-    console.log("handleSelectChange");
-    setInputValues((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  }, []);
-
   const handleFirstButtonClick = useCallback(() => {
     console.log("handleFirstButtonClick ", data);
     setProduct(data.data);
@@ -198,7 +185,9 @@ export default function configPage() {
     };
     items.push(jj);
   });
-
+  const handleSelectChange = (value) => {
+    setSelectedValue(value);
+  };
   async function handleItemClick(itemContent) {
     setPreferenceActiveTab(itemContent);
     const myHeaders = new Headers();
@@ -253,16 +242,22 @@ export default function configPage() {
   }
 
   useEffect(() => {
-    const initialSelectedValue =
-      preference?.form.find((option) => option?.is_default_hide === true)
-        ?.value || false;
-    setPreCheckedEnableDisable(initialSelectedValue ? 0 : 1);
+    const initialSelectedValue = preference?.form[0].value
+      
+    setPreCheckedEnableDisable(initialSelectedValue);
+    setPreCheckedED(initialSelectedValue);
     console.log("initialSelectedValue :::", initialSelectedValue);
-    if (initialSelectedValue === false) {
-      setPrefEnableDisable(1);
-    } else if (initialSelectedValue === true) {
-      setPrefEnableDisable(0);
+    setPrefEnableDisable(initialSelectedValue);
+    
+    setSelectedValue(preference?.form[1].value || preference?.form[0]?.options[0]);
+    if(preference?.form[1].value){
+      setCredentialFormStatus(true);
     }
+    else{
+      if(!credentialFormStatus){
+      handleItemClick("product");}
+    }
+    
   }, [preference]);
 
 
@@ -295,7 +290,7 @@ export default function configPage() {
 
 
   const handleSubmit = (event) => {
-    console.log("inputValues in handlesubmit", inputValues);
+    console.log("formData in handlesubmit", formData);
     event.preventDefault();
 
     if (navbar === null || navbar === false) {
@@ -322,7 +317,7 @@ export default function configPage() {
         "custom_name": apiData?.store?.shop
       }
     });
-
+    console.log(transformedData);
 
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + apiData?.store?.token);
@@ -337,19 +332,6 @@ export default function configPage() {
       redirect: "follow"
     };
     let responseData = {};
-
-    // fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOptions)
-    //   .then((response) => response.json())
-    //   .then((result) => {
-    //     responseData = result;
-    //     console.log(result);
-    //     console.log("responseData ::", responseData?.data);
-
-    //     // console.log("checkData apiData ::", apiData);
-    //   })
-    //   .catch((error) => console.error(error));
-    // // return result;
-
 
     fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOptions)
       .then((response) => response.json())
@@ -408,60 +390,27 @@ export default function configPage() {
 
   };
 
-
-  async function savePrference(label) {
-    try {
-      console.log("Selected label:", label);
-      const isEnabled = label === "Enable" ? 1 : 0;
-      console.log("Is enabled:", isEnabled);
-
-      const myHeaders = new Headers();
-      myHeaders.append("Authorization", "Bearer " + data.store.token);
-      myHeaders.append("Content-Type", "application/json");
-
-      const raw = JSON.stringify({
-        enable: isEnabled,
-        main_plugin: "sid_9o92t6cjz6wnw78vji4ld",
-      });
-
-      const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body: raw,
-        redirect: "follow",
-      };
-
-      const response = await fetch(
-        "https://main.dev.saasintegrator.online/api/v1/category/save-preference",
-        requestOptions,
-      );
-      const result = await response.text();
-      console.log(result, "checking");
-    } catch (error) {
-      console.error("SavePreference Error : ", error);
-    }
-  }
-
-  const handlePrefEnableDisable = (value, label) => {
-    setPreCheckedEnableDisable(value);
+  const handlePrefEnableDisable = (value,label) => {
+    setPreCheckedED(value);
     if (value === 1 && label === "Enable") {
       console.log("if value ::", value);
       console.log("if label ::", label);
-      setPrefEnableDisable(1);
+      setPreCheckedED(1);
     } else if (value === 0 && label === "Disable") {
       console.log("else if value ::", value);
       console.log("else if label ::", label);
-      setPrefEnableDisable(0);
+      setPreCheckedED(0);
     }
-    console.log("preCheckedEnableDisable ::", preCheckedEnableDisable);
-
+  };
+  const handlePreference = async() =>{
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + data?.store?.token);
     myHeaders.append("Content-Type", "application/json");
 
+    
     const raw = JSON.stringify({
-      "enable": value === 0 ? false : true,
-      "main_plugin": "sid_9o92t6cjz6wnw78vji4ld"
+      "enable": preCheckedED == 0 ? false : true,
+      "main_plugin": selectedValue
     });
 
     const requestOptions = {
@@ -474,6 +423,8 @@ export default function configPage() {
     fetch(`https://main.dev.saasintegrator.online/api/v1/${preferenceActiveTab}/save-preference`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
+        setPreCheckedEnableDisable(preCheckedED);
+        setPrefEnableDisable(preCheckedED);
         console.log("save-preference result: ", result);
         setNotificationMessage(result?.message);
         setTimeout(() => {
@@ -481,8 +432,7 @@ export default function configPage() {
         }, 5000);
       })
       .catch((error) => console.error(error));
-
-  };
+  }
 
   const successStyle = {
     background: "#c4f1c4",
@@ -523,12 +473,8 @@ export default function configPage() {
           )}
 
           <Layout>
-            <Layout.Section>
-              <Text as="h1" variant="headingMd">
-                Configuration
-              </Text>
-            </Layout.Section>
-            <Layout.Section>
+            {credentialFormStatus && (
+          <LegacyCard title="Configuration" sectioned style={{ width: "100%" }}>
               <ButtonGroup variant="segmented">
                 <Button
                   pressed={isFirstButtonActive}
@@ -543,15 +489,17 @@ export default function configPage() {
                   Module Configuration
                 </Button>
               </ButtonGroup>
-            </Layout.Section>
+            </LegacyCard>
+            )}
 
             {preference &&
               preference != undefined &&
               configform != null &&
               navbar ? (
               <>
-                <Layout.Section>
-                  <Card title="PReference">
+                
+                <LegacyCard title="Preference" sectioned primaryFooterAction={{content: 'Save Preference',onAction: () => handlePreference()}}>
+                  <Card title="configform">
                     <FormLayout>
                       <div
                         style={{
@@ -606,8 +554,8 @@ export default function configPage() {
                                           name={field.name}
                                           label={field.label}
                                           options={field.options}
-                                        // onChange={handleSelectChange}
-                                        // value={selected}
+                                          onChange={handleSelectChange}
+                                          value={selectedValue}
                                         />
                                       )}
                                     </>
@@ -615,10 +563,14 @@ export default function configPage() {
                                 case "radio":
                                   return (
                                     <>
+                                    {console.log(preCheckedED,"preCheckedEDpreCheckedEDpreCheckedED")}
                                       <Text as="h2" variant="bodyMd">
                                         {field.description}
                                       </Text>
                                       {field?.options?.map((option, index) => (
+                                        <>
+                                        {console.log(option.value,"option.valueoption.value")}
+                                        
                                         <RadioButton
                                           key={index}
                                           label={option.label}
@@ -627,7 +579,7 @@ export default function configPage() {
                                           value={option.value}
                                           // checked={option?.is_default_hide === true}
                                           checked={
-                                            preCheckedEnableDisable ===
+                                            preCheckedED ==
                                             option.value
                                           }
                                           onChange={() =>
@@ -637,6 +589,7 @@ export default function configPage() {
                                             )
                                           }
                                         />
+                                        </>
                                       ))}
                                     </>
                                   );
@@ -650,17 +603,17 @@ export default function configPage() {
                       </div>
                     </FormLayout>
                   </Card>
-                </Layout.Section>
+                </LegacyCard>
 
                 {/* ))} */}
 
-                {prefEnableDisable !== 0 &&
+                {prefEnableDisable != 0 &&
                   configform?.config_form?.map((mango) => {
                     console.log("mango :::", mango);
                     return (
                       <>
                         {mango?.fields.length > 0 && (
-                          <Layout.Section>
+                          <LegacyCard title={mango?.label} sectioned >
                             <Card title="configform">
                               <FormLayout>
                                 <div
@@ -718,11 +671,12 @@ export default function configPage() {
                                 </div>
                               </FormLayout>
                             </Card>
-                          </Layout.Section>
+                          </LegacyCard>
                         )}
                       </>
                     );
                   })}
+                  <button type="button" onClick={handleConfigSubmit}>Save Config</button>
               </>
             ) : (
               <>
@@ -786,12 +740,16 @@ export default function configPage() {
                       </div>
                     );
                   })}
+                  
                 </FormLayout>
+                <button variant="primary" type="submit">
+              Save
+            </button>
               </>
             )}
           </Layout>
         </Page>
-        <button type="button" onClick={handleConfigSubmit}>Save Config</button>
+        
       </form>
     </div>
   );
