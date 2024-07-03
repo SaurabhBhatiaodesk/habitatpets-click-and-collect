@@ -11,7 +11,7 @@ async function fetchData(url) {
 
 async function fetchAccessToken() {
     try {
-        const response = await fetch(`https://clickncollect-12d7088d53ee.herokuapp.com/api/get?shop=${location.hostname}`, {
+        const response = await fetch(`https://events-announcements-playback-shape.trycloudflare.com/api/get?shop=${location.hostname}`, {
             headers: { "Content-Type": "application/json", Accept: "application/json" }
         });
         if (!response.ok) throw new Error("Network response was not ok.");
@@ -50,32 +50,47 @@ async function getLocations(accessToken, selectedLocation = "") {
             .filter(location => location.zip)
             .map(location => `${location.address1} ${location.city} ${location.zip} ${location.province} ${location.country_name}`);
 
+     
         if (destinationsArr.length > 0) {
             const customerLocation = getCookie("customerlocation");
             document.querySelector(".location").value = customerLocation;
 
-            const mapUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&destinations=${destinationsArr.join("|")}&shop=${location.hostname}`;
+            const mapUrl = `https://events-announcements-playback-shape.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${destinationsArr.join("|")}&shop=${location.hostname}`;
             const res = await fetchData(mapUrl);
 
             if (res) {
-                const sortedLocations = responseJSON.locations
-                    .map((location, index) => {
-                        const distanceElement = res.rows[0].elements[index];
-                        if (distanceElement.status === "OK") {
-                            const distanceText = distanceElement.distance.text;
-                            return {
-                                id: location.id,
-                                distance: parseInt(distanceText.replace(/,/g, "").replace(" km", "")),
-                                distanceText,
-                                origin: res.origin_addresses,
-                                ...location
-                            };
-                        }
-                    })
-                    .filter(Boolean)
-                    .sort((a, b) => a.distance - b.distance);
+                console.log('destinationsArr ',destinationsArr);
+                console.log('responseJSON.locations : ', responseJSON.locations);
 
-                renderLocations(sortedLocations, selectedLocation);
+                const sortedLocations = [];
+                const locations = responseJSON.locations;
+                console.log('testingsh'); 
+                for (let index = 0; index < locations.length; index++) {
+                    if(res?.rows[0]?.elements[index]?.distance?.text){
+                    const location = locations[index];
+                    const distanceElement = res.rows[0].elements[index];
+                    console.log(' distanceElement : ', locations, ' location : ',location )
+                    if (locations.length > 0) {
+
+                        const distanceText = distanceElement?.distance?.text || '';
+                        const distance = parseInt(distanceText.replace(/,/g, "").replace(" km", ""));
+                        sortedLocations.push({
+                            id: location.id,
+                            distance,
+                            distanceText,
+                            origin: res.origin_addresses,
+                            ...location
+                        });
+                    }    
+                    
+                    }
+                }
+                
+                // Filter out undefined entries and sort by distance
+                const validSortedLocations = sortedLocations.filter(Boolean).sort((a, b) => a.distance - b.distance);
+                
+                renderLocations(validSortedLocations, selectedLocation);
+                
             }
         }
 

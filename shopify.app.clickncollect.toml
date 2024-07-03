@@ -3,7 +3,7 @@
 client_id = "c2aef3cf60c016454d3da1bc06566b9e"
 name = "clickncollect"
 handle = "clickncollect-1"
-application_url = "https://read-sleeve-aged-throws.trycloudflare.com"
+application_url = "https://verbal-pulling-moments-gm.trycloudflare.com"
 embedded = true
 
 [build]
@@ -13,13 +13,13 @@ include_config_on_deploy = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products"
+scopes = "read_inventory,read_locales,read_locations,read_product_listings,read_products,read_script_tags,write_content,write_inventory,write_locations,write_products,write_script_tags"
 
 [auth]
 redirect_urls = [
-  "https://read-sleeve-aged-throws.trycloudflare.com/auth/callback",
-  "https://read-sleeve-aged-throws.trycloudflare.com/auth/shopify/callback",
-  "https://read-sleeve-aged-throws.trycloudflare.com/api/auth/callback"
+  "https://verbal-pulling-moments-gm.trycloudflare.com/auth/callback",
+  "https://verbal-pulling-moments-gm.trycloudflare.com/auth/shopify/callback",
+  "https://verbal-pulling-moments-gm.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

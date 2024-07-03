@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { LegacyCard,Icon, Card, Layout, Page, Text, Button, ButtonGroup, TextField, Select, RadioButton, FormLayout, ActionList } from "@shopify/polaris";
+import { Spinner,LegacyCard,Icon, Card, Layout, Page, Text, Button, ButtonGroup, TextField, Select, RadioButton, FormLayout, ActionList } from "@shopify/polaris";
 import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
@@ -107,6 +107,7 @@ export default function configPage() {
   const form = data?.form;
   const store = data?.store;
   const items = [];
+  const [loader,setLoader]=useState("");
 
   console.log("dataaaaaaaa ::", data);
 
@@ -189,6 +190,7 @@ export default function configPage() {
     setSelectedValue(value);
   };
   async function handleItemClick(itemContent) {
+    setLoader('yes');
     setPreferenceActiveTab(itemContent);
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + data.store.token);
@@ -233,6 +235,7 @@ export default function configPage() {
       let mapping = await response3.json();
       console.log("mapping ", mapping);
       setMapping(mapping);
+      setLoader('no');
     } catch (error) {
       console.error("Error fetching config-form:", error);
       throw error;
@@ -547,6 +550,8 @@ export default function configPage() {
                                     />
                                   );
                                 case "select":
+                                  {preCheckedED=='enabled' && (
+                                    <>
                                   return (
                                     <>
                                       {field?.options.length > 0 && (
@@ -560,6 +565,8 @@ export default function configPage() {
                                       )}
                                     </>
                                   );
+                                  </>
+                                )}
                                 case "radio":
                                   return (
                                     <>
@@ -612,6 +619,7 @@ export default function configPage() {
                     console.log("mango :::", mango);
                     return (
                       <>
+                      
                         {mango?.fields.length > 0 && (
                           <LegacyCard title={mango?.label} sectioned >
                             <Card title="configform">
@@ -676,6 +684,7 @@ export default function configPage() {
                       </>
                     );
                   })}
+                  {loader!="no" && (<Spinner accessibilityLabel="Preference Spinner" size="large" />)} 
                   <button type="button" onClick={handleConfigSubmit}>Save Config</button>
               </>
             ) : (

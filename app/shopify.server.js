@@ -67,19 +67,37 @@ async function getAuthToken(session) {
       redirect: "follow"
     };
 
-  fetch('https://'+ session.shop + "/admin/api/2024-04/shop.json", requestOptions2)
+  await fetch('https://'+ session.shop + "/admin/api/2024-04/shop.json", requestOptions2)
     .then((response) => response.json())
-    .then((result) => {
+    .then(async(result) => {
       console.log(result, 'result');
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
-      const raw =  JSON.stringify({
+      
+        
+
+      const requestOpt = {
+        method: "GET",
+        redirect: "follow"
+      };
+      
+      let plugin=await fetch("https://main.dev.saasintegrator.online/api/v1/platforms", requestOpt);
+      console.log(plugin,":::plugin");
+      let plugin_data=await plugin.json();
+      console.log(plugin_data,":::plugin_data");
+       let filter_data=plugin_data.filter((pd)=>pd.name="o360-retail-express" || pd.name=="o360-shopify");
+       console.log(filter_data,":::filter_data");
+       const plugin_ids=[];
+       filter_data.map((fd)=>{
+        plugin_ids.push(fd.id);
+       });
+       const raw =  JSON.stringify({
         ...session,
         "state": session?.state.trim() !== "" ? session?.state : null,
-        'email' : result.shop?.email 
+        'email' : result.shop?.email,
+        "plugin_ids":plugin_ids
       });
-        
-        // console.log('testing ', raw);
+         console.log('testing ', raw);
         const requestOptions = {
           method: "POST",
           headers: myHeaders,
@@ -87,7 +105,7 @@ async function getAuthToken(session) {
           redirect: "follow"
         };
         
-      fetch("https://main.dev.saasintegrator.online/api/v1/user-connection", requestOptions)
+      await fetch("https://main.dev.saasintegrator.online/api/v1/user-connection", requestOptions)
         .then((response) => response.json())
         .then((result) => {
      
