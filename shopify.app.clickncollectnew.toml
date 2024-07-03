@@ -3,13 +3,12 @@
 client_id = "c0acbe1ea218ca74db8c10d1234659d6"
 name = "clickncollectnew"
 handle = "clickncollectnew"
-application_url = "https://politicians-specs-spray-poster.trycloudflare.com"
+application_url = "https://finland-prefer-importantly-rp.trycloudflare.com"
 embedded = true
 
 [build]
 automatically_update_urls_on_dev = true
 dev_store_url = "saas-click-collect.myshopify.com"
-include_config_on_deploy = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
@@ -17,9 +16,9 @@ scopes = "read_inventory,read_locales,read_locations,read_product_listings,read_
 
 [auth]
 redirect_urls = [
-  "https://politicians-specs-spray-poster.trycloudflare.com/auth/callback",
-  "https://politicians-specs-spray-poster.trycloudflare.com/auth/shopify/callback",
-  "https://politicians-specs-spray-poster.trycloudflare.com/api/auth/callback"
+  "https://finland-prefer-importantly-rp.trycloudflare.com/auth/callback",
+  "https://finland-prefer-importantly-rp.trycloudflare.com/auth/shopify/callback",
+  "https://finland-prefer-importantly-rp.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

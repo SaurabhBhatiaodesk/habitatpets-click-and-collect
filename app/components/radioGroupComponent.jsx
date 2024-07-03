@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { RadioButton, Text } from "@shopify/polaris";
 
-const RadioGroupComponent = ({ field, inputValues, handleconfigChange, mango }) => {
+const RadioGroupComponent = ({ field, inputValues, handleconfigChange, mango, error }) => {
   const [selectedValue, setSelectedValue] = useState('');
+  const [showError,setShowError]=useState(''); 
+
   useEffect(() => {
     // Ensure inputValues and inputValues.general are defined before accessing them
     const initialValue = inputValues?.[mango?.plugin_id]?.[field.name] || '';
     setSelectedValue(initialValue);
-  }, [inputValues, field.name]);
+    if(field?.name==error?.name){
+ 
+      setShowError("This field is Required");
+    }
+  }, [inputValues, field.name,error]);
 
   const handleChange = (value) => {
     setSelectedValue(value);
@@ -16,6 +22,7 @@ const RadioGroupComponent = ({ field, inputValues, handleconfigChange, mango }) 
 
   return (
     <>
+    <div>
       <Text as="h2" variant="bodyMd">
         {field.label}
       </Text>
@@ -30,6 +37,8 @@ const RadioGroupComponent = ({ field, inputValues, handleconfigChange, mango }) 
           onChange={() => handleChange(option.value)}
         />
       ))}
+      <span style={{color:"red"}}>{showError}</span>
+      </div>
     </>
   );
 };

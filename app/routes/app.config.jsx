@@ -9,6 +9,7 @@ import NotificationBar from "../components/NotificationBar";
 import RadioGroupComponent from "../components/radioGroupComponent";
 import TextFieldComponent from "../components/textFieldComponent";
 import SelectComponent from "../components/selectComponent";
+import MAPPING from "../components/MAPPING";
 
 // Handles form submission
 export const action = async ({ request }) => {
@@ -108,6 +109,8 @@ export default function configPage() {
   const store = data?.store;
   const items = [];
   const [loader,setLoader]=useState("");
+  const [required,setRequired]=useState();
+  const [error,setError]=useState();
 
   console.log("dataaaaaaaa ::", data);
 
@@ -190,6 +193,7 @@ export default function configPage() {
     setSelectedValue(value);
   };
   async function handleItemClick(itemContent) {
+    setDataLimit({start: 0,end: 2});
     setLoader('yes');
     setPreferenceActiveTab(itemContent);
     const myHeaders = new Headers();
@@ -221,7 +225,25 @@ export default function configPage() {
       if (!response2.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      const requireds = [];
+      let PluginID='';
       let configform = await response2.json();
+      configform?.config_form?.map((config) => {
+        console.log(config,"CCCCCCCCCCCCCCCCCCCOOOOOOOONNNNNFIFFFFFGGF")
+        PluginID=config.plugin_id;
+        console.log("PluginIDPluginID",PluginID)
+        config?.fields?.map((cf)=>{
+            if(cf.required) {
+
+              const value=[]
+              value.push({"plugin":PluginID,"name" : cf.name})
+              console.log("valueeeeeeeeee",value);
+              requireds.push(value);
+            }
+        })
+      })
+      setRequired(requireds);
+      console.log("required:::::",requireds);
       console.log("config ", configform);
       setConfig(configform);
       /**************************************** Mapping **************************************************** */
@@ -365,7 +387,44 @@ export default function configPage() {
   }
 
   const handleConfigSubmit = () => {
-    console.log("inputValues in handleConfigSubmit", inputValues);
+    
+    console.log("i", inputValues,"These values should be required",required);
+
+// Function to check if 'is_bidirectional_sync' matches
+  // Function to check for common objects dynamically
+  const getCommonObjects = (inputValues, required) => {
+    let commonObjects = [];
+
+    required.forEach(item => {
+        let requiredItem = item[0]; // Access the first element in each sub-array
+        if (requiredItem) {
+            let { plugin, name } = requiredItem;
+            let inputCategory = inputValues[plugin];
+
+            if (inputCategory && inputCategory[name] !== undefined && inputCategory[name] =="") {
+              commonObjects.push(requiredItem);
+            } else if (!inputCategory) {
+              commonObjects.push(requiredItem);
+                console.log(`${plugin} is absent in inputValues`);
+            } else if (inputCategory[name] === undefined) {
+              commonObjects.push(requiredItem);
+                console.log(`${name} is absent in ${plugin} of inputValues`);
+            }
+        }
+    });
+
+
+    return commonObjects;
+};
+
+const commonObjects = getCommonObjects(inputValues, required);
+    console.log('Common Objects:', commonObjects);
+
+setError(commonObjects)
+
+
+  if(commonObjects.length == 0) {
+    // const matchedValues = required.
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + data?.store?.token);
 
@@ -390,6 +449,7 @@ export default function configPage() {
         }, 5000);
       })
       .catch((error) => console.error(error));
+    }
 
   };
 
@@ -652,6 +712,7 @@ export default function configPage() {
                                                 inputValues={inputValues}
                                                 handleconfigChange={handleconfigChange}
                                                 mango={{ plugin_id: mango?.plugin_id }}
+                                                error={error}
                                               />
                                             );
                                           case "select":
@@ -663,6 +724,7 @@ export default function configPage() {
                                                   inputValues={inputValues}
                                                   handleconfigChange={handleconfigChange}
                                                   mango={mango}
+                                                  error={error}
                                                 />
                                               </>
                                             );
@@ -674,6 +736,7 @@ export default function configPage() {
                                                 inputValues={inputValues}
                                                 handleconfigChange={handleconfigChange}
                                                 mango={{ plugin_id: mango?.plugin_id }}
+                                                error={error}
                                               />
                                            );
                                           default:
@@ -690,6 +753,9 @@ export default function configPage() {
                       </>
                     );
                   })}
+                  <MAPPING mapping={mapping?.items} plugin={selectedValue} />
+                  
+
                   {loader!="no" && (<Spinner accessibilityLabel="Preference Spinner" size="large" />)} 
                   <button type="button" onClick={handleConfigSubmit}>Save Config</button>
               </>

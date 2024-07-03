@@ -3,11 +3,11 @@
 client_id = "c2aef3cf60c016454d3da1bc06566b9e"
 name = "clickncollect"
 handle = "clickncollect-1"
-application_url = "https://verbal-pulling-moments-gm.trycloudflare.com"
+application_url = "https://clickncollect-12d7088d53ee.herokuapp.com/"
 embedded = true
 
 [build]
-automatically_update_urls_on_dev = true
+automatically_update_urls_on_dev = false
 dev_store_url = "saas-click-collect.myshopify.com"
 include_config_on_deploy = true
 
@@ -17,9 +17,9 @@ scopes = "read_inventory,read_locales,read_locations,read_product_listings,read_
 
 [auth]
 redirect_urls = [
-  "https://verbal-pulling-moments-gm.trycloudflare.com/auth/callback",
-  "https://verbal-pulling-moments-gm.trycloudflare.com/auth/shopify/callback",
-  "https://verbal-pulling-moments-gm.trycloudflare.com/api/auth/callback"
+  "https://clickncollect-12d7088d53ee.herokuapp.com/auth/callback",
+  "https://clickncollect-12d7088d53ee.herokuapp.com/auth/shopify/callback",
+  "https://clickncollect-12d7088d53ee.herokuapp.com/api/auth/callback"
 ]
 
 [webhooks]
