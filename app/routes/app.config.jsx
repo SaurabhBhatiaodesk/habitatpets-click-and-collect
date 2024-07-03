@@ -550,8 +550,7 @@ export default function configPage() {
                                     />
                                   );
                                 case "select":
-                                  {preCheckedED=='enabled' && (
-                                    <>
+                                 
                                   return (
                                     <>
                                       {field?.options.length > 0 && (
@@ -565,8 +564,7 @@ export default function configPage() {
                                       )}
                                     </>
                                   );
-                                  </>
-                                )}
+                                
                                 case "radio":
                                   return (
                                     <>
