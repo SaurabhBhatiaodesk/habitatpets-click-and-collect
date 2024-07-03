@@ -98,7 +98,7 @@ export default function configPage() {
   const [notificationMessage, setNotificationMessage] = useState("");
   const [preferenceActiveTab, setPreferenceActiveTab] = useState("");
   const [selectedValue, setSelectedValue] = useState('');
-
+  const [dataLimit, setDataLimit] = useState({ start: 0, end: 2 });
   const [navbar, setNavbar] = useState(null);
   const [formData, setFormData] = useState({});
   const [configPreFill, setConfigPreFill] = useState({});
@@ -396,10 +396,18 @@ export default function configPage() {
   const handlePrefEnableDisable = (value,label) => {
     setPreCheckedED(value);
     if (value === 1 && label === "Enable") {
+      setDataLimit(prevLimit => ({
+        start: prevLimit.start,
+        end: prevLimit.end + 1
+      }));
       console.log("if value ::", value);
       console.log("if label ::", label);
       setPreCheckedED(1);
     } else if (value === 0 && label === "Disable") {
+      setDataLimit(prevLimit => ({
+        start: prevLimit.start,
+        end: prevLimit.end - 1
+      }));
       console.log("else if value ::", value);
       console.log("else if label ::", label);
       setPreCheckedED(0);
@@ -512,7 +520,7 @@ export default function configPage() {
                         }}
                       >
                         {console.log("preference :::", preference)}
-                        {preference?.form?.map((field) => (
+                        {preference?.form.slice(dataLimit.start, dataLimit.end)?.map((field) => (
                           <div style={{ width: "48%" }}>
                             {(() => {
                               switch (field.input_type) {
