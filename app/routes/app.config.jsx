@@ -534,11 +534,7 @@ setError(commonObjects)
             </button>
           </ui-title-bar>
 
-          {credentialFormStatus != null && (
-            <NotificationBar title={!credentialFormStatus
-              ? "Connection not connected"
-              : "Connection is connected"} style={!credentialFormStatus ? errorStyle : successStyle} />
-          )}
+          
           {notificationMessage !== "" && (
             <NotificationBar title={notificationMessage} style={successStyle} />
           )}
@@ -562,7 +558,11 @@ setError(commonObjects)
               </ButtonGroup>
             </LegacyCard>
             )}
-
+{credentialFormStatus != null && (
+            <NotificationBar title={!credentialFormStatus
+              ? "Connection not connected"
+              : "Connection is connected"} style={!credentialFormStatus ? errorStyle : successStyle} />
+          )}
             {preference &&
               preference != undefined &&
               configform != null &&
