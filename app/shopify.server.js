@@ -85,8 +85,8 @@ async function getAuthToken(session) {
       console.log(plugin,":::plugin");
       let plugin_data=await plugin.json();
       console.log(plugin_data,":::plugin_data");
-       let filter_data=plugin_data.filter((pd)=>pd.name="o360-retail-express" || pd.name=="o360-shopify");
-       console.log(filter_data,":::filter_data");
+      let filter_data = plugin_data.filter((pd) => pd.name === "o360-retail-express" || pd.name === "o360-shopify"); 
+      console.log(filter_data,":::filter_data");
        const plugin_ids=[];
        filter_data.map((fd)=>{
         plugin_ids.push(fd.id);
