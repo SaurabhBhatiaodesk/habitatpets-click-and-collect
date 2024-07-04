@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { LegacyCard, Checkbox, Select } from "@shopify/polaris";
 
-const MAPPING = ({ mapping, plugin, preference }) => {
+const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage }) => {
   const [inputValue, setInputValue] = useState('');
   const [value, setValue] = useState();
   const [selectValue, setSelectValue] = useState();
@@ -30,7 +30,7 @@ const MAPPING = ({ mapping, plugin, preference }) => {
       setSelectValue(mapping?.[get.value]);
       setPlugin2(get.label);
     });
-  }, [mapping]);
+  }, [mapping, plugin]);
 
   field.options = [{ label: "Select Value", value: "" }];
   selectValue?.map((v) => {
@@ -45,27 +45,65 @@ const MAPPING = ({ mapping, plugin, preference }) => {
       [id]: selectedOption,
     }));
   };
+  const handleMapping = () => {
+    const formattedValues = Object.entries(selectedValue).reduce((acc, [key, value]) => {
+     
+      acc[key] = { [plugin]: value };
+      return acc;
+    }, {});
+    console.log(plugin, "Formatted Values: ====>", formattedValues);
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer "+token);
+    myHeaders.append("Content-Type", "application/json");
 
+    const raw = JSON.stringify(formattedValues);
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+
+    fetch("https://main.dev.saasintegrator.online/api/v1/category/save-mapping", requestOptions)
+      .then((response) => response.text())
+      .then((result) => {console.log("mapping result ;;;===>",result)
+        setNotificationMessage("Mapping saved successfully");
+      })
+      .catch((error) => console.error(error));
+      }
+
+  // flex style object
+  const flexStyle = {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    width: "100%"
+  }
   return (
     <>
-      <LegacyCard title="Mapping" sectioned>
-        {value?.map((v) => (
-          <div key={v.id} style={{ border: "5px solid", borderRadius: "27px", margin: "10px", padding: "20px" }}>
-            <Checkbox
-              label={`${v.name} [${checkboxHeader}]`}
-              checked={checked[v.id] || false}
-              onChange={() => handleChange(v.id)}
-            />
-            <Select
-              name={`${field.name}:${v.id}`}
-              label={`${field.label} - ${v.name}`}
-              options={field.options}
-              onChange={(selectedOption) => handleSelectChange(v.id, selectedOption)}
-              value={selectedValue[v.id]}
-              disabled={!checked[v.id]}
-            />
-          </div>
-        ))}
+      <LegacyCard title="Mapping" sectioned primaryFooterAction={{ content: 'Save Mapping', onAction: () => handleMapping() }}>
+        <div
+          style={flexStyle}
+        >
+          {value?.map((v) => (
+            <div key={v.id} style={{ width: "48%" }}>
+              <Checkbox
+                label={`${v.name} [${checkboxHeader}]`}
+                checked={checked[v.id] || false}
+                onChange={() => handleChange(v.id)}
+              />
+              <Select
+                name={`${field.name}:${v.id}`}
+                label={`${field.label} - ${v.name}`}
+                options={field.options}
+                onChange={(selectedOption) => handleSelectChange(v.id, selectedOption)}
+                value={selectedValue[v.id]}
+                disabled={!checked[v.id]}
+              />
+            </div>
+          ))}
+        </div>
       </LegacyCard>
     </>
   );

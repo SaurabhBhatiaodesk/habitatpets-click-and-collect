@@ -42,7 +42,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
   return (
     <>
     {show && (
-    <div>
+    <div style={{margin:"4px"}}>
     <TextField
       label={field.label}
       value={inputValue}

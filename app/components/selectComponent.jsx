@@ -30,7 +30,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango,error }
   };
 
   return (
-    <div>
+    <div style={{margin:"4px"}}>
     <Select
       name={field.name}
       label={field.label}

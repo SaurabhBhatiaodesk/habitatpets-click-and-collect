@@ -23,8 +23,6 @@ export default function App() {
           Home
         </Link>
         <Link to="/app/additional">Google API</Link>
-        <Link to="/app/api">API PAge</Link>
-        <Link to="/app/config">Config PAge</Link>
       </ui-nav-menu>
       <Outlet />
     </AppProvider>
