@@ -3,7 +3,7 @@
 client_id = "c0acbe1ea218ca74db8c10d1234659d6"
 name = "clickncollectnew"
 handle = "clickncollectnew"
-application_url = "https://finland-prefer-importantly-rp.trycloudflare.com"
+application_url = "https://approximate-divorce-express-fourth.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,9 +16,9 @@ scopes = "read_inventory,read_locales,read_locations,read_product_listings,read_
 
 [auth]
 redirect_urls = [
-  "https://finland-prefer-importantly-rp.trycloudflare.com/auth/callback",
-  "https://finland-prefer-importantly-rp.trycloudflare.com/auth/shopify/callback",
-  "https://finland-prefer-importantly-rp.trycloudflare.com/api/auth/callback"
+  "https://approximate-divorce-express-fourth.trycloudflare.com/auth/callback",
+  "https://approximate-divorce-express-fourth.trycloudflare.com/auth/shopify/callback",
+  "https://approximate-divorce-express-fourth.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

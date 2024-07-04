@@ -111,6 +111,7 @@ export default function configPage() {
   const [loader,setLoader]=useState("");
   const [required,setRequired]=useState();
   const [error,setError]=useState();
+  const [cerror,setCerror]=useState([]);
 
   console.log("dataaaaaaaa ::", data);
 
@@ -322,20 +323,30 @@ export default function configPage() {
       checkData(formData, data);
     }
   };
-
+  console.log("CerrorCerrorCerror:::",cerror)
   const checkData = (formData, apiData) => {
-
+    let credError = false;
+    let push=[];
     let transformedData = apiData?.data?.plugin_form?.map(plugin => {
       let credential_values = {};
       for (let key in plugin.fields) {
+        if(key!="stocky_token"){
         credential_values[key] = formData[key] || null;
+        if(credential_values[key]==null || credential_values[key]==null)
+          {
+            credError = true;
+            push.push({name:key})
+           
+          }
+        } 
       }
+      
       return {
         "plugin_id": plugin.plugin_id,
         "credential_values": credential_values
       };
     });
-
+    setCerror(push);
     transformedData.push({
       "plugin_id": "general",
       "credential_values": {
@@ -343,7 +354,7 @@ export default function configPage() {
       }
     });
     console.log(transformedData);
-
+    if(!credError){
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + apiData?.store?.token);
     myHeaders.append("Content-Type", "application/json");
@@ -383,7 +394,7 @@ export default function configPage() {
         console.log("credentialFormStatus ::", credentialFormStatus)
       })
       .catch((error) => console.error(error));
-
+    }
   }
 
   const handleConfigSubmit = () => {
@@ -795,6 +806,7 @@ setError(commonObjects)
                                           case "hidden":
                                           case "password":
                                             return (
+                                              <div>
                                               <TextField
                                                 label={field.label}
                                                 value={formData[fieldKey]}
@@ -806,6 +818,14 @@ setError(commonObjects)
                                                 required={field.required}
                                                 helpText={field.description}
                                               />
+                                              <>
+                                              {cerror.length>0 && cerror.filter((e)=>e.name==fieldKey).map((sh)=>{
+                                                return (
+                                                  <span style={{color: 'red'}} >This field is required</span>
+                                                )
+                                              })  }
+                                              </>
+                                              </div>
                                             );
                                           default:
                                             return null;
