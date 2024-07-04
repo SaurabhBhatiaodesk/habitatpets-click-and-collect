@@ -443,6 +443,8 @@ setError(commonObjects)
 
     const raw = JSON.stringify(inputValues);
 
+    console.log("inputValuessssssss",inputValues)
+
     const requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -764,7 +766,7 @@ setError(commonObjects)
                       </>
                     );
                   })}
-                  <MAPPING mapping={mapping?.items} plugin={selectedValue} />
+                  <MAPPING mapping={mapping?.items} plugin={selectedValue} preference={preference} />
                   
 
                   {loader!="no" && (<Spinner accessibilityLabel="Preference Spinner" size="large" />)} 

@@ -3,7 +3,7 @@
 client_id = "c2aef3cf60c016454d3da1bc06566b9e"
 name = "clickncollect"
 handle = "clickncollect-1"
-application_url = "https://clickncollect-12d7088d53ee.herokuapp.com/"
+application_url = "https://falls-honduras-defend-elizabeth.trycloudflare.com/"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_inventory,read_locales,read_locations,read_product_listings,read_
 
 [auth]
 redirect_urls = [
-  "https://clickncollect-12d7088d53ee.herokuapp.com/auth/callback",
-  "https://clickncollect-12d7088d53ee.herokuapp.com/auth/shopify/callback",
-  "https://clickncollect-12d7088d53ee.herokuapp.com/api/auth/callback"
+  "https://falls-honduras-defend-elizabeth.trycloudflare.com/auth/callback",
+  "https://falls-honduras-defend-elizabeth.trycloudflare.com/auth/shopify/callback",
+  "https://falls-honduras-defend-elizabeth.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

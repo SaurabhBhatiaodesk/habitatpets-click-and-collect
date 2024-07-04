@@ -8,12 +8,20 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango,error }
   useEffect(() => {
     // Ensure inputValues is defined before accessing it
     const initialValue = inputValues?.[mango?.plugin_id]?.[field.name] || field.value || '';
+    if(initialValue=='' && field?.options[0]?.value)
+    {
+      handleconfigChange(field.options[0].value, field.name, mango?.plugin_id);
+      setSelectedValue(field.options[0].value);
+    }
+    else{
     setSelectedValue(initialValue);
+    }
     if(field?.name==error?.name){
  
       setShowError("This field is Required");
     }
   }, [inputValues, field.name, field.value, mango?.plugin_id,error]);
+
 
   
   const handleChange = (value) => {

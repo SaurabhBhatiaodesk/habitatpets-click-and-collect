@@ -3,22 +3,23 @@
 client_id = "c0acbe1ea218ca74db8c10d1234659d6"
 name = "clickncollectnew"
 handle = "clickncollectnew"
-application_url = "https://approximate-divorce-express-fourth.trycloudflare.com"
+application_url = "https://oc-streaming-gl-tr.trycloudflare.com"
 embedded = true
 
 [build]
 automatically_update_urls_on_dev = true
 dev_store_url = "saas-click-collect.myshopify.com"
+include_config_on_deploy = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_inventory,read_locales,read_locations,read_product_listings,read_products,read_script_tags,write_content,write_inventory,write_locations,write_products,write_script_tags"
+scopes = "read_inventory,read_locales,read_locations,read_product_listings,read_products,read_publications,read_script_tags,write_content,write_inventory,write_locations,write_products,write_publications,write_script_tags"
 
 [auth]
 redirect_urls = [
-  "https://approximate-divorce-express-fourth.trycloudflare.com/auth/callback",
-  "https://approximate-divorce-express-fourth.trycloudflare.com/auth/shopify/callback",
-  "https://approximate-divorce-express-fourth.trycloudflare.com/api/auth/callback"
+  "https://oc-streaming-gl-tr.trycloudflare.com/auth/callback",
+  "https://oc-streaming-gl-tr.trycloudflare.com/auth/shopify/callback",
+  "https://oc-streaming-gl-tr.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

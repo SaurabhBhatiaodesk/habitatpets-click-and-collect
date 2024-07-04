@@ -34,7 +34,7 @@ async function cartUpdate(updates) {
 }
 async function fetchAccessToken() {
 	try {
-		let response = await fetch(`https://clickncollect-12d7088d53ee.herokuapp.com/api/get?shop=${location.hostname}`, {
+		let response = await fetch(`https://falls-honduras-defend-elizabeth.trycloudflare.com/api/get?shop=${location.hostname}`, {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json"
@@ -68,7 +68,7 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 			if (locations.length > 0) {
 				let customerLocation = getCookie("customerlocation");
 				document.querySelector(".location").value = customerLocation;
-				let distanceApiUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${document.domain}`;
+				let distanceApiUrl = `https://falls-honduras-defend-elizabeth.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${document.domain}`;
 				let distanceData = await fetchData(distanceApiUrl);
 				let locationData = [];
 				for (let i = 0; i < data.locations.length; i++) {
