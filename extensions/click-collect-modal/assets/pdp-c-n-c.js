@@ -1,6 +1,6 @@
-async function fetchAccessToken() { try { let response = await fetch(`https://falls-honduras-defend-elizabeth.trycloudflare.com/api/get?shop=${location.hostname}`, { headers: { "Content-Type": "application/json", Accept: "application/json"  } });  if (!response.ok) throw new Error("Network response was not ok.");    return await response.json();  } catch (error) { console.error("Error fetching access token:", error); throw error;  }}
+async function fetchAccessToken() { try { let response = await fetch(`https://retain-identifier-chinese-mean.trycloudflare.com/api/get?shop=${location.hostname}`, { headers: { "Content-Type": "application/json", Accept: "application/json"  } });  if (!response.ok) throw new Error("Network response was not ok.");    return await response.json();  } catch (error) { console.error("Error fetching access token:", error); throw error;  }}
 function setCookie(name,value,days){let expires="";if(days){let date=new Date();date.setTime(date.getTime()+(days*86400000));expires="; expires="+date.toUTCString()}document.cookie=`${name}=${value}${expires}; path=/`;}
-function getCookie(name){let cookies=document.cookie.split(";").map(cookie=>cookie.trim().split("="));for(let i=0;i<cookies.length;i++){if(cookies[i][0]===name){return decodeURIComponent(cookies[i][1]);}}return null;}
+function getCookie(name){let cookies=document.cookie.split(";").map(cookie=>cookie.trim().split("="));for(let i=0;i<cookies.length;i++){if(cookies[i][0]==name){return decodeURIComponent(cookies[i][1]);}}return null;}
 async function fetchData(url) {
   try {
     let response = await fetch(url);
@@ -9,29 +9,30 @@ async function fetchData(url) {
   } catch (error) { console.error("Error fetching data:", error); throw error;  }
 }
 async function getLocations(accessToken, selectedLocationName = "") {
-  console.log('getLocations accessToken', accessToken, selectedLocationName,'selectedLocationName')
+  console.log('pdp getLocations accessToken', accessToken, selectedLocationName,'selectedLocationName')
   try {
     let response = await fetch("/admin/api/2024-04/locations.json", {
       headers: { "X-Shopify-Access-Token": accessToken }
     });
-    if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+    if (!response.ok) throw new Error(`Request failed with status ${response.status}`); 
     let data = await response.json();
-    console.log('getLocations accessToken',data);     let locations = [];
+      let locations = [];
     for (let i = 0; i < data.locations.length; i++) {  let location = data.locations[i];
       if (location.zip) { locations.push(`${location.address1} ${location.city} ${location.zip} ${location.province} ${location.country_name}`);  } }
     let locationsElement = document.querySelector(".popup-box .address-popup .locationss");
-    locationsElement.innerHTML = "";
-
+    locationsElement.innerHTML = "";      console.log('getLocations locations', locations);
     if (locations.length > 0) {
       let customerLocation = getCookie("customerlocation");
       document.querySelector(".location").value = customerLocation;
-      let distanceApiUrl = `https://falls-honduras-defend-elizabeth.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${location.host}`;
+      let distanceApiUrl = `https://retain-identifier-chinese-mean.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${location.host}`;
       let distanceData = await fetchData(distanceApiUrl);
       let locationData = [];
       for (let i = 0; i < data.locations.length; i++) {
         let location = data.locations[i];
-        if (distanceData.rows[0].elements[i].status === "OK") {
-          let distanceText = distanceData.rows[0].elements[i].distance.text;
+        let distanceElement = distanceData?.rows[0]?.elements[i];
+        console.log(distanceElement.status, 'distanceElement?.status');
+        if (distanceElement.status == "OK") {
+          let distanceText = distanceElement?.distance?.text;
           let distanceValue = parseInt(distanceText.replace(/,/g, "").replace(" km", ""));
           locationData.push({
             ...location,
@@ -49,7 +50,7 @@ async function getLocations(accessToken, selectedLocationName = "") {
           locationElement.classList.add("popup-inner-col");
           locationElement.innerHTML = `
             <div class="add">
-              <span> <input type="radio" id="${location.id}" class="locations" data-name="${location.name}" name="locations" value="HTML" ${selectedLocationName === location.name ? 'checked="checked"' : ""}>
+              <span> <input type="radio" id="${location.id}" class="locations" data-name="${location.name}" name="locations" value="HTML" ${selectedLocationName == location.name ? 'checked="checked"' : ""}>
                 <label for="${location.id}">${location.name}</label> </span>
               <h4>${location.distancetext}</h4>  </div>
             <ul class="order-list">
@@ -100,12 +101,12 @@ function handleInventoryLocationsResponse(data) {
     let variant = data.product.variants.nodes[i];
     let variantIdParts = variant.id.split("/");
     let variantId = variantIdParts[variantIdParts.length - 1];
-    if (variantId === productVariantId) {
+    if (variantId == productVariantId) {
       let isInStock = false;
       if (variant.inventoryItem && variant.inventoryItem.inventoryLevels) {
         for (let j = 0; j < variant.inventoryItem.inventoryLevels.edges.length; j++) {
           let inventoryLevel = variant.inventoryItem.inventoryLevels.edges[j].node;
-          if (inventoryLevel.location.name === storeLocationName) {
+          if (inventoryLevel.location.name == storeLocationName) {
             let quantity = inventoryLevel.quantities[0].quantity;
             isInStock = quantity > 2;
           }
@@ -126,12 +127,12 @@ function handleInventoryLocationsResponse(data) {
     }
   }
   for (let i = 0; i < data.product.collections.nodes.length; i++) {
-    if (data.product.collections.nodes[i].handle === "automated-collection") {
+    if (data.product.collections.nodes[i].handle == "automated-collection") {
       console.log("Collection:", data.product.collections.nodes[i], "Collections working");
     }
   }
   for (let i = 0; i < data.product.tags.length; i++) {
-    if (data.product.tags[i] === "Accessory") {  console.log("Tag:", data.product.tags[i], "Tag validation is working");  }
+    if (data.product.tags[i] == "Accessory") {  console.log("Tag:", data.product.tags[i], "Tag validation is working");  }
   }
 }
 async function refreshInventoryLocations() {

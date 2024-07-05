@@ -10,7 +10,7 @@ async function cartUpdate(updates) {
       }
     } catch (error) { console.error("Error:", error);}
   }
-  async function fetchAccessToken(){try{let response=await fetch(`https://falls-honduras-defend-elizabeth.trycloudflare.com/api/get?shop=${location.hostname}`,{headers:{"Content-Type":"application/json",Accept:"application/json"}});if(!response.ok)throw new Error("Network response was not ok.");return await response.json()}catch(error){console.error("Error fetching access token:",error);throw error;}}
+  async function fetchAccessToken(){try{let response=await fetch(`https://retain-identifier-chinese-mean.trycloudflare.com/api/get?shop=${location.hostname}`,{headers:{"Content-Type":"application/json",Accept:"application/json"}});if(!response.ok)throw new Error("Network response was not ok.");return await response.json()}catch(error){console.error("Error fetching access token:",error);throw error;}}
   async function getCartLocations(accessToken, selectedLocationName = "") {
     try {
       let response = await fetch("/admin/api/2024-04/locations.json", {headers: { "X-Shopify-Access-Token": accessToken }});
@@ -21,18 +21,18 @@ async function cartUpdate(updates) {
         let locationsElement = document.querySelector(".address-popup11 .locationss"); locationsElement.innerHTML = "";
         if (locations.length > 0) {
           let customerLocation = getCookie("customerlocation"); document.querySelector(".location").value = customerLocation;
-          let distanceApiUrl = `https://falls-honduras-defend-elizabeth.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${document.domain}`;
+          let distanceApiUrl = `https://retain-identifier-chinese-mean.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${document.domain}`;
           let distanceData = await fetchData(distanceApiUrl); let locationData = [];
           for (let i = 0; i < data.locations.length; i++) {
             let location = data.locations[i];
-            if (distanceData.rows[0].elements[i].status === "OK") {
+            if (distanceData.rows[0].elements[i].status == "OK") {
               let distanceText = distanceData.rows[0].elements[i].distance.text;
               locationData.push({
                 ...location,
                 distance: parseInt(distanceText.replace(/,/g, "").replace(" km", "")),
                 distancetext: distanceText
               });
-            }
+            }    
           }
           locationData.sort((a, b) => a.distance - b.distance);
           for (let i = 0; i < locationData.length; i++) { let location = locationData[i];
@@ -63,13 +63,13 @@ async function cartUpdate(updates) {
       let variant = data.product.variants.nodes[i];
       let variantIdParts = variant.id.split("/");
       let currentVariantId = variantIdParts[variantIdParts.length - 1];
-      if (currentVariantId === variantId) {
+      if (currentVariantId == variantId) {
         let isInStock = false;
         if (variant.inventoryItem && variant.inventoryItem.inventoryLevels) {
           for (let j = 0; j < variant.inventoryItem.inventoryLevels.edges.length; j++) {
             let inventoryLevel = variant.inventoryItem.inventoryLevels.edges[j].node;
             let locationName = inventoryLevel.location.name;
-            if (storeLocationName === locationName && locationName !== "Snow City Warehouse") {
+            if (storeLocationName == locationName && locationName !== "Snow City Warehouse") {
               isInStock = inventoryLevel.quantities[0].quantity > 2 && inventoryLevel.quantities[0].quantity >= product.quantity;
             }
           }

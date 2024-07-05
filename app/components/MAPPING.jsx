@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { LegacyCard, Checkbox, Select } from "@shopify/polaris";
+import { LegacyCard,Card, Checkbox, Select } from "@shopify/polaris";
 
 const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage }) => {
   const [inputValue, setInputValue] = useState('');
@@ -82,7 +82,9 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage })
   }
   return (
     <>
+    {value?.length >0 && (
       <LegacyCard title="Mapping" sectioned primaryFooterAction={{ content: 'Save Mapping', onAction: () => handleMapping() }}>
+      <Card title="configform">
         <div
           style={flexStyle}
         >
@@ -104,7 +106,9 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage })
             </div>
           ))}
         </div>
+        </Card>
       </LegacyCard>
+      )}
     </>
   );
 };

@@ -194,8 +194,9 @@ export default function configPage() {
     setSelectedValue(value);
   };
   async function handleItemClick(itemContent) {
+
     setDataLimit({ start: 0, end: 2 });
-    setLoader('yes');
+    setLoader('prefyes');
     setPreferenceActiveTab(itemContent);
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + data.store.token);
@@ -218,12 +219,15 @@ export default function configPage() {
       let preference = await response.json();
       console.log("preference ", preference);
       setPreference(preference);
+      setLoader('prefno');
+      setLoader('configyes');
       /****************************************** config-form  ************************************************** */
       const response2 = await fetch(
         `https://main.dev.saasintegrator.online/api/v1/${itemContent}/config-form`,
         requestOptions,
       );
       if (!response2.ok) {
+        setLoader('configno');
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const requireds = [];
@@ -247,7 +251,9 @@ export default function configPage() {
       console.log("required:::::", requireds);
       console.log("config ", configform);
       setConfig(configform);
+      setLoader('configno');
       /**************************************** Mapping **************************************************** */
+      setLoader('mapyes');
       const response3 = await fetch(
         `https://main.dev.saasintegrator.online/api/v1/${itemContent}/mapping`,
         requestOptions,
@@ -258,8 +264,9 @@ export default function configPage() {
       let mapping = await response3.json();
       console.log("mapping ", mapping);
       setMapping(mapping);
-      setLoader('no');
+      setLoader('mapno');
     } catch (error) {
+      setLoader('mapno');
       console.error("Error fetching config-form:", error);
       throw error;
     }
@@ -592,7 +599,8 @@ export default function configPage() {
                 configform != null &&
                 navbar ? (
                 <>
-
+                {loader=="prefyes"?(<LegacyCard title="Preference" sectioned >
+                <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(
                   <LegacyCard title="Preference" sectioned primaryFooterAction={{ content: 'Save Preference', onAction: () => handlePreference() }}>
                     <Card title="configform">
                       <FormLayout>
@@ -699,9 +707,11 @@ export default function configPage() {
                       </FormLayout>
                     </Card>
                   </LegacyCard>
-
-                  {/* ))} */}
-
+               )}
+                 
+                 {loader=="configyes"?(<LegacyCard title="Config" sectioned >
+                  <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(  
+                  <>
                   {prefEnableDisable != 0 &&
                     configform?.config_form?.map((mango,index) => {
                       console.log("mango :::", mango);
@@ -776,8 +786,14 @@ export default function configPage() {
                         </>
                       );
                     })}
+                    </>
+                  )}
+                  {loader=="mapyes"?(<LegacyCard title="Mapping" sectioned >
+                    <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(
+                    <>
                   <MAPPING mapping={mapping?.items} plugin={selectedValue} preference={preference} token={data?.store?.token || ''} setNotificationMessage={setNotificationMessage}/>
-
+                    </>
+                  )}
 
                 </>
               ) : (

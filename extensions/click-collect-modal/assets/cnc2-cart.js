@@ -1,4 +1,4 @@
-async function cartUpdate(updates) {
+async function cartUpdate(updates, flag = false) {
 	try {
 		let response = await fetch("/cart/update.js", {
 			method: "POST",
@@ -10,14 +10,18 @@ async function cartUpdate(updates) {
 			})
 		});
 		if (response.ok) {
-			console.log("testings ", response);
-			let errorMessages = document.querySelectorAll(".cart-grid p.error-massage.active");
-			for (let i = 0; i < errorMessages.length; i++) {
-				let errorMessage = errorMessages[i];
-				errorMessage.closest(".cart-grid").remove();
-			}
-			document.querySelector(".remove-allitem").style.display = "none";
-			let checkoutButton = document.querySelector("button.cart-btn.gotocheckout.checkoutbtn");
+			
+			if(flag == true){
+                console.log('flag it true')
+                let errorMessages = document.querySelectorAll(".cart-grid p.error-massage.active");
+                for (let i = 0; i < errorMessages.length; i++) {
+                    let errorMessage = errorMessages[i];
+                    errorMessage.closest(".cart-grid").remove();
+                }
+                document.querySelector(".remove-allitem").style.display = "none";
+    
+            }
+        	let checkoutButton = document.querySelector("button.cart-btn.gotocheckout.checkoutbtn");
 			checkoutButton.disabled = false;
 			checkoutButton.classList.remove("disabled");
 			let cartResponse = await fetch("/cart.json");
@@ -34,7 +38,7 @@ async function cartUpdate(updates) {
 }
 async function fetchAccessToken() {
 	try {
-		let response = await fetch(`https://falls-honduras-defend-elizabeth.trycloudflare.com/api/get?shop=${location.hostname}`, {
+		let response = await fetch(`https://retain-identifier-chinese-mean.trycloudflare.com/api/get?shop=${location.hostname}`, {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json"
@@ -68,13 +72,13 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 			if (locations.length > 0) {
 				let customerLocation = getCookie("customerlocation");
 				document.querySelector(".location").value = customerLocation;
-				let distanceApiUrl = `https://falls-honduras-defend-elizabeth.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${document.domain}`;
+				let distanceApiUrl = `https://retain-identifier-chinese-mean.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${document.domain}`;
 				let distanceData = await fetchData(distanceApiUrl);
 				let locationData = [];
 				for (let i = 0; i < data.locations.length; i++) {
 					let location = data.locations[i];
-					if (distanceData.rows[0].elements[i].status === "OK") {
-						let distanceText = distanceData.rows[0].elements[i].distance.text;
+					if (distanceData?.rows[0]?.elements[i]?.status == "OK") {
+						let distanceText = distanceData?.rows[0]?.elements[i]?.distance?.text;
 						locationData.push({
 							...location,
 							distance: parseInt(distanceText.replace(/,/g, "").replace(" km", "")),
@@ -85,7 +89,7 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 				locationData.sort((a, b) => a.distance - b.distance);
 				for (let i = 0; i < locationData.length; i++) {
 					let location = locationData[i];
-					if (selectedLocationName && location.name !== "Snow City Warehouse") {
+					if (selectedLocationName && location.name != "Snow City Warehouse") {
 						let radioBtn = document.createElement("div");
 						radioBtn.classList.add("radio-btn");
 						let colDiv = document.createElement("div");
@@ -96,7 +100,7 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 						radioInput.classList.add("locations");
 						radioInput.name = "locations";
 						radioInput.dataset.name = location.name;
-						if (selectedLocationName === location.name) {
+						if (selectedLocationName == location.name) {
 							radioInput.checked = true;
 						}
 						let label = document.createElement("label");
@@ -172,7 +176,7 @@ function handle_inv_locations(error, data, product) {
 					let inventoryLevel = variant.inventoryItem.inventoryLevels.edges[j].node;
 					let locationName = inventoryLevel.location.name;
                     // console.log('locationName',locationName);
-					if (storeLocationName === locationName && locationName !== "Snow City Warehouse") {
+					if (storeLocationName == locationName && locationName !== "Snow City Warehouse") {
                         isInStock = inventoryLevel.quantities[0].quantity > 2 && inventoryLevel.quantities[0].quantity >= product.quantity;
                         // if(inventoryLevel.quantities[0].quantity > 2 && inventoryLevel.quantities[0].quantity >= product.quantity){
                         //     console.log(isInStock, ' -- flase isinstock', inventoryLevel.quantities[0].quantity, product.quantity)
@@ -299,7 +303,6 @@ function handleInventoryLocations(error, productData, cartData) {
 		checkoutButton.classList.remove("disabled");
 	}
 }
-
 function fetchInventoryForCartItems(accessToken, data) {
     var cartItems = data.items;
     var currency = data.currency;
@@ -312,8 +315,9 @@ function fetchInventoryForCartItems(accessToken, data) {
 
 		for (var j = 0; j < cartItems.length; j++) {
 			var cartItem = cartItems[j];
-            console.log('cartItem.variant_id == variantId', cartItem.variant_id, variantId);
+            console.log(' fetchInventoryForCartItems cartItem.variant_id == variantId', cartItem.variant_id, variantId);
 			if (cartItem.variant_id == variantId) {
+                console.log('cartItem.variant_id == variantId', cartItem.variant_id, variantId);
 				matched = true;
 				var itemQuantities = cartGrid.querySelector(".item-quantities span b");
 				if (itemQuantities) {
@@ -371,7 +375,7 @@ fetch("/cart.json")
 	}).catch(function(error) {
 		console.error("Error fetching cart items:", error);
 	});
-document.addEventListener("change", function(event) {
+    document.addEventListener("change", function(event) {
 	if (event.target.matches(".radio-cart.locationss input.locations")) {
 		var variantIds = [];
 		setCookie("storelocation", event.target.id);
@@ -512,7 +516,13 @@ document.addEventListener("click", function(event) {
 			});
 			fetchAccessToken()
 				.then(function(response) {
-					cartUpdate(cartUpdateData, response.accessToken);
+					cartUpdate(cartUpdateData, response.accessToken, true);
+                    let errorMessages = document.querySelectorAll(".cart-grid p.error-massage.active");
+                    for (let i = 0; i < errorMessages.length; i++) {
+                        let errorMessage = errorMessages[i];
+                        errorMessage.closest(".cart-grid").remove();
+                    }
+                    document.querySelector(".remove-allitem").style.display = "none";
 				})
 				.catch(function(error) {
 					console.error("Error fetching access token:", error);

@@ -1,6 +1,6 @@
 async function fetchData(e){try{const t=await fetch(e);if(!t.ok)throw new Error("Network response was not ok");return await t.json()}catch(e){return console.error("Error fetching data:",e),null}}
-async function fetchAccessToken(){try{const e=await fetch(`https://falls-honduras-defend-elizabeth.trycloudflare.com/api/get?shop=${location.hostname}`,{headers:{"Content-Type":"application/json",Accept:"application/json"}});if(!e.ok)throw new Error("Network response was not ok.");return await e.json()}catch(e){console.error("Error fetching access token:",e);throw e}}
-function getCookie(e){const t=document.cookie.split(";").map(e=>e.trim().split("=")),o=t.find(t=>t[0]===e);return o?decodeURIComponent(o[1]):null}function setCookie(e,t,o){let n="";o&&(n=new Date,n.setTime(n.getTime()+24*o*60*60*1e3),n="; expires="+n.toUTCString()),document.cookie=`${e}=${t}${n}; path=/`}
+async function fetchAccessToken(){try{const e=await fetch(`https://retain-identifier-chinese-mean.trycloudflare.com/api/get?shop=${location.hostname}`,{headers:{"Content-Type":"application/json",Accept:"application/json"}});if(!e.ok)throw new Error("Network response was not ok.");return await e.json()}catch(e){console.error("Error fetching access token:",e);throw e}}
+function getCookie(e){const t=document.cookie.split(";").map(e=>e.trim().split("=")),o=t.find(t=>t[0]==e);return o?decodeURIComponent(o[1]):null}function setCookie(e,t,o){let n="";o&&(n=new Date,n.setTime(n.getTime()+24*o*60*60*1e3),n="; expires="+n.toUTCString()),document.cookie=`${e}=${t}${n}; path=/`}
 
 async function getLocations(accessToken, selectedLocation = "") {
     console.log('getLocations accessTokenaccessTokenaccessToken ',accessToken)
@@ -9,36 +9,47 @@ async function getLocations(accessToken, selectedLocation = "") {
         });
         if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
         const responseJSON = await response.json();
+     
         const destinationsArr = responseJSON.locations
             .filter(location => location.zip)
             .map(location => `${location.address1} ${location.city} ${location.zip} ${location.province} ${location.country_name}`);
-        if (destinationsArr.length > 0) {
+
+        if (destinationsArr.length > 0) {    
             const customerLocation = getCookie("customerlocation");
             document.querySelector(".location").value = customerLocation;
-            const mapUrl = `https://falls-honduras-defend-elizabeth.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${destinationsArr.join("|")}&shop=${location.hostname}`;
+            const mapUrl = `https://retain-identifier-chinese-mean.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${destinationsArr.join("|")}&shop=${location.hostname}`;
             const res = await fetchData(mapUrl);
             if (res) {
-                const sortedLocations = responseJSON.locations
-                    .map((location, index) => {
-                        const distanceElement = res.rows[0].elements[index];
-                        if (distanceElement.status === "OK") {
-                            const distanceText = distanceElement.distance.text;
-                            return {
+                console.log('responseJSON.locations ',responseJSON.locations, ' destinationsArr ',destinationsArr, ' res ',res)
+                const sortedLocations = [];
+
+                    for (let index = 0; index < responseJSON.locations.length; index++) {
+                      
+                        const location = responseJSON.locations[index];
+                        const distanceElement = res?.rows[0]?.elements[index];
+                        if (distanceElement?.status == "OK" && distanceElement?.status != "ZERO_RESULTS" ) {
+                            const distanceText = distanceElement?.distance.text;
+                            const parsedDistance = parseInt(distanceText.replace(/,/g, "").replace(" km", ""));
+                            console.log('distanceElement ',index,' distanceText ',distanceText, ' parsedDistance ',parsedDistance);     
+                            sortedLocations.push({
                                 id: location.id,
-                                distance: parseInt(distanceText.replace(/,/g, "").replace(" km", "")),
+                                distance: parsedDistance, 
                                 distanceText,
                                 origin: res.origin_addresses,
                                 ...location
-                            };
-                        }
-                    })
-                    .filter(Boolean)
-                    .sort((a, b) => a.distance - b.distance);
+                            });   
+                        }     
+                    }
+    
+                    sortedLocations.sort((a, b) => a.distance - b.distance);
+     
+                console.log('selectedLocation ',selectedLocation)
                 renderLocations(sortedLocations, selectedLocation);
             }
         }
         if (getCookie("storelocationName")){ 
-           console.log('storelocationName  not set : ',getCookie("storelocationName"))
+            document.querySelector(".popup-box .address-popup").style.display = "block";
+        //    console.log('storelocationName  not set : ',getCookie("storelocationName"))
         }else{     
             document.querySelector(".popup-box .address-popup").style.display = "block";
             console.log('storelocationName  else : ',getCookie("storelocationName"))
@@ -53,7 +64,7 @@ function renderLocations(locations, selectedLocation) {
             if (location.name !== "Snow City Warehouse") {
                 const locationElement = document.createElement("div");
                 locationElement.classList.add("popup-inner-col");
-                locationElement.innerHTML = `<div class="add"><span><input type="radio" id="${location.id}" class="locations" data-name="${location.name}" name="locations" value="HTML" ${location.name === selectedLocation ? 'checked="checked"' : ''}>
+                locationElement.innerHTML = `<div class="add"><span><input type="radio" id="${location.id}" class="locations" data-name="${location.name}" name="locations" value="HTML" ${location.name == selectedLocation ? 'checked="checked"' : ''}>
                             <label for="${location.id}">${location.name}</label></span><h4>${location.distanceText}</h4></div>
                     <ul class="order-list"><li>${location.country_name}</li> <li>Address: ${location.address1}</li><li>Phone: ${location.phone}</li> </ul>
                     <button type="submit"> <a href="https://www.google.com/maps/dir/${location.origin}/${location.address1} ${location.city} ${location.zip} ${location.province} ${location.country_name}" target="_blank">
@@ -120,8 +131,11 @@ async function getUserLocation() {
         const response = await fetch(`https://ipinfo.io/json?token=${accessToken}`);
         const data = await response.json();
         // console.log('data',data.org + ' '+ data.postal + ' '+ data.city +' ' + data.country);
+       
         if(getCookie("customerlocation")){
-
+            if(document.querySelector('.popup-modal .check-btn input').value == ""){
+                document.querySelector('.popup-modal .check-btn input').value= data.postal;
+            }
         }else{
             setCookie("customerlocation", data.postal);
             document.querySelector('.popup-modal .check-btn input').value= data.postal;
