@@ -1,4 +1,4 @@
-async function fetchAccessToken() { try { let response = await fetch(`https://retain-identifier-chinese-mean.trycloudflare.com/api/get?shop=${location.hostname}`, { headers: { "Content-Type": "application/json", Accept: "application/json"  } });  if (!response.ok) throw new Error("Network response was not ok.");    return await response.json();  } catch (error) { console.error("Error fetching access token:", error); throw error;  }}
+async function fetchAccessToken() { try { let response = await fetch(`https://attract-gcc-neighborhood-achieving.trycloudflare.com/api/get?shop=${location.hostname}`, { headers: { "Content-Type": "application/json", Accept: "application/json"  } });  if (!response.ok) throw new Error("Network response was not ok.");    return await response.json();  } catch (error) { console.error("Error fetching access token:", error); throw error;  }}
 function setCookie(name,value,days){let expires="";if(days){let date=new Date();date.setTime(date.getTime()+(days*86400000));expires="; expires="+date.toUTCString()}document.cookie=`${name}=${value}${expires}; path=/`;}
 function getCookie(name){let cookies=document.cookie.split(";").map(cookie=>cookie.trim().split("="));for(let i=0;i<cookies.length;i++){if(cookies[i][0]==name){return decodeURIComponent(cookies[i][1]);}}return null;}
 async function fetchData(url) {
@@ -24,7 +24,7 @@ async function getLocations(accessToken, selectedLocationName = "") {
     if (locations.length > 0) {
       let customerLocation = getCookie("customerlocation");
       document.querySelector(".location").value = customerLocation;
-      let distanceApiUrl = `https://retain-identifier-chinese-mean.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${location.host}`;
+      let distanceApiUrl = `https://attract-gcc-neighborhood-achieving.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${location.host}`;
       let distanceData = await fetchData(distanceApiUrl);
       let locationData = [];
       for (let i = 0; i < data.locations.length; i++) {
@@ -45,7 +45,7 @@ async function getLocations(accessToken, selectedLocationName = "") {
       locationData.sort((a, b) => a.distance - b.distance);
       for (let i = 0; i < locationData.length; i++) {
         let location = locationData[i];
-        if (location.name !== "Snow City Warehouse") {
+        if (location.name != "Snow City Warehouse") {
           let locationElement = document.createElement("div");
           locationElement.classList.add("popup-inner-col");
           locationElement.innerHTML = `

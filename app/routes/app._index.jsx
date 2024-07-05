@@ -327,14 +327,19 @@ export default function configPage() {
     console.log("formData in handlesubmit", formData);
     event.preventDefault();
 
-    if (navbar === null || navbar === false) {
+    if (true) {
+      console.log("entered in iffff")
       checkData(formData, data);
     }
   };
   console.log("CerrorCerrorCerror:::", cerror)
+
   const checkData = (formData, apiData) => {
+    console.log("enteredddd");
     let credError = false;
     let push = [];
+    console.log("PUSH: " , push)
+    console.log("credError: " , credError)
     let transformedData = apiData?.data?.plugin_form?.map(plugin => {
       let credential_values = {};
       for (let key in plugin.fields) {
@@ -353,6 +358,7 @@ export default function configPage() {
         "credential_values": credential_values
       };
     });
+    console.log("PUSH: " , push)
     setCerror(push);
     transformedData.push({
       "plugin_id": "general",
@@ -493,6 +499,8 @@ export default function configPage() {
       setPreCheckedED(0);
     }
   };
+
+
   const handlePreference = async () => {
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + data?.store?.token);
@@ -863,9 +871,9 @@ export default function configPage() {
                     })}
 
                   </FormLayout>
-                  <Button  variant="primary" type="submit">
+                  <button style={{backgroundColor:"#000",color:"#fff",padding:"4px 8px",borderRadius:"10px"}}  variant="primary" type="submit">
                     Save
-                  </Button>
+                  </button>
                 </>
               )}
             </div>

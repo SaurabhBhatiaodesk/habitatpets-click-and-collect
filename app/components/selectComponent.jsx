@@ -4,6 +4,7 @@ import { Select } from "@shopify/polaris"; // Replace with your actual UI librar
 const SelectComponent = ({ field, inputValues, handleconfigChange, mango,error }) => {
   const [selectedValue, setSelectedValue] = useState('');
   const [showError,setShowError]=useState(''); 
+  const [show,setShow]=useState(false);
 
   useEffect(() => {
     // Ensure inputValues is defined before accessing it
@@ -20,6 +21,19 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango,error }
  
       setShowError("This field is Required");
     }
+    const valuesString = field.show_in_value;
+    const valueToCheck = inputValues?.[mango?.plugin_id]?.[field.show_in];
+
+    if (valuesString) {
+      const valuesArray = valuesString.split(',');
+      if (valuesArray.includes(valueToCheck)) {
+        setShow(true);
+      } else {
+        setShow(false);
+      }
+    } else {
+      setShow(false);
+    }
   }, [inputValues, field.name, field.value, mango?.plugin_id,error]);
 
 
@@ -30,6 +44,8 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango,error }
   };
 
   return (
+    <>
+    {show && (
     <div style={{margin:"4px"}}>
     <Select
       name={field.name}
@@ -43,6 +59,8 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango,error }
     />
     <span style={{color:"red"}}>{showError}</span>
     </div>
+    )}
+    </>
   );
 };
 

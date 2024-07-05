@@ -38,7 +38,7 @@ async function cartUpdate(updates, flag = false) {
 }
 async function fetchAccessToken() {
 	try {
-		let response = await fetch(`https://retain-identifier-chinese-mean.trycloudflare.com/api/get?shop=${location.hostname}`, {
+		let response = await fetch(`https://attract-gcc-neighborhood-achieving.trycloudflare.com/api/get?shop=${location.hostname}`, {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json"
@@ -72,7 +72,7 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 			if (locations.length > 0) {
 				let customerLocation = getCookie("customerlocation");
 				document.querySelector(".location").value = customerLocation;
-				let distanceApiUrl = `https://retain-identifier-chinese-mean.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${document.domain}`;
+				let distanceApiUrl = `https://attract-gcc-neighborhood-achieving.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${document.domain}`;
 				let distanceData = await fetchData(distanceApiUrl);
 				let locationData = [];
 				for (let i = 0; i < data.locations.length; i++) {

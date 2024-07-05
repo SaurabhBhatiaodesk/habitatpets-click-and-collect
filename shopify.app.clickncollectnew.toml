@@ -3,7 +3,7 @@
 client_id = "c0acbe1ea218ca74db8c10d1234659d6"
 name = "clickncollectnew"
 handle = "clickncollectnew"
-application_url = "https://retain-identifier-chinese-mean.trycloudflare.com"
+application_url = "https://attract-gcc-neighborhood-achieving.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_inventory,read_locales,read_locations,read_product_listings,read_
 
 [auth]
 redirect_urls = [
-  "https://retain-identifier-chinese-mean.trycloudflare.com/auth/callback",
-  "https://retain-identifier-chinese-mean.trycloudflare.com/auth/shopify/callback",
-  "https://retain-identifier-chinese-mean.trycloudflare.com/api/auth/callback"
+  "https://attract-gcc-neighborhood-achieving.trycloudflare.com/auth/callback",
+  "https://attract-gcc-neighborhood-achieving.trycloudflare.com/auth/shopify/callback",
+  "https://attract-gcc-neighborhood-achieving.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

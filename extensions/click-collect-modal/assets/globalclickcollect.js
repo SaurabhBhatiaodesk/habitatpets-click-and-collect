@@ -1,5 +1,5 @@
 async function fetchData(e){try{const t=await fetch(e);if(!t.ok)throw new Error("Network response was not ok");return await t.json()}catch(e){return console.error("Error fetching data:",e),null}}
-async function fetchAccessToken(){try{const e=await fetch(`https://retain-identifier-chinese-mean.trycloudflare.com/api/get?shop=${location.hostname}`,{headers:{"Content-Type":"application/json",Accept:"application/json"}});if(!e.ok)throw new Error("Network response was not ok.");return await e.json()}catch(e){console.error("Error fetching access token:",e);throw e}}
+async function fetchAccessToken(){try{const e=await fetch(`https://attract-gcc-neighborhood-achieving.trycloudflare.com/api/get?shop=${location.hostname}`,{headers:{"Content-Type":"application/json",Accept:"application/json"}});if(!e.ok)throw new Error("Network response was not ok.");return await e.json()}catch(e){console.error("Error fetching access token:",e);throw e}}
 function getCookie(e){const t=document.cookie.split(";").map(e=>e.trim().split("=")),o=t.find(t=>t[0]==e);return o?decodeURIComponent(o[1]):null}function setCookie(e,t,o){let n="";o&&(n=new Date,n.setTime(n.getTime()+24*o*60*60*1e3),n="; expires="+n.toUTCString()),document.cookie=`${e}=${t}${n}; path=/`}
 
 async function getLocations(accessToken, selectedLocation = "") {
@@ -17,7 +17,7 @@ async function getLocations(accessToken, selectedLocation = "") {
         if (destinationsArr.length > 0) {    
             const customerLocation = getCookie("customerlocation");
             document.querySelector(".location").value = customerLocation;
-            const mapUrl = `https://retain-identifier-chinese-mean.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${destinationsArr.join("|")}&shop=${location.hostname}`;
+            const mapUrl = `https://attract-gcc-neighborhood-achieving.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${destinationsArr.join("|")}&shop=${location.hostname}`;
             const res = await fetchData(mapUrl);
             if (res) {
                 console.log('responseJSON.locations ',responseJSON.locations, ' destinationsArr ',destinationsArr, ' res ',res)
