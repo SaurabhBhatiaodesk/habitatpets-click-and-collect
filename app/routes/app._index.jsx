@@ -366,13 +366,15 @@ export default function configPage() {
         "custom_name": apiData?.store?.shop
       }
     });
-    console.log(transformedData);
+    console.log("transformedData",transformedData);
+
     if (!credError) {
       const myHeaders = new Headers();
       myHeaders.append("Authorization", "Bearer " + apiData?.store?.token);
       myHeaders.append("Content-Type", "application/json");
 
       const raw = JSON.stringify(transformedData);
+      console.log("rawwwwwwwwwwwwww",raw)
 
       const requestOptions = {
         method: "POST",
@@ -571,9 +573,7 @@ export default function configPage() {
           </ui-title-bar>
 
 
-          {notificationMessage !== "" && (
-            <NotificationBar title={notificationMessage} style={successStyle} />
-          )}
+         
 
           <Layout>
             <div style={{ width: "100%" }}>
@@ -596,12 +596,15 @@ export default function configPage() {
                 </LegacyCard>
               )}
             </div>
-            {credentialFormStatus != null && (
+            {notificationMessage !== "" && (
+            <NotificationBar title={notificationMessage} style={successStyle} />
+          )}
+            {/* {credentialFormStatus != null && (
               <NotificationBar title={!credentialFormStatus
                 ? "Connection not connected"
                 : "Connection is connected"} style={!credentialFormStatus ? errorStyle : successStyle} />
-            )}
-            <div style={{ width: "100%" }}>
+            )} */}
+            <div style={{ width: "100%",marginTop:"10px" }}>
               {preference &&
                 preference != undefined &&
                 configform != null &&
@@ -611,6 +614,7 @@ export default function configPage() {
                 <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(
                   <LegacyCard title="Preference" sectioned primaryFooterAction={{ content: 'Save Preference', onAction: () => handlePreference() }}>
                     <Card title="configform">
+                    
                       <FormLayout>
                         <div
                           style={flexStyle}
@@ -663,7 +667,8 @@ export default function configPage() {
                                             label={field.label}
                                             options={field.options}
                                             onChange={handleSelectChange}
-                                            value={selectedValue}
+                                            value={selectedValue} 
+                                            placeholder="Select source of Truth"
                                           />
                                         )}
                                       </>
@@ -796,17 +801,90 @@ export default function configPage() {
                     })}
                     </>
                   )}
+                  {prefEnableDisable != 0 && (
+                    <>
                   {loader=="mapyes"?(<LegacyCard title="Mapping" sectioned >
                     <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(
                     <>
-                  <MAPPING mapping={mapping?.items} plugin={selectedValue} preference={preference} token={data?.store?.token || ''} setNotificationMessage={setNotificationMessage}/>
+                  <MAPPING mapping={mapping?.items} plugin={selectedValue} preference={preference} token={data?.store?.token || ''} setNotificationMessage={setNotificationMessage}  
+                  preferenceActiveTab={preferenceActiveTab}  mappings={mapping}/>
                     </>
                   )}
-
+                  </>
+                )}
                 </>
               ) : (
                 <>
                   <FormLayout>
+                  {!credentialFormStatus
+                ? (<LegacyCard title="" sectioned  actions={[{content: 'Not Connected', destructive: true}]}>
+                  
+                  {product?.plugin_form?.map((plugin, index) => {
+                    // console.log("plugin?.fields?.token :::", plugin?.fields?.token)
+                    return (
+                      <div
+                        style={{
+                          display:
+                            plugin.fields?.token != undefined ||
+                              plugin?.fields?.token != null
+                              ? "none"
+                              : "block",
+                        }}
+                      >
+                          <Card key={index} title={plugin.label}>
+                            <div
+                              style={flexStyle}
+                            >
+                              {Object.entries(plugin.fields).map(
+                                ([fieldKey, field]) => {
+                                  // console.log("fieldKey :::", fieldKey)
+                                  return (
+                                    <div style={{ width: "48%" }}>
+                                      {(() => {
+                                        switch (field.type) {
+                                          case "url":
+                                          case "text":
+                                          case "hidden":
+                                          case "password":
+                                            return (
+                                              <div>
+                                                <TextField
+                                                  label={field.label}
+                                                  value={formData[fieldKey]}
+                                                  onChange={(value) =>
+                                                    handleChange(value, fieldKey)
+                                                  }
+                                                  name={fieldKey}
+                                                  type={field.type}
+                                                  required={field.required}
+                                                  helpText={field.description}
+                                                />
+                                                <>
+                                                  {cerror.length > 0 && cerror.filter((e) => e.name == fieldKey).map((sh) => {
+                                                    return (
+                                                      <span style={{ color: 'red' }} >This field is required</span>
+                                                    )
+                                                  })}
+                                                </>
+                                              </div>
+                                            );
+                                          default:
+                                            return null;
+                                        }
+                                      })()}
+                                    </div>
+                                  );
+                                },
+                              )}
+                            </div>
+                          </Card>
+                      </div>
+                    );
+                  })}
+                  </LegacyCard>)
+                :(
+                  <LegacyCard title="" sectioned  actions={[{content: 'Connected'}]}>
+                  
                     {product?.plugin_form?.map((plugin, index) => {
                       // console.log("plugin?.fields?.token :::", plugin?.fields?.token)
                       return (
@@ -869,7 +947,8 @@ export default function configPage() {
                         </div>
                       );
                     })}
-
+                    </LegacyCard>
+                    )}
                   </FormLayout>
                   <button style={{backgroundColor:"#000",color:"#fff",padding:"4px 8px",borderRadius:"10px"}}  variant="primary" type="submit">
                     Save

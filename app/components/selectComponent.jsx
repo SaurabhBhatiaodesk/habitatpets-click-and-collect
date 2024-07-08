@@ -4,7 +4,7 @@ import { Select } from "@shopify/polaris"; // Replace with your actual UI librar
 const SelectComponent = ({ field, inputValues, handleconfigChange, mango,error }) => {
   const [selectedValue, setSelectedValue] = useState('');
   const [showError,setShowError]=useState(''); 
-  const [show,setShow]=useState(false);
+  const [show,setShow]=useState(true);
 
   useEffect(() => {
     // Ensure inputValues is defined before accessing it
@@ -31,9 +31,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango,error }
       } else {
         setShow(false);
       }
-    } else {
-      setShow(false);
-    }
+    } 
   }, [inputValues, field.name, field.value, mango?.plugin_id,error]);
 
 

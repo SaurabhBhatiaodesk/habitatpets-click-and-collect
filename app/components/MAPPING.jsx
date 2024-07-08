@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { LegacyCard,Card, Checkbox, Select } from "@shopify/polaris";
 
-const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage }) => {
+const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage ,preferenceActiveTab , mappings }) => {
   const [inputValue, setInputValue] = useState('');
   const [value, setValue] = useState();
   const [selectValue, setSelectValue] = useState();
@@ -9,6 +9,9 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage })
   const [plugin2, setPlugin2] = useState();
   const [selectedValue, setSelectedValue] = useState('');
   let field = {};
+
+
+  console.log("it is running................................................................")
 
   const handleChange = useCallback(
     (id) => {
@@ -25,6 +28,17 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage })
   const checkboxHeader = opt[plugin];
 
   useEffect(() => {
+    
+      
+      Object.entries(mappings.selected).reduce((acc, [key, value]) => {
+        handleChange(key);
+        console.log(mappings?.mapping?.[key]?.[plugin],"full",mappings?.[key],"half",plugin,"plugin")
+        handleSelectChange(key,mappings?.mapping?.[key]?.[plugin]);
+        
+        //console.log("key=>",key,"value=>", value);
+      }, {});
+    
+    console.log('under Mapping ',mapping);
     setValue(mapping?.[plugin]);
     pref.filter((p) => p.value !== plugin).map((get) => {
       setSelectValue(mapping?.[get.value]);
@@ -45,7 +59,10 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage })
       [id]: selectedOption,
     }));
   };
+
+  console.log("selectedValueee",selectedValue)
   const handleMapping = () => {
+    console.log("selectedValueeee",selectedValue)
     const formattedValues = Object.entries(selectedValue).reduce((acc, [key, value]) => {
      
       acc[key] = { [plugin]: value };
@@ -58,6 +75,9 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage })
 
     const raw = JSON.stringify(formattedValues);
 
+    console.log("rawwwwwwwwwwwwww",raw)
+    console.log("preferenceActiveTabbb",preferenceActiveTab)
+
     const requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -65,9 +85,11 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage })
       redirect: "follow"
     };
 
-    fetch("https://main.dev.saasintegrator.online/api/v1/category/save-mapping", requestOptions)
+
+
+    fetch(`https://main.dev.saasintegrator.online/api/v1/${preferenceActiveTab}/save-mapping`, requestOptions)
       .then((response) => response.text())
-      .then((result) => {console.log("mapping result ;;;===>",result)
+      .then((result) => {console.log("mapping result ;;;===>",result)``
         setNotificationMessage("Mapping saved successfully");
       })
       .catch((error) => console.error(error));
@@ -97,7 +119,7 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage })
               />
               <Select
                 name={`${field.name}:${v.id}`}
-                label={`${field.label} - ${v.name}`}
+                label={`${field.label}`}
                 options={field.options}
                 onChange={(selectedOption) => handleSelectChange(v.id, selectedOption)}
                 value={selectedValue[v.id]}

@@ -38,7 +38,7 @@ async function cartUpdate(updates, flag = false) {
 }
 async function fetchAccessToken() {
 	try {
-		let response = await fetch(`https://attract-gcc-neighborhood-achieving.trycloudflare.com/api/get?shop=${location.hostname}`, {
+		let response = await fetch(`https://liquid-rebound-write-employed.trycloudflare.com/api/get?shop=${location.hostname}`, {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json"
@@ -51,44 +51,56 @@ async function fetchAccessToken() {
 		throw error;
 	}
 }
+async function fetchLocationsGraphQL(accessToken) {    const myHeaders = new Headers();    myHeaders.append("Content-Type", "application/json");    myHeaders.append("X-Shopify-Access-Token", accessToken);
+    const graphql = JSON.stringify({  query: `query MyQuery {locations(first: 10) {nodes {activatable hasActiveInventory isActive localPickupSettingsV2 { instructions pickupTime } name id address {zip provinceCode province phone longitude latitude formatted countryCode country city address2 address1 } } } }`, variables: {}});
+    const requestOptions = { method: "POST", headers: myHeaders, body: graphql, redirect: "follow"};
+    try { const response = await fetch("/admin/api/2024-04/graphql.json", requestOptions); if (!response.ok) throw new Error(`Request failed with status ${response.status}`); return await response.json();} catch (error) {console.error("Error fetching locations:", error); throw error;}
+}
 async function getCartLocations(accessToken, selectedLocationName = "") {
 	try {
-		let response = await fetch("/admin/api/2024-04/locations.json", {
-			headers: {
-				"X-Shopify-Access-Token": accessToken
-			}
-		});
-		if (response.ok) {
-			let data = await response.json();
-			let locations = [];
-			for (let i = 0; i < data.locations.length; i++) {
-				let location = data.locations[i];
-				if (location.zip) {
-					locations.push(`${location.address1} ${location.city} ${location.zip} ${location.province} ${location.country_name}`);
-				}
-			}
-			let locationsElement = document.querySelector(".address-popup11 .locationss");
-			locationsElement.innerHTML = "";
-			if (locations.length > 0) {
-				let customerLocation = getCookie("customerlocation");
-				document.querySelector(".location").value = customerLocation;
-				let distanceApiUrl = `https://attract-gcc-neighborhood-achieving.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${document.domain}`;
-				let distanceData = await fetchData(distanceApiUrl);
-				let locationData = [];
-				for (let i = 0; i < data.locations.length; i++) {
-					let location = data.locations[i];
-					if (distanceData?.rows[0]?.elements[i]?.status == "OK") {
-						let distanceText = distanceData?.rows[0]?.elements[i]?.distance?.text;
-						locationData.push({
-							...location,
-							distance: parseInt(distanceText.replace(/,/g, "").replace(" km", "")),
-							distancetext: distanceText
-						});
+		const testres = await fetchLocationsGraphQL(accessToken);
+		console.log('testres ',testres)
+		if (testres.data.locations.nodes.length > 0) {
+			const locations = testres?.data?.locations?.nodes;
+            const destinationsArr = []; if (locations) { 
+				for (const location of locations) { 
+					if (location.address.zip && location?.localPickupSettingsV2 != null) {
+						 console.log('location rrr ',location.name); 
+						 destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`);
+						}
 					}
 				}
-				locationData.sort((a, b) => a.distance - b.distance);
-				for (let i = 0; i < locationData.length; i++) {
-					let location = locationData[i];
+			let locationsElement = document.querySelector(".address-popup11 .locationss");
+			locationsElement.innerHTML = "";
+			if (destinationsArr.length > 0) {
+				let customerLocation = getCookie("customerlocation");
+				document.querySelector(".location").value = customerLocation;
+				let distanceApiUrl = `https://liquid-rebound-write-employed.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${destinationsArr.join("|")}&shop=${location.hostname}`;
+				let res = await fetchData(distanceApiUrl);
+				let locationData = [];
+				const sortedLocations = [];
+				for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) {  const zipcode= location.address.zip; 
+					for (let index = 0; index < destinationsArr.length; index++) {
+						const distanceElement = res?.rows[0]?.elements[index]; const destinationAddress = destinationsArr[index];
+						console.log(zipcode, ' location.address ',' destinationsArr ',destinationAddress, ' location.name ',location.name, 'distanceElement ',distanceElement )
+						if(destinationAddress.includes(zipcode) ){
+						if (distanceElement?.status == "OK" && distanceElement?.status != "ZERO_RESULTS" ) {
+							const distanceText = distanceElement?.distance.text;
+							const parsedDistance = parseInt(distanceText.replace(/,/g, "").replace(" km", ""));
+							console.log('distanceElement ',index,' distanceText ',distanceText, ' parsedDistance ',parsedDistance);   
+							sortedLocations.push({
+								id: location.id,
+								distance: parsedDistance,
+								distanceText,
+								origin: res.origin_addresses,
+								...location
+							});   
+					} } }  }}
+						 sortedLocations.sort((a, b) => a.distance - b.distance); 
+						 console.log('sortedLocations ',sortedLocations)
+				for (let i = 0; i < sortedLocations.length; i++) {
+					let location = sortedLocations[i];
+					console.log('location ',location, 'selectedLocationName',selectedLocationName, location.distanceText)
 					if (selectedLocationName && location.name != "Snow City Warehouse") {
 						let radioBtn = document.createElement("div");
 						radioBtn.classList.add("radio-btn");
@@ -100,7 +112,7 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 						radioInput.classList.add("locations");
 						radioInput.name = "locations";
 						radioInput.dataset.name = location.name;
-						if (selectedLocationName == location.name) {
+						if (selectedLocationName === location.name) {
 							radioInput.checked = true;
 						}
 						let label = document.createElement("label");
@@ -110,7 +122,7 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 						colDiv.appendChild(label);
 						let col2Div = document.createElement("div");
 						col2Div.classList.add("col2");
-						col2Div.textContent = location.distancetext;
+						col2Div.textContent = location.distanceText;
 						radioBtn.appendChild(colDiv);
 						radioBtn.appendChild(col2Div);
 						locationsElement.appendChild(radioBtn);
@@ -124,25 +136,17 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 			}
 			document.querySelector(".address-popup11").style.display = "block";
 		}
-	} catch (error) {
-		console.error("Error getting cart locations:", error);
+	} catch (error) {console.error("Error getting cart locations:", error);
 	}
 }
 async function get_inv_locations(accessToken, product) {
-	// console.log('get_inv_locations accessToken ', accessToken);
     // let query=`query MyQuery { product(id: "gid://shopify/Product/${product.product_id}") {tags title tracksInventory collections(first: 10) { nodes { id title handle } } variants(first: 10) { nodes { inventoryItem { inventoryLevels(first: 10) { edges { node { location { activatable name } id quantities(names: "available") { name id quantity } } } } } id } id } } }`;
-
 	let query = `query MyQuery { product(id: "gid://shopify/Product/${product.product_id}") { tags title tracksInventory collections(first: 10) { nodes { id title handle } } variants(first: 10) { nodes { inventoryItem { inventoryLevels(first: 10) { edges { node { location { activatable name } id quantities(names: "available") { name id quantity } } } } } id } } } }`;
 	try {
 		let response = await fetch(`${location.origin}/admin/api/2024-04/graphql.json`, {
 			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"X-Shopify-Access-Token": `${accessToken}`
-			},
-			body: JSON.stringify({
-				query: query
-			})
+			headers: {	"Content-Type": "application/json",	"X-Shopify-Access-Token": `${accessToken}`	},
+			body: JSON.stringify({	query: query})
 		});
 		if (response.ok) {
 			let data = await response.json();
@@ -176,7 +180,7 @@ function handle_inv_locations(error, data, product) {
 					let inventoryLevel = variant.inventoryItem.inventoryLevels.edges[j].node;
 					let locationName = inventoryLevel.location.name;
                     // console.log('locationName',locationName);
-					if (storeLocationName == locationName && locationName !== "Snow City Warehouse") {
+					if (storeLocationName === locationName && locationName !== "Snow City Warehouse") {
                         isInStock = inventoryLevel.quantities[0].quantity > 2 && inventoryLevel.quantities[0].quantity >= product.quantity;
                         // if(inventoryLevel.quantities[0].quantity > 2 && inventoryLevel.quantities[0].quantity >= product.quantity){
                         //     console.log(isInStock, ' -- flase isinstock', inventoryLevel.quantities[0].quantity, product.quantity)
