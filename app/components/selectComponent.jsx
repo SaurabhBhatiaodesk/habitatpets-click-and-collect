@@ -29,7 +29,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango,error }
       if (valuesArray.includes(valueToCheck)) {
         setShow(true);
       } else {
-        setShow(false);
+        setShow(false); 
       }
     } 
   }, [inputValues, field.name, field.value, mango?.plugin_id,error]);

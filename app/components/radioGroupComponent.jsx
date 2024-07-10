@@ -35,7 +35,9 @@ const RadioGroupComponent = ({ field, inputValues, handleconfigChange, mango, er
             id={field.id}
             name={field.name}
             value={option.value}
+            required={field.required}
             onChange={() => handleChange(option.value)}
+            requiredIndicator
           />
         ))}
         <span style={{ color: "red" }}>{showError}</span>

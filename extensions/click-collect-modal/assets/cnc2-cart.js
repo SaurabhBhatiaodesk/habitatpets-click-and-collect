@@ -38,7 +38,7 @@ async function cartUpdate(updates, flag = false) {
 }
 async function fetchAccessToken() {
 	try {
-		let response = await fetch(`https://liquid-rebound-write-employed.trycloudflare.com/api/get?shop=${location.hostname}`, {
+		let response = await fetch(`https://clickncollect-12d7088d53ee.herokuapp.com/api/get?shop=${location.hostname}`, {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json"
@@ -75,7 +75,7 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 			if (destinationsArr.length > 0) {
 				let customerLocation = getCookie("customerlocation");
 				document.querySelector(".location").value = customerLocation;
-				let distanceApiUrl = `https://liquid-rebound-write-employed.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${destinationsArr.join("|")}&shop=${location.hostname}`;
+				let distanceApiUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&destinations=${destinationsArr.join("|")}&shop=${location.hostname}`;
 				let res = await fetchData(distanceApiUrl);
 				let locationData = [];
 				const sortedLocations = [];

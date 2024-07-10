@@ -27,7 +27,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
         setShow(false);
       }
     } else {
-      setShow(false);
+      setShow(false); 
     }
     
     

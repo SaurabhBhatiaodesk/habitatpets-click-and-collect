@@ -288,7 +288,7 @@ export default function configPage() {
     }
     else {
       if (!credentialFormStatus) {
-        handleItemClick("product");
+        handleItemClick("store");
       }
     }
 
@@ -728,7 +728,7 @@ export default function configPage() {
                   {prefEnableDisable != 0 &&
                     configform?.config_form?.map((mango,index) => {
                       console.log("mango :::", mango);
-                      const isLast = index === mango?.fields.length-1 || index === mango?.fields.length-2;
+                      const isLast = index === 0;
                       console.log("isLast :::", isLast);
                       console.log("index :::", index);
                       console.log("mango?.fields.length :::", mango?.fields.length);
@@ -737,7 +737,7 @@ export default function configPage() {
 
                           {mango?.fields.length > 0 && (
                             <LegacyCard title={mango?.label} sectioned 
-                            primaryFooterAction={isLast ? { content: 'Save Config', onAction: () => handleConfigSubmit() } : undefined}>
+                            actions={isLast ? { content: 'Save Config', onAction: () => handleConfigSubmit() } : undefined}>
                               <Card title="configform">
                                 <FormLayout>
                                   <div
@@ -858,6 +858,7 @@ export default function configPage() {
                                                   type={field.type}
                                                   required={field.required}
                                                   helpText={field.description}
+                                                  requiredIndicator
                                                 />
                                                 <>
                                                   {cerror.length > 0 && cerror.filter((e) => e.name == fieldKey).map((sh) => {
@@ -924,6 +925,7 @@ export default function configPage() {
                                                     type={field.type}
                                                     required={field.required}
                                                     helpText={field.description}
+                                                    requiredIndicator
                                                   />
                                                   <>
                                                     {cerror.length > 0 && cerror.filter((e) => e.name == fieldKey).map((sh) => {
