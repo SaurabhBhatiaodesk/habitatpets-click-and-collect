@@ -14,8 +14,7 @@ async function fetchLocationsGraphQL(accessToken) {    const myHeaders = new Hea
               const res = await fetchData(mapUrl);
               if (res) { const sortedLocations = [];
                   for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) {  const zipcode= location.address.zip; 
-                      for (let index = 0; index < destinationsArr.length; index++) {
-                          const distanceElement = res?.rows[0]?.elements[index]; const destinationAddress = destinationsArr[index];
+                      for (let index = 0; index < destinationsArr.length; index++) { const distanceElement = res?.rows[0]?.elements[index]; const destinationAddress = destinationsArr[index];
                           console.log(zipcode, ' location.address ',' destinationsArr ',destinationAddress, ' location.name ',location.name )
                           if(destinationAddress.includes(zipcode) ){
                           if (distanceElement?.status == "OK" && distanceElement?.status != "ZERO_RESULTS" ) {
@@ -28,11 +27,10 @@ async function fetchLocationsGraphQL(accessToken) {    const myHeaders = new Hea
                                   origin: res.origin_addresses,
                                   ...location
                               });   
-                      } } }  }}
-                           sortedLocations.sort((a, b) => a.distance - b.distance); 
+                      } } }  }} sortedLocations.sort((a, b) => a.distance - b.distance); 
                              renderLocations(sortedLocations, selectedLocation);  }   }
-          const popupModal = document.querySelector(".popup-modal"); if (popupModal) popupModal.style.display = "block";
           document.querySelector(".popup-box .address-popup").style.display = "block";
+          let popupModal = document.querySelector(".popup-modal");    if (popupModal) { popupModal.style.display = "block"; popupModal.classList.add("showmodal"); }
           if (getCookie("storelocationName")){ console.log('storelocationName  not set : ',getCookie("storelocationName"))}
           else{  console.log('storelocationName  else : ',getCookie("storelocationName"))}
       } catch (error) { console.error("Error fetching locations:", error); }
@@ -40,9 +38,9 @@ async function fetchLocationsGraphQL(accessToken) {    const myHeaders = new Hea
 async function getInventoryLocations(accessToken, callback) {
   let productId = document.querySelector('.product-form input[name="product-id"]').value;
   let query=`query { product(id: "gid://shopify/Product/${productId}") { tags title tracksInventory collections(first: 10) { nodes { id title handle } } variants(first: 10) { nodes { inventoryItem { inventoryLevels(first: 10) { edges { node { location { activatable name } id quantities(names: "available") { name id quantity } } } } } id } } } }`;
-  try {
+  try {console.log('getInventoryLocations accessToken : ', accessToken.accessToken);
     let response = await fetch(`${location.origin}/admin/api/2024-04/graphql.json`, {     
-      method: "POST", headers: {  "Content-Type": "application/json", "X-Shopify-Access-Token": accessToken.accessToken },
+      method: "POST", headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": accessToken.accessToken },
       body: JSON.stringify({ query: query, variables: {} })
     });
     if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
@@ -82,28 +80,28 @@ function handleInventoryLocationsResponse(data) {
       document.querySelector(".inventory-details .broadway .dropdown b").textContent = storeLocationName;
     }
   }
-  for (let i = 0; i < data.product.collections.nodes.length; i++) {
-    if (data.product.collections.nodes[i].handle === "automated-collection") { console.log("Collection:", data.product.collections.nodes[i], "Collections working");}
+  for (let i = 0; i < data.product.collections.nodes.length; i++) { if (data.product.collections.nodes[i].handle === "automated-collection") { console.log("Collection:", data.product.collections.nodes[i], "Collections working");}
   }
-  for (let i = 0; i < data.product.tags.length; i++) {
-    if (data.product.tags[i] === "Accessory") {  console.log("Tag:", data.product.tags[i], "Tag validation is working");  }
-  }
+  for (let i = 0; i < data.product.tags.length; i++) { if (data.product.tags[i] === "Accessory") {  console.log("Tag:", data.product.tags[i], "Tag validation is working");  } }
 }
 async function refreshInventoryLocations() {
-  try { let accessToken = await fetchAccessToken(); 
-      getInventoryLocations(accessToken, (error, data) => {
+  try {
+    let accessToken = await fetchAccessToken(); console.log('refreshInventoryLocations accessToken   ',accessToken.accessToken);  
+    getInventoryLocations(accessToken, (error, data) => {
       if (data) {  handleInventoryLocationsResponse(data); } else { console.error("Error:", error); }
     });
   } catch (error) { console.error("Error refreshing inventory locations:", error); }
 }
-document.addEventListener("click", event => {  if (!event.target.closest(".inventory-details")) { refreshInventoryLocations(); } });
+document.addEventListener("click", event => {
+  if (!event.target.closest(".inventory-details")) { refreshInventoryLocations(); }
+});
 const crossElement = document.querySelector(".popup-close-cross");
-function showModal(){ let storeLocationName=getCookie("storelocationName");fetchAccessToken().then(({accessToken})=>{getLocations(accessToken,storeLocationName)}).catch(console.error); console.log('refreshInventoryLocations '); refreshInventoryLocations()}
+function showModal(){let storeLocationName=getCookie("storelocationName");fetchAccessToken().then(({accessToken})=>{getLocations(accessToken,storeLocationName)}).catch(console.error);refreshInventoryLocations()}
 if (crossElement) {  crossElement.addEventListener("click", event => {  event.preventDefault(); let popupModal = document.querySelector(".popup-modal");    if (popupModal) { popupModal.style.display = "none"; popupModal.classList.remove("showmodal"); }  });
 } else {  console.log("Element with class 'cross' not found");}
 document.addEventListener("change", event => {  if (event.target.matches(".popup-modal .address-popup input.locations")) { let locationName = event.target.nextElementSibling.textContent;
     setCookie("storelocationName", locationName);    setCookie("storelocation", event.target.id);    refreshInventoryLocations();
   }
 });
-document.addEventListener("click", event => {  if (event.target.classList.contains("open-modal-cnc"))  {showModal(); }});
+document.addEventListener("click", event => {  if (event.target.classList.contains("open-modal-cnc")) {showModal(); }});
 refreshInventoryLocations();

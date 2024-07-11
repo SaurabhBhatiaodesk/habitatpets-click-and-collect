@@ -15,22 +15,20 @@ async function fetchLocationsGraphQL(accessToken) {    const myHeaders = new Hea
                 const mapUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&destinations=${destinationsArr.join("|")}&shop=${location.hostname}`;
                 const res = await fetchData(mapUrl);
                 if (res) {  const sortedLocations = [];
-                    for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) {  const zipcode= location.address.zip; 
-                        for (let index = 0; index < destinationsArr.length; index++) {
-                            const distanceElement = res?.rows[0]?.elements[index]; const destinationAddress = destinationsArr[index]; console.log(zipcode, ' location.address ',' destinationsArr ',destinationAddress, ' location.name ',location.name )
+                    for (let index = 0; index < locations.length; index++){ const location = locations[index]; if (location.address.zip && location?.localPickupSettingsV2 != null) {  const zipcode= location.address.zip; const  fulladdress= location.address.address1 + ' '+zipcode ;
+					for (let index = 0; index < destinationsArr.length; index++) {
+                            const distanceElement = res?.rows[0]?.elements[index]; const destinationAddress = destinationsArr[index]; console.log('testssssss',zipcode, ' location.address ',' destinationsArr ',destinationAddress, ' location.name ',location.name )
                             if(destinationAddress.includes(zipcode) ){
                             if (distanceElement?.status == "OK" && distanceElement?.status != "ZERO_RESULTS" ) {
                                 const distanceText = distanceElement?.distance.text;
-                                const parsedDistance = parseInt(distanceText.replace(/,/g, "").replace(" km", ""));
-                                console.log('distanceElement ',index,' distanceText ',distanceText, ' parsedDistance ',parsedDistance);   
+                                const parsedDistance = parseInt(distanceText.replace(/,/g, "").replace(" km", ""));         console.log('distanceElement ',index,' distanceText ',distanceText, ' parsedDistance ',parsedDistance);   
                                 sortedLocations.push({
                                     id: location.id,
                                     distance: parsedDistance,
                                     distanceText,
                                     origin: res.origin_addresses,
                                     ...location
-                                });   
-                        } } }  }}
+                                }); } } }}} console.log('sortedLocations',sortedLocations);
                              sortedLocations.sort((a, b) => a.distance - b.distance); 
                                renderLocations(sortedLocations, selectedLocation);
                 }
@@ -70,6 +68,6 @@ if (document.querySelector(".popup-modal")) {
         } });});  if (getCookie("storelocationName")) {  }else{ showModal(); }
 }
 async function getUserLocation() { const accessToken = '7a1891347cf4af'; try {const response = await fetch(`https://ipinfo.io/json?token=${accessToken}`);
-        const data = await response.json(); if(getCookie("customerlocation")){ if(document.querySelector('.popup-modal .check-btn input').value == ""){  document.querySelector('.popup-modal .check-btn input').value= data.postal;
-            } }else{ setCookie("customerlocation", data.postal); document.querySelector('.popup-modal .check-btn input').value= data.postal;
+        const data = await response.json(); if(getCookie("customerlocation")){ if(document.querySelector('.check-btn input.location').value == ""){  document.querySelector('.check-btn input.location').value= data.postal;
+            } }else{ setCookie("customerlocation", data.postal); document.querySelector('.check-btn input.location').value= data.postal;
         } return data; } catch (error) { console.error('Error fetching IP information:', error);} } getUserLocation();

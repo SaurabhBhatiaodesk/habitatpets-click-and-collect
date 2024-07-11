@@ -1,1 +1,213 @@
-:focus-visible{outline:inherit!important;box-shadow:none!important}.popup-modal{background:#000000db;height:100vh;width:100%;position:fixed;display:flex;align-items:center;z-index:9}.popup-box{background:#fff;box-shadow:0 0 10px #ddd;max-width:464px;margin:2em auto;padding:10px 20px;border-radius:20px}.popup-modal .address-popup h4{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:flex-start;gap:10px;margin:5px 0;font-size:18px}.popup-inner-col .add{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center}.popup-inner-col{border-bottom:1px solid #ccc;margin:20px 0;padding-bottom:20px}.popup-box h3{font-size:20px;line-height:30px;color:#141414;text-align:center;margin-bottom:0;margin-top:10px}.popup-box p{margin:10px 0;font-size:15px;line-height:22px;font-weight:300;text-align:center;color:#000}.address-popup{margin-top:2.5em;max-height:350px;overflow:auto}.popup-modal .check-btn input{border:1px solid #000;min-height:50px;padding-left:15px;border-radius:10px 0 0 10px;min-width:70%}.popup-modal .check-btn input::placeholder{font-size:15px;line-height:25px}.popup-modal button.check-btn{cursor:pointer;background:#141414;color:#fff;min-height:52px;padding:0 30px;font-size:15px;border-radius:0 10px 10px 0;margin-left:-10px;position:absolute;margin-top:-1px}.popup-modal ul.order-list li{list-style:none;margin:6px 0;font-size:15px;line-height:22px;color:#141414}.popup-modal .popup-inner-col button{margin:20px 0;border:none}.popup-btn,.popup-modal .popup-inner-col button a{border-radius:5px;background:#141414;color:#fff;padding:10px 20px;font-size:16px;line-height:22px;text-decoration:none}.popup-modal .popup-inner-col .add label{font-size:17px;line-height:27px;font-weight:600;color:#141414;padding-left:5px}.popup-modal .address-popup img{max-width:30px}.popup-modal .popup-box a.cross img,.popup-modal .popup-box a.popup-close-cross img{background:#d40000;padding:6px;border-radius:50%;color:#fff;text-decoration:none;position:absolute;right:8px;top:8px;width:27px}.popup-modal .popup-box{position:fixed;width:500px;height:auto;background:#fff;overflow:visible;z-index:9;max-height:100%;top:50%;left:50%;transform:translate(-50%,-50%)}.popup-modal .check-btn{max-width:80%;margin:auto}.popup-modal ::-webkit-scrollbar{width:2px}.popup-modal ::-webkit-scrollbar-track{background:0 0}.popup-modal ::-webkit-scrollbar-thumb{background:0 0}.popup-modal ::-webkit-scrollbar-thumb:hover{background:0 0}.popup-btn{width:100%;cursor:pointer}@media screen and (max-width:575px){.popup-box{max-width:90%}.address-popup{max-height:215px!important}}@media screen and (max-width:400px){.popup-box button.check-btn{padding:0 15px;font-size:17px}}
+:focus-visible {
+    outline: inherit !important;
+    box-shadow: none !important
+}
+
+.popup-modal {
+    background: #000000db;
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    z-index: 9
+}
+
+.popup-box {
+    background: #fff;
+    box-shadow: 0 0 10px #ddd;
+    max-width: 464px;
+    margin: 2em auto;
+    padding: 10px 20px;
+    border-radius: 20px
+}
+
+.popup-modal .address-popup h4 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    margin: 5px 0;
+    font-size: 18px;
+}
+
+.popup-inner-col .add {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center
+}
+
+.popup-inner-col {
+    border-bottom: 1px solid #ccc;
+    margin: 20px 0;
+    padding-bottom: 20px
+}
+
+.popup-box h3 {
+    font-size: 20px;
+    line-height: 30px;
+    color: #141414;
+    text-align: center;
+    margin-bottom: 0;
+    margin-top: 10px
+}
+
+.popup-box p {
+    margin: 10px 0;
+    font-size: 15px;
+    line-height: 22px;
+    font-weight: 300;
+    text-align: center;
+    color: #000
+}
+
+.locationss .popup-inner-col ul.order-list {
+    margin: 0;
+    padding: 0 10px;
+}
+
+.address-popup {
+    margin-top: 0.5em;
+    max-height: 350px;
+    overflow: auto;
+}
+
+.popup-modal .check-btn input {
+    border: 1px solid #000;
+    min-height: 50px;
+    padding-left: 15px;
+    border-radius: 10px 0 0 10px;
+    min-width: 70%
+}
+
+.popup-modal .check-btn input::placeholder {
+    font-size: 15px;
+    line-height: 25px
+}
+
+.popup-modal button.check-btn {
+    cursor: pointer;
+    background: #141414;
+    color: #fff;
+    min-height: 52px;
+    padding: 0 30px;
+    font-size: 15px;
+    border-radius: 0 10px 10px 0;
+    margin-left: -10px;
+    position: absolute;
+    margin-top: -1px
+}
+
+.popup-modal ul.order-list li {
+    list-style: none;
+    margin: 6px 0;
+    font-size: 15px;
+    line-height: 22px;
+    color: #141414
+}
+
+.popup-modal .popup-inner-col button {
+    margin: 20px 0;
+    border: none
+}
+
+.popup-btn,
+.popup-modal .popup-inner-col button a {
+    border-radius: 5px;
+    background: #141414;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 16px;
+    line-height: 22px;
+    text-decoration: none
+}
+
+.popup-modal .popup-inner-col .add label {
+    font-size: 17px;
+    line-height: 27px;
+    font-weight: 600;
+    color: #141414;
+    padding-left: 5px
+}
+
+.popup-modal .address-popup img {
+    max-width: 30px;
+    object-fit: contain;
+}
+
+.popup-modal .popup-box a.cross img,
+.popup-modal .popup-box a.popup-close-cross img {
+    background: #d40000;
+    padding: 6px;
+    border-radius: 50%;
+    color: #fff;
+    text-decoration: none;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    width: 27px
+}
+
+.popup-modal .popup-box {
+    position: fixed;
+    width: 500px;
+    height: auto;
+    background: #fff;
+    overflow: visible;
+    z-index: 9;
+    max-height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%)
+}
+
+.popup-modal .check-btn {
+    max-width: 80%;
+    margin: auto
+}
+
+.popup-modal ::-webkit-scrollbar {
+    width: 2px
+}
+
+.popup-modal ::-webkit-scrollbar-track {
+    background: 0 0
+}
+
+.popup-modal ::-webkit-scrollbar-thumb {
+    background: 0 0
+}
+
+.popup-modal ::-webkit-scrollbar-thumb:hover {
+    background: 0 0
+}
+
+.popup-btn {
+    width: 100%;
+    cursor: pointer
+}
+
+@media screen and (max-width:575px) {
+    .popup-box {
+        max-width: 90%
+    }
+
+    .address-popup {
+        max-height: 215px !important
+    }
+}
+
+@media screen and (max-width:400px) {
+    .popup-box button.check-btn {
+        padding: 0 15px;
+        font-size: 17px
+    }
+}
+
+@media screen and (max-width:370px) {
+    .popup-modal .check-btn {
+        padding: 0;
+    }
+}
