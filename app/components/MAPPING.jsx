@@ -29,15 +29,15 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage ,p
 
   useEffect(() => {
     
-      
-      Object.entries(mappings.selected).reduce((acc, [key, value]) => {
+      if(mappings?.selected){
+      Object.entries(mappings?.selected).reduce((acc, [key, value]) => {
         handleChange(key);
         console.log(mappings?.mapping?.[key]?.[plugin],"full",mappings?.[key],"half",plugin,"plugin")
         handleSelectChange(key,mappings?.mapping?.[key]?.[plugin]);
-        
+      
         //console.log("key=>",key,"value=>", value);
       }, {});
-    
+      }
     console.log('under Mapping ',mapping);
     setValue(mapping?.[plugin]);
     pref.filter((p) => p.value !== plugin).map((get) => {
@@ -60,23 +60,21 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage ,p
     }));
   };
 
-  console.log("selectedValueee",selectedValue)
   const handleMapping = () => {
-    console.log("selectedValueeee",selectedValue)
+
     const formattedValues = Object.entries(selectedValue).reduce((acc, [key, value]) => {
      
       acc[key] = { [plugin]: value };
       return acc;
     }, {});
-    console.log(plugin, "Formatted Values: ====>", formattedValues);
+
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer "+token);
     myHeaders.append("Content-Type", "application/json");
 
     const raw = JSON.stringify(formattedValues);
 
-    console.log("rawwwwwwwwwwwwww",raw)
-    console.log("preferenceActiveTabbb",preferenceActiveTab)
+
 
     const requestOptions = {
       method: "POST",

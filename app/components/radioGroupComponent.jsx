@@ -9,10 +9,12 @@ const RadioGroupComponent = ({ field, inputValues, handleconfigChange, mango, er
     // Ensure inputValues and inputValues.general are defined before accessing them
     const initialValue = inputValues?.[mango?.plugin_id]?.[field.name] || '';
     setSelectedValue(initialValue);
-    if (field?.name == error?.name) {
-
-      setShowError("This field is Required");
-    }
+    error.map((e)=>{
+      if(field?.name==e?.name){
+          console.log('"This field is Required"',field.name);
+        setShowError("This field is Required");
+      }
+    })
   }, [inputValues, field.name, error]);
 
   const handleChange = (value) => {
@@ -37,7 +39,7 @@ const RadioGroupComponent = ({ field, inputValues, handleconfigChange, mango, er
             value={option.value}
             required={field.required}
             onChange={() => handleChange(option.value)}
-            requiredIndicator
+            requiredIndicator={field.required}
           />
         ))}
         <span style={{ color: "red" }}>{showError}</span>

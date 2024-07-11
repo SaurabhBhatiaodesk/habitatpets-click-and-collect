@@ -110,7 +110,7 @@ export default function configPage() {
   const items = [];
   const [loader, setLoader] = useState("");
   const [required, setRequired] = useState();
-  const [error, setError] = useState();
+  const [showerror, setError] = useState();
   const [cerror, setCerror] = useState([]);
 
   console.log("dataaaaaaaa ::", data);
@@ -345,7 +345,7 @@ export default function configPage() {
       for (let key in plugin.fields) {
         if (key != "stocky_token") {
           credential_values[key] = formData[key] || null;
-          if (credential_values[key] == null || credential_values[key] == null) {
+          if (credential_values[key] == null || credential_values[key] == null || credential_values[key] == "") {
             credError = true;
             push.push({ name: key })
 
@@ -758,7 +758,7 @@ export default function configPage() {
                                                   inputValues={inputValues}
                                                   handleconfigChange={handleconfigChange}
                                                   mango={{ plugin_id: mango?.plugin_id }}
-                                                  error={error}
+                                                  error={showerror}
                                                 />
                                               );
                                             case "select":
@@ -770,7 +770,7 @@ export default function configPage() {
                                                     inputValues={inputValues}
                                                     handleconfigChange={handleconfigChange}
                                                     mango={mango}
-                                                    error={error}
+                                                    error={showerror}
                                                   />
                                                 </>
                                               );
@@ -782,7 +782,7 @@ export default function configPage() {
                                                   inputValues={inputValues}
                                                   handleconfigChange={handleconfigChange}
                                                   mango={{ plugin_id: mango?.plugin_id }}
-                                                  error={error}
+                                                  error={showerror}
                                                 />
                                               );
                                             default:

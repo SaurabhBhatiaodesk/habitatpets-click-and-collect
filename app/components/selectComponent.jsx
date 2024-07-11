@@ -17,10 +17,12 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango,error }
     else{
     setSelectedValue(initialValue);
     }
-    if(field?.name==error?.name){
- 
-      setShowError("This field is Required");
-    }
+    error.map((e)=>{
+      if(field?.name==e?.name){
+          console.log('"This field is Required"',field.name);
+        setShowError("This field is Required");
+      }
+    })
     const valuesString = field.show_in_value;
     const valueToCheck = inputValues?.[mango?.plugin_id]?.[field.show_in];
 
@@ -53,7 +55,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango,error }
       value={selectedValue}
       required={field.required}
       helpText={field.description}
-      requiredIndicator
+      requiredIndicator={field.required}
     />
     <span style={{color:"red"}}>{showError}</span>
     </div>

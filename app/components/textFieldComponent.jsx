@@ -6,15 +6,18 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
   const [showError,setShowError]=useState('');
   const [show,setShow]=useState(false);
 
+  console.log("error:::::::",error);
   useEffect(() => {
-    console.log("error:::::::",error);
+    
     // Ensure inputValues is defined before accessing it
     const initialValue = inputValues?.[mango?.plugin_id]?.[field.name] || field.value || '';
     setInputValue(initialValue);
-    if(field?.name==error?.name){
- 
+    error.map((e)=>{
+    if(field?.name==e?.name){
+        console.log('"This field is Required"',field.name);
       setShowError("This field is Required");
     }
+  })
     
     const valuesString = field.show_in_value;
     const valueToCheck = inputValues?.[mango?.plugin_id]?.[field.show_in];
@@ -31,7 +34,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
     }
     
     
-  }, [inputValues, field.name, field.value, mango?.plugin_id], error);
+  }, [inputValues, field.name, field.value, mango?.plugin_id,error]);
 
   
   const handleChange = (value) => {
@@ -49,9 +52,9 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
       onChange={handleChange}
       name={field.name}
       type={field.input_type}
-      required={field.required}
+      required="true"
       helpText={field.description}
-      requiredIndicator
+      requiredIndicator={field.required}
     />
     <span style={{color:"red"}}>{showError}</span>
     </div>
