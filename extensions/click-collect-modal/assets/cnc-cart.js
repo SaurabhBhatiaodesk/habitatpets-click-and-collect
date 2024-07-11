@@ -10,7 +10,7 @@ async function cartUpdate(updates) {
       }
     } catch (error) { console.error("Error:", error);}
   }
-  async function fetchAccessToken(){try{let response=await fetch(`https://liquid-rebound-write-employed.trycloudflare.com/api/get?shop=${location.hostname}`,{headers:{"Content-Type":"application/json",Accept:"application/json"}});if(!response.ok)throw new Error("Network response was not ok.");return await response.json()}catch(error){console.error("Error fetching access token:",error);throw error;}}
+  async function fetchAccessToken(){try{let response=await fetch(`https://clickncollect-12d7088d53ee.herokuapp.com/api/get?shop=${location.hostname}`,{headers:{"Content-Type":"application/json",Accept:"application/json"}});if(!response.ok)throw new Error("Network response was not ok.");return await response.json()}catch(error){console.error("Error fetching access token:",error);throw error;}}
   async function getCartLocations(accessToken, selectedLocationName = "") {
     try {
       let response = await fetch("/admin/api/2024-04/locations.json", {headers: { "X-Shopify-Access-Token": accessToken }});
@@ -21,7 +21,7 @@ async function cartUpdate(updates) {
         let locationsElement = document.querySelector(".address-popup11 .locationss"); locationsElement.innerHTML = "";
         if (locations.length > 0) {
           let customerLocation = getCookie("customerlocation"); document.querySelector(".location").value = customerLocation;
-          let distanceApiUrl = `https://liquid-rebound-write-employed.trycloudflare.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${document.domain}`;
+          let distanceApiUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&destinations=${locations.join("|")}&shop=${document.domain}`;
           let distanceData = await fetchData(distanceApiUrl); let locationData = [];
           for (let i = 0; i < data.locations.length; i++) {
             let location = data.locations[i];

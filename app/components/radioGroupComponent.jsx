@@ -9,7 +9,7 @@ const RadioGroupComponent = ({ field, inputValues, handleconfigChange, mango, er
     // Ensure inputValues and inputValues.general are defined before accessing them
     const initialValue = inputValues?.[mango?.plugin_id]?.[field.name] || '';
     setSelectedValue(initialValue);
-    error.map((e)=>{
+    error?.map((e)=>{
       if(field?.name==e?.name){
           console.log('"This field is Required"',field.name);
         setShowError("This field is Required");

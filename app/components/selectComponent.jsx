@@ -17,7 +17,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango,error }
     else{
     setSelectedValue(initialValue);
     }
-    error.map((e)=>{
+    error?.map((e)=>{
       if(field?.name==e?.name){
           console.log('"This field is Required"',field.name);
         setShowError("This field is Required");

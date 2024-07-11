@@ -12,7 +12,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
     // Ensure inputValues is defined before accessing it
     const initialValue = inputValues?.[mango?.plugin_id]?.[field.name] || field.value || '';
     setInputValue(initialValue);
-    error.map((e)=>{
+    error?.map((e)=>{
     if(field?.name==e?.name){
         console.log('"This field is Required"',field.name);
       setShowError("This field is Required");
