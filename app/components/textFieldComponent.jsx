@@ -20,7 +20,15 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
   })
     
     const valuesString = field.show_in_value;
-    const valueToCheck = inputValues?.[mango?.plugin_id]?.[field.show_in];
+    let valueToCheck = inputValues?.[mango?.plugin_id]?.[field.show_in];
+
+    for (var key in inputValues) {
+      // code block to be executed
+      if(inputValues?.[key]?.[field.show_in])
+          {
+             valueToCheck=inputValues?.[key]?.[field.show_in];
+          }
+    }
 
     if (valuesString) {
       const valuesArray = valuesString.split(',');

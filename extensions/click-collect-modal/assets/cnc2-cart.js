@@ -78,8 +78,8 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 		const testres = await fetchLocationsGraphQL(accessToken);
 		let arrr = localStorage.getItem("testings");
 		arrr = JSON.parse(arrr);
-		console.log('testingskkkkkkkkkkkkkkeeeeeeeees',arrr);
-		console.log('testres ', testres)
+		// console.log('testingskkkkkkkkkkkkkkeeeeeeeees',arrr);
+		// console.log('testres ', testres)
 		if (testres.data.locations.nodes.length > 0) {
 			const locations = testres?.data?.locations?.nodes;
 			const destinationsArr = []; if (locations) {
@@ -132,8 +132,8 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 			
 				for (let i = 0; i < sortedLocations.length; i++) {
 					let location = sortedLocations[i];
-					let loc= location.name;
-					console.log('location ', location, 'selectedLocationName',arrr,'  arrr.location ', arrr?.[loc], arrr.loc,'loc -- ', loc, selectedLocationName, location.distanceText)
+					let loc= location?.name;
+					console.log('location ', location, 'selectedLocationName',arrr,'  arrr.location ', arrr?.[loc],'loc -- ', loc, selectedLocationName, location.distanceText)
 					// if (selectedLocationName && location.name != "Snow City Warehouse") {
 					let radioBtn = document.createElement("div");  
 					if(arrr?.[loc] ){ radioBtn.classList.add("radio-btn");
@@ -310,7 +310,7 @@ async function handle_inv_locations(error, data, product) {
 		}
 	  });     
 
-	console.log('testings arrr111 11111111', arrr);
+
 	localStorage.setItem("testings", JSON.stringify(arrr));
 	
 	let variantId = product.variant_id;
@@ -474,9 +474,9 @@ function fetchInventoryForCartItems(accessToken, data) {
 
 		for (var j = 0; j < cartItems.length; j++) {
 			var cartItem = cartItems[j];
-			console.log(' fetchInventoryForCartItems cartItem.variant_id == variantId', cartItem.variant_id, variantId);
+			// console.log(' fetchInventoryForCartItems cartItem.variant_id == variantId', cartItem.variant_id, variantId);
 			if (cartItem.variant_id == variantId) {
-				console.log('cartItem.variant_id == variantId', cartItem.variant_id, variantId);
+				// console.log('cartItem.variant_id == variantId', cartItem.variant_id, variantId);
 				matched = true;
 				var itemQuantities = cartGrid.querySelector(".item-quantities span b");
 				if (itemQuantities) {

@@ -7,6 +7,10 @@ async function fetchLocationsGraphQL(accessToken) {    const myHeaders = new Hea
   const requestOptions = { method: "POST", headers: myHeaders, body: graphql, redirect: "follow"};
   try { const response = await fetch("/admin/api/2024-04/graphql.json", requestOptions); if (!response.ok) throw new Error(`Request failed with status ${response.status}`); return await response.json();} catch (error) {console.error("Error fetching locations:", error); throw error;}
 }
+
+async function fetchQuantity() {try { let response = await fetch(`https://clickncollect-12d7088d53ee.herokuapp.com/api/quantity?shop=${location.hostname}`, {
+			headers: {"Content-Type": "application/json", Accept: "application/json" } });
+		if (!response.ok) throw new Error("Network response was not ok."); return await response.json()	} catch (error) { console.error("Error fetching access token:", error);		throw error;	}}
   async function getLocations(accessToken, selectedLocation = "") { try {      const testres = await fetchLocationsGraphQL(accessToken); 
         const locations = testres?.data?.locations?.nodes;  const destinationsArr = []; if (locations) { for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) { console.log('location rrr ',location.name); destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`);}}}
             if (destinationsArr.length > 0) { const customerLocation = getCookie("customerlocation"); document.querySelector(".location").value = customerLocation;
@@ -34,11 +38,11 @@ async function fetchLocationsGraphQL(accessToken) {    const myHeaders = new Hea
           if (getCookie("storelocationName")){ console.log('storelocationName  not set : ',getCookie("storelocationName"))}
           else{  console.log('storelocationName  else : ',getCookie("storelocationName"))}
       } catch (error) { console.error("Error fetching locations:", error); }
-  }
+  } 
 async function getInventoryLocations(accessToken, callback) {
   let productId = document.querySelector('.product-form input[name="product-id"]').value;
   let query=`query { product(id: "gid://shopify/Product/${productId}") { tags title tracksInventory collections(first: 10) { nodes { id title handle } } variants(first: 10) { nodes { inventoryItem { inventoryLevels(first: 10) { edges { node { location { activatable name } id quantities(names: "available") { name id quantity } } } } } id } } } }`;
-  try {console.log('getInventoryLocations accessToken : ', accessToken.accessToken);
+  try {
     let response = await fetch(`${location.origin}/admin/api/2024-04/graphql.json`, {     
       method: "POST", headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": accessToken.accessToken },
       body: JSON.stringify({ query: query, variables: {} })
@@ -48,8 +52,8 @@ async function getInventoryLocations(accessToken, callback) {
     callback(null, data.data);
   } catch (error) {console.error("Error fetching inventory locations:", error); callback(error, null);}
 }
-function handleInventoryLocationsResponse(data) {
-  let storeLocationName = getCookie("storelocationName");
+async function handleInventoryLocationsResponse(data) {
+  var quantityres = await fetchQuantity(); let storeLocationName = getCookie("storelocationName");
   let productVariantId = document.querySelector(".product-form .product-variant-id").value;
   for (let i = 0; i < data.product.variants.nodes.length; i++) {
     let variant = data.product.variants.nodes[i];
@@ -62,46 +66,21 @@ function handleInventoryLocationsResponse(data) {
           let inventoryLevel = variant.inventoryItem.inventoryLevels.edges[j].node;
           if (inventoryLevel.location.name === storeLocationName) {
             let quantity = inventoryLevel.quantities[0].quantity;
-            isInStock = quantity > 2;
+            isInStock = quantity > quantityres.quantity;
           }
         }
       }
-      let inventoryStatusElement = document.querySelector(".inventory_status");
-      let stockElement = document.querySelector(".inventory_status .stock");
-      if (isInStock) {
-        inventoryStatusElement.classList.add("in-stock");
-        inventoryStatusElement.classList.remove("out-stock");
-        stockElement.textContent = "In-stock";
-      } else {
-        inventoryStatusElement.classList.add("out-stock");
-        inventoryStatusElement.classList.remove("in-stock");
-        stockElement.textContent = "Out of Stock";
-      }
-      document.querySelector(".inventory-details .broadway .dropdown b").textContent = storeLocationName;
-    }
+      let inventoryStatusElement = document.querySelector(".inventory_status"); let stockElement = document.querySelector(".inventory_status .stock");
+      if (isInStock) { inventoryStatusElement.classList.add("in-stock"); inventoryStatusElement.classList.remove("out-stock"); stockElement.textContent = "In-stock"; } else { inventoryStatusElement.classList.add("out-stock"); inventoryStatusElement.classList.remove("in-stock"); stockElement.textContent = "Out of Stock"; }  document.querySelector(".inventory-details .broadway .dropdown b").textContent = storeLocationName; }
   }
-  for (let i = 0; i < data.product.collections.nodes.length; i++) { if (data.product.collections.nodes[i].handle === "automated-collection") { console.log("Collection:", data.product.collections.nodes[i], "Collections working");}
-  }
-  for (let i = 0; i < data.product.tags.length; i++) { if (data.product.tags[i] === "Accessory") {  console.log("Tag:", data.product.tags[i], "Tag validation is working");  } }
+  for (let i = 0; i < data.product.collections.nodes.length; i++) { if (data.product.collections.nodes[i].handle === "automated-collection") { } } for (let i = 0; i < data.product.tags.length; i++) { if (data.product.tags[i] === "Accessory") {  } }
 }
-async function refreshInventoryLocations() {
-  try {
-    let accessToken = await fetchAccessToken(); console.log('refreshInventoryLocations accessToken   ',accessToken.accessToken);  
-    getInventoryLocations(accessToken, (error, data) => {
-      if (data) {  handleInventoryLocationsResponse(data); } else { console.error("Error:", error); }
-    });
-  } catch (error) { console.error("Error refreshing inventory locations:", error); }
-}
-document.addEventListener("click", event => {
-  if (!event.target.closest(".inventory-details")) { refreshInventoryLocations(); }
-});
+async function refreshInventoryLocations() { try { let accessToken = await fetchAccessToken(); getInventoryLocations(accessToken, (error, data) => { if (data) {  handleInventoryLocationsResponse(data); } else { console.error("Error:", error); } }); } catch (error) { console.error("Error refreshing inventory locations:", error); }}
+document.addEventListener("click", event => { if (!event.target.closest(".inventory-details")) { refreshInventoryLocations(); }});
 const crossElement = document.querySelector(".popup-close-cross");
 function showModal(){let storeLocationName=getCookie("storelocationName");fetchAccessToken().then(({accessToken})=>{getLocations(accessToken,storeLocationName)}).catch(console.error);refreshInventoryLocations()}
-if (crossElement) {  crossElement.addEventListener("click", event => {  event.preventDefault(); let popupModal = document.querySelector(".popup-modal");    if (popupModal) { popupModal.style.display = "none"; popupModal.classList.remove("showmodal"); }  });
-} else {  console.log("Element with class 'cross' not found");}
-document.addEventListener("change", event => {  if (event.target.matches(".popup-modal .address-popup input.locations")) { let locationName = event.target.nextElementSibling.textContent;
-    setCookie("storelocationName", locationName);    setCookie("storelocation", event.target.id);    refreshInventoryLocations();
-  }
+if (crossElement) {  crossElement.addEventListener("click", event => {  event.preventDefault(); let popupModal = document.querySelector(".popup-modal");    if (popupModal) { popupModal.style.display = "none"; popupModal.classList.remove("showmodal"); }  }); } else {  console.log("Element with class 'cross' not found");}
+document.addEventListener("change", event => {  if (event.target.matches(".popup-modal .address-popup input.locations")) { let locationName = event.target.nextElementSibling.textContent; setCookie("storelocationName", locationName); setCookie("storelocation", event.target.id); refreshInventoryLocations(); }
 });
 document.addEventListener("click", event => {  if (event.target.classList.contains("open-modal-cnc")) {showModal(); }});
 refreshInventoryLocations();
