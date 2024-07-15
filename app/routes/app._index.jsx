@@ -737,7 +737,7 @@ export default function configPage() {
 
                           {mango?.fields.length > 0 && (
                             <LegacyCard title={mango?.label} sectioned 
-                            actions={isLast ? { content: 'Save Config', onAction: () => handleConfigSubmit() } : undefined}>
+                            primaryFooterAction={{ content: 'Save Config', onAction: () => handleConfigSubmit() } }>
                               <Card title="configform">
                                 <FormLayout>
                                   <div

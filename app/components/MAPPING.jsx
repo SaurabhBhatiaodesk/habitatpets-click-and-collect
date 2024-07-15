@@ -51,6 +51,7 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage ,p
     field.label = `[${plugin2}]`;
     field.name = `${v.id}`;
     field.options.push({ label: v.name, value: v.id });
+    field.plugin = v.sync_ids.plugin_id;
   });
 
   const handleSelectChange = (id, selectedOption) => {
@@ -119,7 +120,7 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage ,p
                 name={`${field.name}:${v.id}`}
                 label={`${field.label}`}
                 options={field.options}
-                onChange={(selectedOption) => handleSelectChange(v.id, selectedOption)}
+                onChange={(selectedOption) => handleSelectChange(field.plugin, selectedOption)}
                 value={selectedValue[v.id]}
                 disabled={!checked[v.id]}
               />
