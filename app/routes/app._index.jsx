@@ -4,7 +4,7 @@ import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 import db from "../db.server";
-import { ChevronRightIcon } from "@shopify/polaris-icons";
+import { ChevronRightIcon,CheckIcon } from "@shopify/polaris-icons";
 import NotificationBar from "../components/NotificationBar";
 import RadioGroupComponent from "../components/radioGroupComponent";
 import TextFieldComponent from "../components/textFieldComponent";
@@ -112,6 +112,7 @@ export default function configPage() {
   const [required, setRequired] = useState();
   const [showerror, setError] = useState();
   const [cerror, setCerror] = useState([]);
+  const [loading, setLoading] = useState({});
 
   console.log("dataaaaaaaa ::", data);
 
@@ -185,7 +186,8 @@ export default function configPage() {
   form.map((item) => {
     var jj = {
       content: item.name,
-      suffix: <Icon source={ChevronRightIcon} />,
+      suffix: item.module==preferenceActiveTab?(<Icon source={CheckIcon} tone="textSuccess" />):null,
+      prefix: <Icon source={ChevronRightIcon} />,
       onAction: () => handleItemClick(item.module),
     };
     items.push(jj);
@@ -326,7 +328,7 @@ export default function configPage() {
   const handleSubmit = (event) => {
     console.log("formData in handlesubmit", formData);
     event.preventDefault();
-
+    setLoading({"config_loading": true});
     if (true) {
       console.log("entered in iffff")
       checkData(formData, data);
@@ -404,16 +406,16 @@ export default function configPage() {
               }
             }
           }
-
+          setLoading({"config_loading": false});
           // console.log("allValid ::", allValid)
           console.log("credentialFormStatus ::", credentialFormStatus)
         })
-        .catch((error) => console.error(error));
+        .catch((error) => {console.error(error); setLoading({"config_loading": false});});
     }
   }
 
   const handleConfigSubmit = () => {
-
+    setLoading({"config":true});
     console.log("i", inputValues, "These values should be required", required);
 
     // Function to check if 'is_bidirectional_sync' matches
@@ -471,12 +473,13 @@ export default function configPage() {
         .then((response) => response.json())
         .then((result) => {
           console.log("config result:::::::", result)
+          setLoading({"config":false});
           setNotificationMessage(result?.message);
           setTimeout(() => {
             setNotificationMessage("")
           }, 5000);
         })
-        .catch((error) => console.error(error));
+        .catch((error) =>{ console.error(error); setLoading({"config":false});});
     }
 
   };
@@ -504,6 +507,7 @@ export default function configPage() {
 
 
   const handlePreference = async () => {
+    setLoading({"preference":true});
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + data?.store?.token);
     myHeaders.append("Content-Type", "application/json");
@@ -527,12 +531,13 @@ export default function configPage() {
         setPreCheckedEnableDisable(preCheckedED);
         setPrefEnableDisable(preCheckedED);
         console.log("save-preference result: ", result);
+        setLoading({"preference":false});
         setNotificationMessage(result?.message);
         setTimeout(() => {
           setNotificationMessage("")
         }, 5000);
       })
-      .catch((error) => console.error(error));
+      .catch((error) =>{ console.error(error); setLoading({"preference":false});});
   }
 
   const successStyle = {
@@ -612,7 +617,7 @@ export default function configPage() {
                 <>
                 {loader=="prefyes"?(<LegacyCard title="Preference" sectioned >
                 <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(
-                  <LegacyCard title="Preference" sectioned primaryFooterAction={{ content: 'Save Preference', onAction: () => handlePreference() }}>
+                  <LegacyCard title="Preference" sectioned primaryFooterAction={!loading.preference?{ content: 'Save Preference', onAction: () => handlePreference() }:{content:<Spinner accessibilityLabel="Spinner example" size="small" />}}>
                     <Card title="configform">
                     
                       <FormLayout>
@@ -665,10 +670,10 @@ export default function configPage() {
                                           <Select
                                             name={field.name}
                                             label={field.label}
-                                            options={field.options}
+                                            options={[{ value: '', label: 'Select source of Truth' }, ...field.options]}
                                             onChange={handleSelectChange}
                                             value={selectedValue} 
-                                            placeholder="Select source of Truth"
+                                           // placeholder="Select source of Truth"
                                           />
                                         )}
                                       </>
@@ -737,7 +742,7 @@ export default function configPage() {
 
                           {mango?.fields.length > 0 && (
                             <LegacyCard title={mango?.label} sectioned 
-                            primaryFooterAction={{ content: 'Save Config', onAction: () => handleConfigSubmit() } }>
+                            primaryFooterAction={!loading.config?{ content: 'Save Config', onAction: () => handleConfigSubmit() }:{ content:<Spinner accessibilityLabel="Spinner example" size="small" />}}>
                               <Card title="configform">
                                 <FormLayout>
                                   <div
@@ -952,9 +957,15 @@ export default function configPage() {
                     </LegacyCard>
                     )}
                   </FormLayout>
+                  {loading.config_loading ? (
+                    <button style={{backgroundColor:"#000",color:"#fff",padding:"4px 8px",borderRadius:"10px"}}  variant="primary">
+                    <Spinner accessibilityLabel="Config Form" size="small" />
+                  </button>
+                  ):(
                   <button style={{backgroundColor:"#000",color:"#fff",padding:"4px 8px",borderRadius:"10px"}}  variant="primary" type="submit">
                     Save
                   </button>
+                )}
                 </>
               )}
             </div>

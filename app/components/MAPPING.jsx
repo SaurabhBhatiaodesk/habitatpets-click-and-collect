@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { LegacyCard,Card, Checkbox, Select } from "@shopify/polaris";
+import { LegacyCard,Card, Checkbox, Select, Spinner } from "@shopify/polaris";
 
 const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage ,preferenceActiveTab , mappings }) => {
   const [inputValue, setInputValue] = useState('');
@@ -8,6 +8,7 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage ,p
   const [checked, setChecked] = useState(false);
   const [plugin2, setPlugin2] = useState();
   const [selectedValue, setSelectedValue] = useState('');
+  const [loading, setLoading] = useState({});
   let field = {};
 
 
@@ -31,9 +32,14 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage ,p
     
       if(mappings?.selected){
       Object.entries(mappings?.selected).reduce((acc, [key, value]) => {
-        handleChange(key);
+        
+        let plginnew= plugin;
         console.log(mappings?.mapping?.[key]?.[plugin],"full",mappings?.[key],"half",plugin,"plugin")
-        handleSelectChange(key,mappings?.mapping?.[key]?.[plugin]);
+        pref.filter((p) => p.value !== plugin).map((get) => {
+          plginnew=get.value;
+        });
+        handleChange(key);
+        handleSelectChange(key,mappings?.mapping?.[key]?.[plginnew]);
       
         //console.log("key=>",key,"value=>", value);
       }, {});
@@ -51,7 +57,6 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage ,p
     field.label = `[${plugin2}]`;
     field.name = `${v.id}`;
     field.options.push({ label: v.name, value: v.id });
-    field.plugin = v.sync_ids.plugin_id;
   });
 
   const handleSelectChange = (id, selectedOption) => {
@@ -62,13 +67,18 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage ,p
   };
 
   const handleMapping = () => {
-
+    setLoading({"mapping":true});
     const formattedValues = Object.entries(selectedValue).reduce((acc, [key, value]) => {
-     
-      acc[key] = { [plugin]: value };
+      let newplugin = plugin;
+      pref.filter((p) => p.value !== plugin).map((get) => {
+        setSelectValue(mapping?.[get.value]);
+        setPlugin2(get.label);
+        newplugin = get.value;
+      });
+      acc[key] = { [newplugin]: value };
       return acc;
     }, {});
-
+    console.log(formattedValues,"formatting");
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer "+token);
     myHeaders.append("Content-Type", "application/json");
@@ -90,8 +100,9 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage ,p
       .then((response) => response.text())
       .then((result) => {console.log("mapping result ;;;===>",result)``
         setNotificationMessage("Mapping saved successfully");
+        setLoading({"mapping":false});
       })
-      .catch((error) => console.error(error));
+      .catch((error) =>{ console.error(error); setLoading({"mapping":false});});
       }
 
   // flex style object
@@ -104,7 +115,7 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage ,p
   return (
     <>
     {value?.length >0 && (
-      <LegacyCard title="Mapping" sectioned primaryFooterAction={{ content: 'Save Mapping', onAction: () => handleMapping() }}>
+      <LegacyCard title="Mapping" sectioned primaryFooterAction={!loading.mapping?{ content: 'Save Mapping', onAction: () => handleMapping() }:{content:<Spinner accessibilityLabel="Spinner example" size="small" />}}>
       <Card title="configform">
         <div
           style={flexStyle}
@@ -120,7 +131,7 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage ,p
                 name={`${field.name}:${v.id}`}
                 label={`${field.label}`}
                 options={field.options}
-                onChange={(selectedOption) => handleSelectChange(field.plugin, selectedOption)}
+                onChange={(selectedOption) => handleSelectChange(v.id, selectedOption)}
                 value={selectedValue[v.id]}
                 disabled={!checked[v.id]}
               />

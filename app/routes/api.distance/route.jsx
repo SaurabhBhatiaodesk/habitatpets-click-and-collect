@@ -34,12 +34,27 @@ export async function loader({ request }) {
   }else{
     console.log('response ',response);
   }
-
+ // Filter locations within 50 km
+ const maxDistanceInMeters = 50000; // 50 km in meters
+ const filteredLocations = data.rows[0].elements
+   .map((element, index) => {
+     if (element.status === 'OK' && element.distance.value <= maxDistanceInMeters) {
+       return {
+         destination: destinations.split('|')[index],
+         distance: element.distance.text,
+         duration: element.duration.text
+       };
+     }
+     return null;
+   })
+   .filter(location => location !== null);
+ 
+//  console.log('Filtered Locations within 50 km:', filteredLocations);
   //   var arr = {
   //     data: [],
   //     origin: []
   // };
   //   arr['data'].push(data.rows[0]);
   //   arr['origin'].push(data.origin_addresses);
-  return await cors(request, json(data));
+  return await cors(request, json(filteredLocations));
 }
