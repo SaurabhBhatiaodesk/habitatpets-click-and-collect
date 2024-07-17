@@ -336,7 +336,18 @@ export default function configPage() {
   const handleconfigChange = useCallback((value, field, plugin_id) => {
     console.log("handleconfigChange Value :", value);
     console.log(plugin_id, "fieldfield", field);
-
+    let val = value;
+    if(Array.isArray(value))
+    {
+      if(value.length>1)
+      {
+        val = value;
+      }
+      else
+      {
+        val = value[0];
+      }
+    }
     setInputValues((prev) => {
       // If the plugin_id is 'general', update the 'general' section
 
@@ -344,7 +355,7 @@ export default function configPage() {
         ...prev,
         [plugin_id]: {
           ...prev[plugin_id],
-          [field]: value,
+          [field]: val,
         },
       };
     });
@@ -842,13 +853,16 @@ export default function configPage() {
                                   >
                                     {mango?.fields?.map((field) => (
                                       // <Card type={field.input_type} field={field} />
+                                      
                                       <div style={{ width: "48%" }}>
                                         {(() => {
+                                          {console.log(field.input_type,"field.input_typefield.input_typefield.input_type");}
                                           switch (field.input_type) {
                                             case "url":
                                             case "text":
                                             case "password":
                                               return (
+                                                
                                                 <TextFieldComponent
                                                   key={field.name}
                                                   field={field}

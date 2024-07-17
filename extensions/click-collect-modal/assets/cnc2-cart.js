@@ -12,7 +12,7 @@ async function cartUpdate(updates, flag = false) {
 		if (response.ok) {
 
 			if (flag == true) {
-				console.log('flag it true')
+				// console.log('flag it true')
 				let errorMessages = document.querySelectorAll(".cart-grid p.error-massage.active");
 				for (let i = 0; i < errorMessages.length; i++) {
 					let errorMessage = errorMessages[i];
@@ -74,7 +74,7 @@ async function fetchLocationsGraphQL(accessToken) {
 }
 async function getCartLocations(accessToken, selectedLocationName = "") {
 	try {
-
+		var count = 0;
 		const testres = await fetchLocationsGraphQL(accessToken);
 		let arrr = localStorage.getItem("testings");
 		arrr = JSON.parse(arrr);
@@ -95,19 +95,16 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 				let customerLocation = getCookie("customerlocation");
 				document.querySelector(".location").value = customerLocation;
 				let distanceApiUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&destinations=${destinationsArr.join("|")}&shop=${location.hostname}`;
-				let res = await fetchData(distanceApiUrl);
-
-		
-				let locationData = [];
-				const sortedLocations = [];
+				let res = await fetchData(distanceApiUrl);		
+				let locationData = [];	const sortedLocations = []; 
 				for (const location of locations) {
 					if (location.address.zip && location?.localPickupSettingsV2 != null) {
 						const zipcode = location.address.zip; const fulladdress = location.address.address1 + ' ' + zipcode;
 						for (let index = 0; index < destinationsArr.length; index++) {
 							const distanceElement = res?.rows[0]?.elements[index]; const destinationAddress = destinationsArr[index];
-							console.log(fulladdress, ' location.address ', ' destinationsArr ', destinationAddress, ' location.name ', location.name, 'distanceElement ', distanceElement)
+							// console.log(fulladdress, ' location.address ', ' destinationsArr ', destinationAddress, ' location.name ', location.name, 'distanceElement ', distanceElement)
 							if (destinationAddress.includes(zipcode)) {
-								if (distanceElement?.status == "OK" && distanceElement?.status != "ZERO_RESULTS") {
+								if (distanceElement?.status == "OK" && distanceElement?.status != "ZERO_RESULTS"  && distanceElement?.distance?.value < 50000) {
 									const distanceText = distanceElement?.distance.text;
 									const parsedDistance = parseInt(distanceText.replace(/,/g, "").replace(" km", ""));
 									// console.log('distanceElement ',index,' distanceText ',distanceText, ' parsedDistance ',parsedDistance);   
@@ -119,26 +116,28 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 										...location
 									});
 									locationData.push(location.name);
+								}else if (distanceElement?.status == "OK" && distanceElement?.status != "ZERO_RESULTS"  && distanceElement?.distance?.value > 1){
+									count = count +1;
 								}
 							}
 						}
 					}
 				}
 				sortedLocations.sort((a, b) => a.distance - b.distance);
-				console.log('sortedLocations ', locationData)
+				// console.log('sortedLocations ', locationData)
 				let locationsss = locationData.join(', ');
-				console.log('locations ', locationsss)
+				// console.log('locations ', locationsss)
 				setCookie('sortedLocations', locationsss);
 			
 				for (let i = 0; i < sortedLocations.length; i++) {
 					let location = sortedLocations[i];
 					let loc= location?.name;
-					console.log('location ', location, 'selectedLocationName',arrr,'  arrr.location ', arrr?.[loc],'loc -- ', loc, selectedLocationName, location.distanceText)
+					// console.log('location ', location, 'selectedLocationName',arrr,'  arrr.location ', arrr?.[loc],'loc -- ', loc, selectedLocationName, location.distanceText)
 					// if (selectedLocationName && location.name != "Snow City Warehouse") {
 					let radioBtn = document.createElement("div");  
 					if(arrr?.[loc] ){ radioBtn.classList.add("radio-btn");
 						radioBtn.classList.add("green");
-					}else{		radioBtn.classList.add("radio-btn");   }         
+					}else{	radioBtn.classList.add("radio-btn");   }         
 
 					let colDiv = document.createElement("div");    
 					colDiv.classList.add("col");   
@@ -164,7 +163,12 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 					locationsElement.appendChild(radioBtn);
 					// }
 				}
-			} else {
+			} else if (count > 0 && sortedLocations.length == 0){
+				let noStoresElement = document.createElement("div");
+				noStoresElement.classList.add("popup-inner-col11");
+				noStoresElement.innerHTML = '<div class="add11">Stores are not available within a 50 km range</div>';
+				locationsElement.appendChild(noStoresElement);
+			}else {
 				let noStoresElement = document.createElement("div");
 				noStoresElement.classList.add("popup-inner-col11");
 				noStoresElement.innerHTML = '<div class="add11">Stores not available for entered location</div>';
@@ -219,7 +223,7 @@ async function get_inv_locations(accessToken, product) {
 	}
 }
 function filterlocations(data, product, quantity) {
-	console.log('filterlocations product', data, product);
+	// console.log('filterlocations product', data, product);
 	let variantId = product.variant_id;
 	// Get sorted locations from cookies
 	let getSortedLocations = getCookie('sortedLocations');
@@ -230,16 +234,16 @@ function filterlocations(data, product, quantity) {
 	// Check if sorted locations exist
 	if (getSortedLocations) {
 		sortedLocations = getSortedLocations.split(', ');
-		console.log('handle_inv_locations Sorted Locations:', sortedLocations);
+		// console.log('handle_inv_locations Sorted Locations:', sortedLocations);
 	}
 
 	// Loop through sorted locations and initialize them as true in the sorted object
 	for (let i = 0; i < sortedLocations.length; i++) {
 		const storeLocationName = sortedLocations[i];
 		sorted[storeLocationName] = true;
-		console.log('storeLocationName ', storeLocationName);
+		// console.log('storeLocationName ', storeLocationName);
 	}
-	console.log('data.product.variants.nodes ', data.product.variants.nodes, data)
+	// console.log('data.product.variants.nodes ', data.product.variants.nodes, data)
 	var isInStock = false;
 	for (let j = 0; j < data.product.variants.nodes.length; j++) {
 		let variant = data.product.variants.nodes[j];
@@ -253,6 +257,7 @@ function filterlocations(data, product, quantity) {
 					let inventoryLevel = variant.inventoryItem.inventoryLevels.edges[k].node;
 					let locationName = inventoryLevel.location.name;
 					let storeLocationName = sortedLocations.find(name => name === locationName);
+					console.log('storeLocationName ',storeLocationName)
 					if (storeLocationName) {
 						isInStock = inventoryLevel.quantities[0].quantity > quantity && inventoryLevel.quantities[0].quantity >= product.quantity;
 						sorted[storeLocationName] = isInStock;
@@ -264,9 +269,9 @@ function filterlocations(data, product, quantity) {
 
 	let arrr = localStorage.getItem("testings");
 		if(!arrr){
-			console.log('if !arrr ')    
+			// console.log('if !arrr ')    
 		}else{
-			console.log('else arrr has ',arrr)    
+			// console.log('else arrr has ',arrr)    
 			Object.keys(arrr).forEach((key) => {
 				if (arrr[key]) {
 					if (isInStock == false) {
@@ -288,13 +293,15 @@ async function handle_inv_locations(error, data, product) {
 
 	if (error) { console.error("Error fetching inventory locations:", error); return; }
 	var quantityres = await fetchQuantity();
-
+	// if(document.querySelectorAll('.cart-popup .radio-btn .locations').length > 1){	
 	let arrr = filterlocations(data, product, quantityres.quantity);
-		document.querySelectorAll('.cart-popup .radio-btn .locations').forEach((element) => {
+	// }
+	document.querySelectorAll('.cart-popup .radio-btn .locations').forEach((element) => {
 		let isInStock = false;
-	  	console.log('element ',element);
+	  	// console.log('element ',element, ' data -- ', data, ' -- product -- ', product, ' quantity ', quantityres.quantity);
 		Object.keys(arrr).forEach((key) => {
 			if (element.getAttribute('data-name') == key && arrr[key] == true) {
+			// console.log(element.getAttribute('data-name'), '---- ---- ', key, ' ----- ',arrr[key] );
 			isInStock = true;
 		  }
 		});
@@ -310,8 +317,9 @@ async function handle_inv_locations(error, data, product) {
 		}
 	  });     
 
+	 
+		localStorage.setItem("testings", JSON.stringify(arrr));
 
-	localStorage.setItem("testings", JSON.stringify(arrr));
 	
 	let variantId = product.variant_id;
 	let storeLocationName = getCookie("storelocationName");
@@ -614,7 +622,7 @@ document.addEventListener("click", function (event) {
 			var cartUpdateData = {};
 			cartUpdateData[cartGrid.getAttribute("data-id")] = 0;
 			var accessToken = getCookie("accessToken");
-			console.log('cartUpdateData ', cartUpdateData, ' accessToken ', accessToken)
+			// console.log('cartUpdateData ', cartUpdateData, ' accessToken ', accessToken)
 			cartUpdate(cartUpdateData, accessToken);
 			cartGrid.remove();
 			var activeErrorMessages = document.querySelectorAll(".cart-grid p.error-massage.active");

@@ -17,8 +17,8 @@ export async function loader({ request }) {
   
   console.log('apiKey1111111', apiKey1);    
       
-  // let apikey= 'AIzaSyCLacE5pxPDBjoLMm0a6uHnIn-VNb1rV2c';
-  let apikey= 'AIzaSyCko7Eg7TvcKwILrpqnwiRlWY9OlF31TpA';
+  let apikey= 'AIzaSyBXNyT9zcGdvhAUCUEYTm6e_qPw26AOPgI';
+  // let apikey= 'AIzaSyCko7Eg7TvcKwILrpqnwiRlWY9OlF31TpA';
   // let apikey = apiKey1.apikey;
   const requestOptions = {
     method: "GET",
@@ -34,27 +34,12 @@ export async function loader({ request }) {
   }else{
     console.log('response ',response);
   }
- // Filter locations within 50 km
- const maxDistanceInMeters = 50000; // 50 km in meters
- const filteredLocations = data.rows[0].elements
-   .map((element, index) => {
-     if (element.status === 'OK' && element.distance.value <= maxDistanceInMeters) {
-       return {
-         destination: destinations.split('|')[index],
-         distance: element.distance.text,
-         duration: element.duration.text
-       };
-     }
-     return null;
-   })
-   .filter(location => location !== null);
- 
-//  console.log('Filtered Locations within 50 km:', filteredLocations);
+
   //   var arr = {
   //     data: [],
   //     origin: []
   // };
   //   arr['data'].push(data.rows[0]);
   //   arr['origin'].push(data.origin_addresses);
-  return await cors(request, json(filteredLocations));
+  return await cors(request, json(data));
 }

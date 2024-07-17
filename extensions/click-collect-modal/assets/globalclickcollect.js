@@ -7,30 +7,32 @@ async function fetchLocationsGraphQL(accessToken) {    const myHeaders = new Hea
     try { const response = await fetch("/admin/api/2024-04/graphql.json", requestOptions); if (!response.ok) throw new Error(`Request failed with status ${response.status}`); return await response.json();} catch (error) {console.error("Error fetching locations:", error); throw error;}
 }
     async function getLocations(accessToken, selectedLocation = "") {
-            try {      const testres = await fetchLocationsGraphQL(accessToken);  //  const response = await fetch("/admin/api/2024-04/locations.json", { headers: { "X-Shopify-Access-Token": accessToken }}); // if (!response.ok) throw new Error(`Request failed with status ${response.status}`);  const responseJSON = await response.json(); 
+            try {      const testres = await fetchLocationsGraphQL(accessToken); 
           const locations = testres?.data?.locations?.nodes;
             const destinationsArr = []; if (locations) { for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) { console.log('location rrr ',location.name); destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`);}}}
               if (destinationsArr.length > 0) {  const customerLocation = getCookie("customerlocation");
                 document.querySelector(".location").value = customerLocation;
                 const mapUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&destinations=${destinationsArr.join("|")}&shop=${location.hostname}`;
-                const res = await fetchData(mapUrl);
+                const res = await fetchData(mapUrl); var count = 0;
                 if (res) {  const sortedLocations = [];
                     for (let index = 0; index < locations.length; index++){ const location = locations[index]; if (location.address.zip && location?.localPickupSettingsV2 != null) {  const zipcode= location.address.zip; const  fulladdress= location.address.address1 + ' '+zipcode ;
 					for (let index = 0; index < destinationsArr.length; index++) {
-                            const distanceElement = res?.rows[0]?.elements[index]; const destinationAddress = destinationsArr[index]; console.log('testssssss',zipcode, ' location.address ',' destinationsArr ',destinationAddress, ' location.name ',location.name )
+                            const distanceElement = res?.rows[0]?.elements[index]; const destinationAddress = destinationsArr[index]; 
                             if(destinationAddress.includes(zipcode) ){
-                            if (distanceElement?.status == "OK" && distanceElement?.status != "ZERO_RESULTS" ) {
+                            if (distanceElement?.status == "OK" && distanceElement?.status != "ZERO_RESULTS"  && distanceElement?.distance?.value < 50000) {
                                 const distanceText = distanceElement?.distance.text;
-                                const parsedDistance = parseInt(distanceText.replace(/,/g, "").replace(" km", ""));         console.log('distanceElement ',index,' distanceText ',distanceText, ' parsedDistance ',parsedDistance);   
+                                const parsedDistance = parseInt(distanceText.replace(/,/g, "").replace(" km", ""));   
                                 sortedLocations.push({
                                     id: location.id,
                                     distance: parsedDistance,
                                     distanceText,
                                     origin: res.origin_addresses,
                                     ...location
-                                }); } } }}} console.log('sortedLocations',sortedLocations);
+                                }); } }else if (distanceElement?.status == "OK" && distanceElement?.status != "ZERO_RESULTS"  && distanceElement?.distance?.value > 1){
+                                    count = count +1;
+                                } }}} 
                              sortedLocations.sort((a, b) => a.distance - b.distance); 
-                               renderLocations(sortedLocations, selectedLocation);
+                               renderLocations(sortedLocations, selectedLocation, count);
                 }
             }
             document.querySelector(".popup-box .address-popup").style.display = "block";
@@ -38,15 +40,16 @@ async function fetchLocationsGraphQL(accessToken) {    const myHeaders = new Hea
             else{ document.querySelector(".popup-box .address-popup").style.display = "block"; console.log('storelocationName  else : ',getCookie("storelocationName"))}
         } catch (error) { console.error("Error fetching locations:", error); }
     }
-function renderLocations(locations, selectedLocation) {
-    console.log('locations   .........', locations)
+function renderLocations(locations, selectedLocation, count = 0) {
     const locationsContainer = document.querySelector(".popup-box .address-popup .locationss"); locationsContainer.innerHTML = "";
     if (locations.length > 0) {
         locations.forEach(location => {
             if (location.name !== "Snow City Warehouse") { const locationElement = document.createElement("div"); locationElement.classList.add("popup-inner-col");
                 locationElement.innerHTML = `<div class="add"><span><input type="radio" id="${location.id}" class="locations" data-name="${location.name}" name="locations" value="HTML" ${location.name === selectedLocation ? 'checked="checked"' : ''}><label for="${location.id}">${location.name}</label></span><h4>${location.distanceText}</h4></div><ul class="order-list"><li>${location.address.country}</li> <li>Address: ${location.address.address1}</li><li>Phone: ${location.address.phone}</li> </ul><button type="submit"> <a href="https://www.google.com/maps/dir/${location.origin}/${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}" target="_blank"> Get Directions >> </a></button>`;
                 locationsContainer.appendChild(locationElement);
-            }  }); } else { const noStoresElement = document.createElement("div"); noStoresElement.classList.add("popup-inner-col"); noStoresElement.innerHTML = '<div class="add">Stores not available for entered location</div>'; locationsContainer.appendChild(noStoresElement);}
+            }  }); }else if(count > 0 && locations.length == 0){
+                const noStoresElement = document.createElement("div"); noStoresElement.classList.add("popup-inner-col"); noStoresElement.innerHTML = '<div class="add">Stores are not available within a 50 km range </div>'; locationsContainer.appendChild(noStoresElement);
+            } else { const noStoresElement = document.createElement("div"); noStoresElement.classList.add("popup-inner-col"); noStoresElement.innerHTML = '<div class="add">Stores not available for entered location</div>'; locationsContainer.appendChild(noStoresElement);}
 }
 function showModal() {   if(getCookie("storelocationName")){    const selectedLocation = getCookie("storelocationName");
     const customerLocation = getCookie("customerlocation");    document.querySelector(".location").value = customerLocation;
