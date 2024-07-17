@@ -198,6 +198,7 @@ export default function configPage() {
   const handleSecondButtonClick = useCallback(() => {
     setNavbar(true);
     setProduct(null);
+    handleItemClick("store");
     // setConfig(null);
     if (!isFirstButtonActive) return;
     setIsFirstButtonActive(false);
@@ -541,8 +542,8 @@ export default function configPage() {
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + data?.store?.token);
     myHeaders.append("Content-Type", "application/json");
-
-    if(selectedValue!=""){
+    console.log("preCheckedEDpreCheckedEDpreCheckedEDpreCheckedED ::", preCheckedED);
+    if(selectedValue!="" && preCheckedED==1){
     const raw = JSON.stringify({
       "enable": preCheckedED == 0 ? false : true,
       "main_plugin": selectedValue
@@ -654,18 +655,19 @@ export default function configPage() {
       )}
       <form onSubmit={handleSubmit}>
         <Page>
-          <ui-title-bar title="Click & Collect">
+          {/* <ui-title-bar title="Click & Collect">
             <button variant="primary" type="submit">
               Save
             </button>
-          </ui-title-bar>
+          </ui-title-bar> */}
 
 
          
 
           <Layout>
-            <div style={{ width: "100%" }}>
+            
               {credentialFormStatus && (
+                <div style={{ width: "100%" }}>
                 <LegacyCard title="Configuration" sectioned >
                   <ButtonGroup variant="segmented">
                     <Button
@@ -682,8 +684,9 @@ export default function configPage() {
                     </Button>
                   </ButtonGroup>
                 </LegacyCard>
+                </div>
               )}
-            </div>
+            
             {notificationMessage !== "" && (
             <NotificationBar title={notificationMessage} style={successStyle} />
           )}
@@ -913,14 +916,18 @@ export default function configPage() {
                   <>
                   <FormLayout>
                  <LegacyCard title="" sectioned  >
-                  <InlineStack gap="200" align="center" blockAlign="center">
+                  <div style={{marginBottom: '10px'}} >
+                 <Card>
+                  <div style={{textAlign: 'center'}} >
                   <Badge
                     tone={credentialFormStatus ? 'success' : undefined}
                     toneAndProgressLabelOverride={`Setting is ${credentialFormStatus ? 'Connected' : 'Not Connected'}`}
                   >
                     {credentialFormStatus ? 'Connected' : 'Not Connected'}
                   </Badge>
-        </InlineStack>
+                  </div>
+        </Card>
+        </div>
                   {product?.plugin_form?.map((plugin, index) => {
                     // console.log("plugin?.fields?.token :::", plugin?.fields?.token)
                     return (
@@ -993,7 +1000,7 @@ export default function configPage() {
                     <Spinner accessibilityLabel="Config Form" size="small" />
                   </button>
                   ):(
-                  <button style={{backgroundColor:"#000",color:"#fff",padding:"4px 8px",borderRadius:"10px"}}  variant="primary" type="submit">
+                  <button style={{backgroundColor:"#000",color:"#fff",padding:"4px 8px",borderRadius:"10px",marginTop:"15px"}}  variant="primary" type="submit">
                     Save
                   </button>
                 )}
