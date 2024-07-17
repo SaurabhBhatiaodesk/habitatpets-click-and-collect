@@ -588,7 +588,7 @@ export default function configPage() {
             setNotificationMessage(result?.message);
             break;
         }
-        
+        handleItemClick(preferenceActiveTab);
         setTimeout(() => {
           setNotificationMessage("")
         }, 5000);
