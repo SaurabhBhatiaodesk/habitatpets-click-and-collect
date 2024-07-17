@@ -104,7 +104,7 @@ async function getAuthToken(session) {
           body: raw,
           redirect: "follow"
         };
-        
+        const email = result.shop?.email;
       await fetch("https://main.dev.saasintegrator.online/api/v1/user-connection", requestOptions)
         .then((response) => response.json())
         .then((result) => {
@@ -115,6 +115,7 @@ async function getAuthToken(session) {
               shop:session.shop,
               ...result.data.connection,
               token: result.data.token,
+              email: email
           };
           console.log('testings ', data);
         
@@ -186,6 +187,7 @@ if (existingUserConnection) {
             status: data.status,
             active_subscription_id: data.active_subscription_id,
             token: data.token,
+            email: data.email,
         },
     });
     return newUserConnection;

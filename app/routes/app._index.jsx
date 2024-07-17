@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Spinner, LegacyCard, Icon, Card, Layout, Page, Text, Button, ButtonGroup, TextField, Select, RadioButton, FormLayout, ActionList } from "@shopify/polaris";
+import { Spinner, LegacyCard, Icon, Card, Layout, Page, Text, Button, ButtonGroup, TextField, Select, RadioButton, FormLayout, ActionList, Badge,InlineStack } from "@shopify/polaris";
 import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
@@ -77,8 +77,24 @@ export const loader = async ({ request }) => {
     }
     const form_data = await form.json();
     console.log("form_data ", form_data);
+    const myHead = new Headers();
+    myHead.append("Authorization", "Bearer " + store.token);
 
-    return { form: form_data, data: data, auth: auth, store: store };
+    const requestOpt = {
+      method: "GET",
+      headers: myHead,
+      redirect: "follow"
+    };
+
+    const connection = await fetch("https://main.dev.saasintegrator.online/api/v1/user-connection?email=" + store.email, requestOpt);
+    if(!connection.ok)
+    {
+      throw new Error("Couldn't connect to" + connection.status)
+    }
+    const user = await connection.json();
+    const user_data = user.connection.filter(u => u.uid==store.uid);
+    console.log(user_data);
+    return { form: form_data, data: data, auth: auth, store: store, user_data: user_data[0]};
   } catch (error) {
     console.error("Error fetching config-form:", error);
     throw error;
@@ -97,9 +113,11 @@ export default function configPage() {
   const [preCheckedEnableDisable, setPreCheckedEnableDisable] = useState();
   const [preCheckedED, setPreCheckedED] = useState();
   const [notificationMessage, setNotificationMessage] = useState("");
+  const [notificationMessageError, setNotificationMessageError] = useState("");
+  const [notificationMessageInfo, setNotificationMessageInfo] = useState("");
   const [preferenceActiveTab, setPreferenceActiveTab] = useState("");
   const [selectedValue, setSelectedValue] = useState('');
-  const [dataLimit, setDataLimit] = useState({ start: 0, end: 2 });
+  const [dataLimit, setDataLimit] = useState({ start: 1, end: 2 });
   const [navbar, setNavbar] = useState(null);
   const [formData, setFormData] = useState({});
   const [configPreFill, setConfigPreFill] = useState({});
@@ -107,12 +125,14 @@ export default function configPage() {
   const [product, setProduct] = useState(data.data);
   const form = data?.form;
   const store = data?.store;
+  const user_data = data?.user_data;
   const items = [];
   const [loader, setLoader] = useState("");
   const [required, setRequired] = useState();
   const [showerror, setError] = useState();
   const [cerror, setCerror] = useState([]);
   const [loading, setLoading] = useState({});
+  
 
   console.log("dataaaaaaaa ::", data);
 
@@ -161,15 +181,15 @@ export default function configPage() {
     }
   }, [configform]);
 
-  useEffect(() => {
-    console.log("prefilled inputValues", inputValues);
-  }, [inputValues]);
+  // useEffect(() => {
+  //   return null
+  // }, [inputValues]);
 
 
   const handleFirstButtonClick = useCallback(() => {
     console.log("handleFirstButtonClick ", data);
     setProduct(data.data);
-    setNavbar(null);
+    setNavbar(false);
     if (isFirstButtonActive) return;
 
     setIsFirstButtonActive(true);
@@ -186,7 +206,8 @@ export default function configPage() {
   form.map((item) => {
     var jj = {
       content: item.name,
-      suffix: item.module==preferenceActiveTab?(<Icon source={CheckIcon} tone="textSuccess" />):null,
+     // suffix: item.module==preferenceActiveTab?(<Icon source={CheckIcon} tone="textSuccess" />):null,
+      suffix: item.is_configured?(<Icon source={CheckIcon} tone="textSuccess" />):null,
       prefix: <Icon source={ChevronRightIcon} />,
       onAction: () => handleItemClick(item.module),
     };
@@ -223,6 +244,13 @@ export default function configPage() {
       setPreference(preference);
       setLoader('prefno');
       setLoader('configyes');
+      if(preference.meta.is_enabled) {
+        setDataLimit({ start: 0, end: 2 });
+      }
+      else{
+        setDataLimit({ start: 0, end: 1 });
+      }
+      if(preference?.meta?.is_enabled){
       /****************************************** config-form  ************************************************** */
       const response2 = await fetch(
         `https://main.dev.saasintegrator.online/api/v1/${itemContent}/config-form`,
@@ -267,33 +295,32 @@ export default function configPage() {
       console.log("mapping ", mapping);
       setMapping(mapping);
       setLoader('mapno');
+    }
     } catch (error) {
       setLoader('mapno');
       console.error("Error fetching config-form:", error);
       throw error;
     }
-
     // You can add any other logic you need here
   }
 
   useEffect(() => {
     const initialSelectedValue = preference?.form[0].value
-
     setPreCheckedEnableDisable(initialSelectedValue);
     setPreCheckedED(initialSelectedValue);
     console.log("initialSelectedValue :::", initialSelectedValue);
     setPrefEnableDisable(initialSelectedValue);
-
-    setSelectedValue(preference?.form[1].value || preference?.form[0]?.options[0]);
+   setSelectedValue(preference?.form[1].value || "");
     if (preference?.form[1].value) {
       setCredentialFormStatus(true);
     }
     else {
       if (!credentialFormStatus) {
-        handleItemClick("store");
+        if(user_data?.is_plugins_connected){
+          setCredentialFormStatus(true);
+        }
       }
     }
-
   }, [preference]);
 
 
@@ -336,7 +363,7 @@ export default function configPage() {
   };
   console.log("CerrorCerrorCerror:::", cerror)
 
-  const checkData = (formData, apiData) => {
+  const checkData = async(formData, apiData) => {
     console.log("enteredddd");
     let credError = false;
     let push = [];
@@ -350,7 +377,7 @@ export default function configPage() {
           if (credential_values[key] == null || credential_values[key] == null || credential_values[key] == "") {
             credError = true;
             push.push({ name: key })
-
+            setLoading({"config_loading": false});
           }
         }
       }
@@ -386,9 +413,9 @@ export default function configPage() {
       };
       let responseData = {};
 
-      fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOptions)
+      await fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOptions)
         .then((response) => response.json())
-        .then((result) => {
+        .then(async(result) => {
           responseData = result?.data;
           console.log("result ::", result);
           console.log("responseData ::", responseData);
@@ -403,10 +430,12 @@ export default function configPage() {
                 break;
               } else {
                 setCredentialFormStatus(true);
+                
               }
             }
           }
           setLoading({"config_loading": false});
+          setNotificationMessage(result?.message);
           // console.log("allValid ::", allValid)
           console.log("credentialFormStatus ::", credentialFormStatus)
         })
@@ -503,6 +532,7 @@ export default function configPage() {
       console.log("else if label ::", label);
       setPreCheckedED(0);
     }
+    console.log("data limit ::", dataLimit);
   };
 
 
@@ -512,7 +542,7 @@ export default function configPage() {
     myHeaders.append("Authorization", "Bearer " + data?.store?.token);
     myHeaders.append("Content-Type", "application/json");
 
-
+    if(selectedValue!=""){
     const raw = JSON.stringify({
       "enable": preCheckedED == 0 ? false : true,
       "main_plugin": selectedValue
@@ -530,14 +560,36 @@ export default function configPage() {
       .then((result) => {
         setPreCheckedEnableDisable(preCheckedED);
         setPrefEnableDisable(preCheckedED);
-        console.log("save-preference result: ", result);
+        console.log("result?.status_code ",result?.status_code,"save-preference result: ", result);
         setLoading({"preference":false});
-        setNotificationMessage(result?.message);
+        switch(result?.status_code){
+          case 500:
+            setNotificationMessageError(result.message);
+          break;
+          case 422:
+            setNotificationMessageError(result.message);
+          break;
+          case 200:
+            setNotificationMessage(result?.message);
+          break;
+          default:
+            setNotificationMessage(result?.message);
+            break;
+        }
+        
         setTimeout(() => {
           setNotificationMessage("")
         }, 5000);
       })
       .catch((error) =>{ console.error(error); setLoading({"preference":false});});
+    }
+    else{
+      setNotificationMessageInfo("Please select Source of Truth/Main Plugin");
+      setLoading({"preference":false});
+      setTimeout(() => {
+        setNotificationMessageInfo("")
+      }, 5000);
+    }
   }
 
   const successStyle = {
@@ -554,6 +606,16 @@ export default function configPage() {
     padding: "12px",
     borderRadius: "8px",
     marginBottom: "1rem",
+    width: "100%",
+    marginTop: "1rem",
+  };
+  const infoStyle = {
+    background: "#f4f573",
+    padding: "12px",
+    borderRadius: "8px",
+    marginBottom: "1rem",
+    width: "100%",
+    marginTop: "1rem",
   };
 
   const flexStyle = {
@@ -561,7 +623,8 @@ export default function configPage() {
     flexWrap: "wrap",
     justifyContent: "space-between",
   }
-
+  
+  
   return (
     <div style={{ display: "flex", gap: "2rem", marginLeft: "1.9rem" }}>
       {navbar && (
@@ -604,15 +667,16 @@ export default function configPage() {
             {notificationMessage !== "" && (
             <NotificationBar title={notificationMessage} style={successStyle} />
           )}
-            {/* {credentialFormStatus != null && (
-              <NotificationBar title={!credentialFormStatus
-                ? "Connection not connected"
-                : "Connection is connected"} style={!credentialFormStatus ? errorStyle : successStyle} />
-            )} */}
+          {notificationMessageError !== "" && (
+            <NotificationBar title={notificationMessageError} style={errorStyle} />
+          )}
+          {notificationMessageInfo !== "" && (
+            <NotificationBar title={notificationMessageInfo} style={infoStyle} />
+          )}
+          
             <div style={{ width: "100%",marginTop:"10px" }}>
               {preference &&
                 preference != undefined &&
-                configform != null &&
                 navbar ? (
                 <>
                 {loader=="prefyes"?(<LegacyCard title="Preference" sectioned >
@@ -727,13 +791,18 @@ export default function configPage() {
                   </LegacyCard>
                )}
                  
-                 {loader=="configyes"?(<LegacyCard title="Config" sectioned >
+                 {prefEnableDisable != 0 && loader=="configyes" && 
+                    configform?.config_form?.filter(mango => mango?.fields.length > 0)?(<LegacyCard title="Config" sectioned >
                   <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(  
                   <>
                   {prefEnableDisable != 0 &&
-                    configform?.config_form?.map((mango,index) => {
+                    configform?.config_form
+                    ?.filter(mango => mango?.fields.length > 0)
+                    .map((mango, index, filteredArray) => {
                       console.log("mango :::", mango);
-                      const isLast = index === 0;
+                  
+                      const isLast = index === filteredArray.length - 1;
+                  
                       console.log("isLast :::", isLast);
                       console.log("index :::", index);
                       console.log("mango?.fields.length :::", mango?.fields.length);
@@ -742,7 +811,7 @@ export default function configPage() {
 
                           {mango?.fields.length > 0 && (
                             <LegacyCard title={mango?.label} sectioned 
-                            primaryFooterAction={!loading.config?{ content: 'Save Config', onAction: () => handleConfigSubmit() }:{ content:<Spinner accessibilityLabel="Spinner example" size="small" />}}>
+                            primaryFooterAction={isLast?!loading.config?{ content: 'Save Config', onAction: () => handleConfigSubmit() }:{ content:<Spinner accessibilityLabel="Spinner example" size="small" />}:null}>
                               <Card title="configform">
                                 <FormLayout>
                                   <div
@@ -820,10 +889,18 @@ export default function configPage() {
                 </>
               ) : (
                 <>
+                {!navbar && (
+                  <>
                   <FormLayout>
-                  {!credentialFormStatus
-                ? (<LegacyCard title="" sectioned  actions={[{content: 'Not Connected', destructive: true}]}>
-                  
+                 <LegacyCard title="" sectioned  >
+                  <InlineStack gap="200" align="center" blockAlign="center">
+                  <Badge
+                    tone={credentialFormStatus ? 'success' : undefined}
+                    toneAndProgressLabelOverride={`Setting is ${credentialFormStatus ? 'Connected' : 'Not Connected'}`}
+                  >
+                    {credentialFormStatus ? 'Connected' : 'Not Connected'}
+                  </Badge>
+        </InlineStack>
                   {product?.plugin_form?.map((plugin, index) => {
                     // console.log("plugin?.fields?.token :::", plugin?.fields?.token)
                     return (
@@ -887,76 +964,10 @@ export default function configPage() {
                       </div>
                     );
                   })}
-                  </LegacyCard>)
-                :(
-                  <LegacyCard title="" sectioned  actions={[{content: 'Connected'}]}>
-                  
-                    {product?.plugin_form?.map((plugin, index) => {
-                      // console.log("plugin?.fields?.token :::", plugin?.fields?.token)
-                      return (
-                        <div
-                          style={{
-                            display:
-                              plugin.fields?.token != undefined ||
-                                plugin?.fields?.token != null
-                                ? "none"
-                                : "block",
-                          }}
-                        >
-                            <Card key={index} title={plugin.label}>
-                              <div
-                                style={flexStyle}
-                              >
-                                {Object.entries(plugin.fields).map(
-                                  ([fieldKey, field]) => {
-                                    // console.log("fieldKey :::", fieldKey)
-                                    return (
-                                      <div style={{ width: "48%" }}>
-                                        {(() => {
-                                          switch (field.type) {
-                                            case "url":
-                                            case "text":
-                                            case "hidden":
-                                            case "password":
-                                              return (
-                                                <div>
-                                                  <TextField
-                                                    label={field.label}
-                                                    value={formData[fieldKey]}
-                                                    onChange={(value) =>
-                                                      handleChange(value, fieldKey)
-                                                    }
-                                                    name={fieldKey}
-                                                    type={field.type}
-                                                    required={field.required}
-                                                    helpText={field.description}
-                                                    requiredIndicator
-                                                  />
-                                                  <>
-                                                    {cerror.length > 0 && cerror.filter((e) => e.name == fieldKey).map((sh) => {
-                                                      return (
-                                                        <span style={{ color: 'red' }} >This field is required</span>
-                                                      )
-                                                    })}
-                                                  </>
-                                                </div>
-                                              );
-                                            default:
-                                              return null;
-                                          }
-                                        })()}
-                                      </div>
-                                    );
-                                  },
-                                )}
-                              </div>
-                            </Card>
-                        </div>
-                      );
-                    })}
-                    </LegacyCard>
-                    )}
+                  </LegacyCard>
+              
                   </FormLayout>
+                  
                   {loading.config_loading ? (
                     <button style={{backgroundColor:"#000",color:"#fff",padding:"4px 8px",borderRadius:"10px"}}  variant="primary">
                     <Spinner accessibilityLabel="Config Form" size="small" />
@@ -966,6 +977,8 @@ export default function configPage() {
                     Save
                   </button>
                 )}
+                </>
+              )}
                 </>
               )}
             </div>

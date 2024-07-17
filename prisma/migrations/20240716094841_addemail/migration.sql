@@ -43,7 +43,8 @@ CREATE TABLE "UserConnection" (
     "updated_at" DATETIME,
     "status" TEXT,
     "active_subscription_id" TEXT,
-    "token" TEXT NOT NULL
+    "token" TEXT NOT NULL,
+    "email" TEXT
 );
 
 -- CreateIndex

@@ -12,7 +12,7 @@ export const action = async ({ request }) => {
   switch (topic) {
     case "APP_UNINSTALLED":
       if (session) {
-        const store = await prisma.userConnection.findFirst({
+        const store = await db.userConnection.findFirst({
           where: { shop },
         });
         const myHeaders = new Headers();
@@ -20,7 +20,7 @@ export const action = async ({ request }) => {
         myHeaders.append("Content-Type", "application/json");
 
         const raw = JSON.stringify({
-          "email": "apps@saasintegrator.com"
+          "email": store.email,
         });
 
         const requestOptions = {
@@ -30,7 +30,7 @@ export const action = async ({ request }) => {
           redirect: "follow"
         };
 
-        fetch("https://main.dev.saasintegrator.online/api/v1/inactive-connection/"+store.connection_id, requestOptions)
+        await fetch("https://main.dev.saasintegrator.online/api/v1/inactive-connection/"+store.connection_id, requestOptions)
           .then((response) => response.text())
           .then((result) => console.log(result))
           .catch((error) => console.error(error));

@@ -56,4 +56,5 @@ model UserConnection {
     status               String?
     active_subscription_id String?
     token                String
+    email                String?
 }
