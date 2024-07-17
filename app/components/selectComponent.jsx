@@ -59,9 +59,9 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error 
                 helpText={field.description}
                 requiredIndicator={field.required}
               />
-              {/* {index === fields.length - 1 && field.is_cloneable && ( */}
+              {index === fields.length - 1 && field.is_cloneable && (
                 <Button icon={PlusIcon} onClick={addField} plain />
-              {/* )} */}
+              )} 
             </div>
           ))}
           <span style={{ color: "red" }}>{showError}</span>
