@@ -206,7 +206,7 @@ export default function configPage() {
   form.map((item) => {
     var jj = {
       content: item.name,
-     // suffix: item.module==preferenceActiveTab?(<Icon source={CheckIcon} tone="textSuccess" />):null,
+      tone: item.module==preferenceActiveTab?"primary":"secondary",
       suffix: item.is_configured?(<Icon source={CheckIcon} tone="textSuccess" />):null,
       prefix: <Icon source={ChevronRightIcon} />,
       onAction: () => handleItemClick(item.module),
@@ -629,7 +629,27 @@ export default function configPage() {
     <div style={{ display: "flex", gap: "2rem", marginLeft: "1.9rem" }}>
       {navbar && (
         <>
-          <ActionList actionRole="menuitem" items={items} />
+          {/* <ActionList actionRole="menuitem" items={items} /> */}
+          <div style={{ width: "15%"  ,float:'left' , }}>
+  {items.map((item, index) => (
+    <Button
+      key={index}
+      onClick={item.onAction}
+      icon={item.prefix}
+      fullWidth
+      alignment="left"
+      iconAlignment="left"
+      textAlign = "left"
+      variant={item.tone}
+    >
+      <div style={{ display: "flex", float:'left', width: "100%" }}>
+        <span>{item.content}</span>
+        {item.suffix}
+      </div>
+    </Button>
+  ))}
+</div>
+
         </>
       )}
       <form onSubmit={handleSubmit}>
