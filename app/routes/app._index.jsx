@@ -543,7 +543,7 @@ export default function configPage() {
     myHeaders.append("Authorization", "Bearer " + data?.store?.token);
     myHeaders.append("Content-Type", "application/json");
     console.log("preCheckedEDpreCheckedEDpreCheckedEDpreCheckedED ::", preCheckedED);
-    if(selectedValue!="" && preCheckedED==1){
+    if(selectedValue!="" || preCheckedED==0){
     const raw = JSON.stringify({
       "enable": preCheckedED == 0 ? false : true,
       "main_plugin": selectedValue
@@ -996,7 +996,7 @@ export default function configPage() {
                   </FormLayout>
                   
                   {loading.config_loading ? (
-                    <button style={{backgroundColor:"#000",color:"#fff",padding:"4px 8px",borderRadius:"10px"}}  variant="primary">
+                    <button style={{backgroundColor:"#000",color:"#fff",padding:"4px 8px",borderRadius:"10px",marginTop:"15px"}}  variant="primary">
                     <Spinner accessibilityLabel="Config Form" size="small" />
                   </button>
                   ):(
