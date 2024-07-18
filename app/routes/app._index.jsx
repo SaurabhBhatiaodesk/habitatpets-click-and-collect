@@ -708,7 +708,7 @@ export default function configPage() {
             <NotificationBar title={notificationMessageInfo} style={infoStyle} />
           )}
           
-            <div style={{ width: "100%",marginTop:"10px" }}>
+            <div style={{ width: "100%",marginTop:"10px",minWidth:"32pc" }}>
               {preference &&
                 preference != undefined &&
                 navbar ? (
