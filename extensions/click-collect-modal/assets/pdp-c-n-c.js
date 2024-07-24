@@ -1,14 +1,14 @@
 async function fetchAccessToken() { try { let response = await fetch(`https://clickncollect-12d7088d53ee.herokuapp.com/api/get?shop=${location.hostname}`, { headers: { "Content-Type": "application/json", Accept: "application/json"  } });  if (!response.ok) throw new Error("Network response was not ok.");    return await response.json();  } catch (error) { console.error("Error fetching access token:", error); throw error;  }}
 function setCookie(name,value,days){let expires="";if(days){let date=new Date();date.setTime(date.getTime()+(days*86400000));expires="; expires="+date.toUTCString()}document.cookie=`${name}=${value}${expires}; path=/`;}
 function getCookie(name){let cookies=document.cookie.split(";").map(cookie=>cookie.trim().split("="));for(let i=0;i<cookies.length;i++){if(cookies[i][0]===name){return decodeURIComponent(cookies[i][1]);}}return null;}
-async function fetchData(url) { try { let response = await fetch(url); if (!response.ok) throw new Error(`Failed to fetch data from ${url}`); return await response.json(); } catch (error) { console.error("Error fetching data:", error); throw error;  }}
+async function fetchData(url) { try { let response = await fetch(url); if (!response.ok) throw new Error(`Failed to fetch data from ${url}`); return await response.json(); } catch (error) { console.error("Error: ", error); throw error;  }}
 async function fetchLocationsGraphQL(accessToken) {    const myHeaders = new Headers();    myHeaders.append("Content-Type", "application/json");    myHeaders.append("X-Shopify-Access-Token", accessToken);
   const graphql = JSON.stringify({  query: `query MyQuery {locations(first: 10) {nodes {activatable hasActiveInventory isActive localPickupSettingsV2 { instructions pickupTime } name id address {zip provinceCode province phone longitude latitude formatted countryCode country city address2 address1 } } } }`, variables: {}});
   const requestOptions = { method: "POST", headers: myHeaders, body: graphql, redirect: "follow"};
   try { const response = await fetch("/admin/api/2024-04/graphql.json", requestOptions); if (!response.ok) throw new Error(`Request failed with status ${response.status}`); return await response.json();} catch (error) {console.error("Error fetching locations:", error); throw error;}
 }
 async function fetchQuantity() {try { let response = await fetch(`https://clickncollect-12d7088d53ee.herokuapp.com/api/quantity?shop=${location.hostname}`, {	headers: {"Content-Type": "application/json", Accept: "application/json" } });
-		if (!response.ok) throw new Error("Network response was not ok."); return await response.json()	} catch (error) { console.error("Error fetching access token:", error);		throw error;	}}
+		if (!response.ok) throw new Error("Network response not ok."); return await response.json()	} catch (error) { console.error("Error token:", error);		throw error;	}}
   async function getLocations(accessToken, selectedLocation = "") { try {  const testres = await fetchLocationsGraphQL(accessToken); 
         const locations = testres?.data?.locations?.nodes;  const destinationsArr = []; if (locations) { for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) {  destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`);}}}
             if (destinationsArr.length > 0) { const customerLocation = getCookie("customerlocation"); document.querySelector(".location").value = customerLocation;
@@ -35,7 +35,7 @@ async function fetchQuantity() {try { let response = await fetch(`https://clickn
           document.querySelector(".popup-box .address-popup").style.display = "block";
           let popupModal = document.querySelector(".popup-modal");    if (popupModal) { popupModal.style.display = "block"; popupModal.classList.add("showmodal"); }
           if (getCookie("storelocationName")){ console.log('locationName ',getCookie("storelocationName"))}
-          else{  console.log('locationName  else',getCookie("storelocationName"))}
+          else{  console.log('locationName ',getCookie("storelocationName"))}
       } catch (error) { console.error("Error locations:", error); }
   } 
 async function getInventoryLocations(accessToken, callback) {
@@ -77,7 +77,6 @@ document.addEventListener("click", event => { if (!event.target.closest(".invent
 const crossElement = document.querySelector(".popup-close-cross");
 function showModal(){let storeLocationName=getCookie("storelocationName");fetchAccessToken().then(({accessToken})=>{getLocations(accessToken,storeLocationName)}).catch(console.error);refreshInventoryLocations()}
 if (crossElement) {  crossElement.addEventListener("click", event => {  event.preventDefault(); let popupModal = document.querySelector(".popup-modal");    if (popupModal) { popupModal.style.display = "none"; popupModal.classList.remove("showmodal"); }  }); } else {  console.log("class 'cross' undefined");}
-document.addEventListener("change", event => { if (event.target.matches(".popup-modal .address-popup input.locations")) { let locationName = event.target.nextElementSibling.textContent; setCookie("storelocationName", locationName); setCookie("storelocation", event.target.id); refreshInventoryLocations(); }
-});
+document.addEventListener("change", event => { if (event.target.matches(".popup-modal .address-popup input.locations")) { let locationName = event.target.nextElementSibling.textContent; setCookie("storelocationName", locationName); setCookie("storelocation", event.target.id); refreshInventoryLocations(); } });
 document.addEventListener("click", event => { if (event.target.classList.contains("open-modal-cnc")) {showModal(); }});
-document.addEventListener("DOMContentLoaded", () => { refreshInventoryLocations(); });
+window.onload = async function() { refreshInventoryLocations();}

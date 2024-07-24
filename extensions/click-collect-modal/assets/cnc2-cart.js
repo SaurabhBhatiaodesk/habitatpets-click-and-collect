@@ -12,14 +12,12 @@ async function cartUpdate(updates, flag = false) {
 		if (response.ok) {
 
 			if (flag == true) {
-				// console.log('flag it true')
 				let errorMessages = document.querySelectorAll(".cart-grid p.error-massage.active");
 				for (let i = 0; i < errorMessages.length; i++) {
 					let errorMessage = errorMessages[i];
 					errorMessage.closest(".cart-grid").remove();
 				}
 				document.querySelector(".remove-allitem").style.display = "none";
-
 			}
 			let checkoutButton = document.querySelector("button.cart-btn.gotocheckout.checkoutbtn");
 			checkoutButton.disabled = false;
@@ -30,7 +28,9 @@ async function cartUpdate(updates, flag = false) {
 				style: "currency",
 				currency: cartData.currency
 			});
+
 			document.querySelector(".cart-right .sub-total .price .totals__subtotal-value").innerHTML = totalPrice;
+			localStorage.setItem("testings", JSON.stringify([]));
 		}
 	} catch (error) {
 		console.error("Error:", error);
@@ -202,7 +202,7 @@ async function getCartLocations(accessToken, selectedLocationName = "") {
 		console.error("Error getting cart locations:", error);
 	}
 }
-async function get_inv_locations(accessToken, product) {
+async function get_inv_locations(accessToken, product, quantityres = 0) {
 	// let query=`query MyQuery { product(id: "gid://shopify/Product/${product.product_id}") {tags title tracksInventory collections(first: 10) { nodes { id title handle } } variants(first: 10) { nodes { inventoryItem { inventoryLevels(first: 10) { edges { node { location { activatable name } id quantities(names: "available") { name id quantity } } } } } id } id } } }`;
 	let query = `query MyQuery { product(id: "gid://shopify/Product/${product.product_id}") { tags title tracksInventory collections(first: 10) { nodes { id title handle } } variants(first: 10) { nodes { inventoryItem { inventoryLevels(first: 10) { edges { node { location { activatable name } id quantities(names: "available") { name id quantity } } } } } id } } } }`;
 	try {
@@ -213,25 +213,22 @@ async function get_inv_locations(accessToken, product) {
 		});
 		if (response.ok) {
 			let data = await response.json();
-			handle_inv_locations(null, data.data, product);
+			handle_inv_locations(null, data.data, product, quantityres);
 		} else {
 			let error = new Error("Request failed");
-			handle_inv_locations(error, null, product);
+			handle_inv_locations(error, null, product, quantityres);
 		}
 	} catch (error) {
-		handle_inv_locations(error, null, product);
+		handle_inv_locations(error, null, product, quantityres);
 	}
 }
 function filterlocations(data, product, quantity) {
 	// console.log('filterlocations product', data, product);
 	let variantId = product.variant_id;
-	// Get sorted locations from cookies
 	let getSortedLocations = getCookie('sortedLocations');
-
 	let sortedLocations = [];
 	let sorted = {};
 
-	// Check if sorted locations exist
 	if (getSortedLocations) {
 		sortedLocations = getSortedLocations.split(', ');
 		// console.log('handle_inv_locations Sorted Locations:', sortedLocations);
@@ -240,11 +237,12 @@ function filterlocations(data, product, quantity) {
 	// Loop through sorted locations and initialize them as true in the sorted object
 	for (let i = 0; i < sortedLocations.length; i++) {
 		const storeLocationName = sortedLocations[i];
-		sorted[storeLocationName] = true;
-		// console.log('storeLocationName ', storeLocationName);
+		if (typeof(storeLocationName) === "string") {
+			sorted[storeLocationName] = false;
+		  } // console.log(sorted , '--  storeLocationName --', storeLocationName);
 	}
 	// console.log('data.product.variants.nodes ', data.product.variants.nodes, data)
-	var isInStock = false;
+	var isInStock = true;
 	for (let j = 0; j < data.product.variants.nodes.length; j++) {
 		let variant = data.product.variants.nodes[j];
 		let variantIdParts = variant.id.split("/");
@@ -257,42 +255,50 @@ function filterlocations(data, product, quantity) {
 					let inventoryLevel = variant.inventoryItem.inventoryLevels.edges[k].node;
 					let locationName = inventoryLevel.location.name;
 					let storeLocationName = sortedLocations.find(name => name === locationName);
-					console.log('storeLocationName ',storeLocationName)
+					// console.log('storeLocationName ',storeLocationName)
 					if (storeLocationName) {
-						isInStock = inventoryLevel.quantities[0].quantity > quantity && inventoryLevel.quantities[0].quantity >= product.quantity;
-						sorted[storeLocationName] = isInStock;
+						// console.log('inventoryLevel.quantities[0].quantity ',inventoryLevel.quantities[0].quantity, ' > api quantity ',quantity, ' and  >= product.quantity ',product.quantity )
+						if(inventoryLevel.quantities[0].quantity > quantity && inventoryLevel.quantities[0].quantity >= product.quantity){
+							isInStock = true;
+							sorted[storeLocationName] = isInStock;
+						}
+						// console.log('isInStock ',isInStock, 'storeLocationName ',storeLocationName, '  --   ',sorted[storeLocationName], '  sorted ',sorted);
+						// break;
 					}
 				}
 			}
 		}
 	}
 
-	let arrr = localStorage.getItem("testings");
+		let arrr = JSON.parse(localStorage.getItem("testings") || "[]");
 		if(!arrr){
-			// console.log('if !arrr ')    
+			localStorage.setItem("testings", JSON.stringify(sorted));
 		}else{
 			// console.log('else arrr has ',arrr)    
-			Object.keys(arrr).forEach((key) => {
-				if (arrr[key]) {
-					if (isInStock == false) {
-						sorted[key] = false; 
+			for (let i = 0; i < sortedLocations.length; i++) {
+				const storeLocationName = sortedLocations[i];
+				// console.log('key ', storeLocationName,'--- arr.key', arrr[storeLocationName], ' ---- ',arrr.storeLocationName )
+				// if (arrr[storeLocationName]) {
+				// 	if (isInStock == false) {
+				// 		sorted[storeLocationName] = false; 
+				// 	}
+				// } else {
+					if (sorted[storeLocationName] == true && arrr[storeLocationName] == false) {
+						sorted[storeLocationName] = false; 
 					}
-				} else {
-					if (isInStock == true && arrr[key] == false) {
-						sorted[key] = false; 
-					}
-				}
-			});
+				// }
+			}
 
 		}     
+		// console.log('arrr has ',arrr, '-- sorted --',sorted)    
 	return sorted;
 }
 
 
-async function handle_inv_locations(error, data, product) {
+async function handle_inv_locations(error, data, product, quantityres) {
 
 	if (error) { console.error("Error fetching inventory locations:", error); return; }
-	var quantityres = await fetchQuantity();
+
 	// if(document.querySelectorAll('.cart-popup .radio-btn .locations').length > 1){	
 	let arrr = filterlocations(data, product, quantityres.quantity);
 	// }
@@ -316,10 +322,9 @@ async function handle_inv_locations(error, data, product) {
 		  element.parentElement.style.color = '';
 		}
 	  });     
+	  	// console.log('arrr localStorage.setItem ',arrr);
 
-	 
-		localStorage.setItem("testings", JSON.stringify(arrr));
-
+	  localStorage.setItem("testings", JSON.stringify(arrr));
 	
 	let variantId = product.variant_id;
 	let storeLocationName = getCookie("storelocationName");
@@ -379,7 +384,7 @@ async function handle_inv_locations(error, data, product) {
 	checkoutButton.disabled = hasActiveErrors;
 	checkoutButton.classList.toggle("disabled", hasActiveErrors);
 }
-async function fetch_inventory_for_cart_items(accessToken, cartItems) {
+async function fetch_inventory_for_cart_items(accessToken, cartItems, quantityres) {
 	// console.log('fetch_inventory_for_cart_items accessToken  ', accessToken, ' cartItems ',cartItems);     
 	let cartGrids = document.querySelectorAll(".cart-grid");
 	for (let i = 0; i < cartGrids.length; i++) {
@@ -391,9 +396,9 @@ async function fetch_inventory_for_cart_items(accessToken, cartItems) {
 			let quantityElement = cartGrid.querySelector(".item-quantities span b");
 			if (quantityElement) {
 				quantityElement.textContent = cartItem.quantity;
-			}
+			}    
 			cartGrid.classList.add("matched");
-			get_inv_locations(accessToken.accessToken, cartItem);
+			get_inv_locations(accessToken.accessToken, cartItem, quantityres);
 		} else {
 			cartGrid.style.display = "none";
 		}
@@ -406,11 +411,12 @@ async function fetch_inventory_for_cart_items(accessToken, cartItems) {
 }
 
 async function init() {
+	var quantityres = await fetchQuantity();
 	let accessToken = await fetchAccessToken();
 	let cartResponse = await fetch("/cart.js");
 	if (cartResponse.ok) {
 		let cartData = await cartResponse.json();
-		fetch_inventory_for_cart_items(accessToken, cartData.items);
+		fetch_inventory_for_cart_items(accessToken, cartData.items, quantityres);
 	}
 }
 init();
@@ -470,7 +476,8 @@ function handleInventoryLocations(error, productData, cartData) {
 		checkoutButton.classList.remove("disabled");
 	}
 }
-function fetchInventoryForCartItems(accessToken, data) {
+async function fetchInventoryForCartItems(accessToken, data) {
+	var quantityres = await fetchQuantity();
 	var cartItems = data.items;
 	var currency = data.currency;
 	// console.log('accessToken ',accessToken, ' cartItems ',cartItems);
@@ -517,7 +524,7 @@ function fetchInventoryForCartItems(accessToken, data) {
 		}
 	}
 	for (var i = 0; i < cartItems.length; i++) {
-		get_inv_locations(accessToken, cartItems[i]);
+		get_inv_locations(accessToken, cartItems[i],quantityres);
 		// getInventoryLocations(accessToken, cartItems[i]);
 	}
 }
@@ -583,6 +590,7 @@ document.addEventListener("change", function (event) {
 });
 document.addEventListener("click", function (event) {
 	if (event.target.matches("button.check-btn")) {
+		localStorage.setItem("testings", JSON.stringify([]));
 		setCookie("customerlocation", document.querySelector(".location").value);
 		var storeLocationName = getCookie("storelocationName");
 		fetchAccessToken().then(function (response) {
@@ -592,6 +600,7 @@ document.addEventListener("click", function (event) {
 		});
 	}
 	if (event.target.matches("button.cart-btn.button")) {
+		localStorage.setItem("testings", JSON.stringify([]));
 		document.body.classList.add("bg-hidden");
 		document.querySelector(".cart-popup").style.display = "block";
 		var storeLocationName = getCookie("storelocationName");
@@ -688,6 +697,7 @@ document.addEventListener("click", function (event) {
 						errorMessage.closest(".cart-grid").remove();
 					}
 					document.querySelector(".remove-allitem").style.display = "none";
+					localStorage.setItem("testings", JSON.stringify([]));
 				})
 				.catch(function (error) {
 					console.error("Error fetching access token:", error);

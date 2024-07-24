@@ -132,7 +132,9 @@ button.cart-btn.gotocheckout {
 }
 
 .cart-popup .address-popup img {
-    max-width: 30px
+    max-width: inherit;
+    object-fit: contain;
+    width: 26px;
 }
 
 .cart-popup .cart-popup-box a.cross img {
@@ -142,9 +144,10 @@ button.cart-btn.gotocheckout {
     color: #fff;
     text-decoration: none;
     position: absolute;
-    right: -15px;
-    top: -15px;
-    width: 30px
+    right: -8px;
+    top: -5px;
+    width: 26px;
+    height: 26px;
 }
 
 .cart-popup img {
@@ -204,7 +207,8 @@ svg.icon.icon-remove path {
 .cart-popup .quantity-row {
     height: 100%;
     flex-wrap: wrap;
-    align-items: stretch
+    align-items: stretch;
+    max-width: 70%;
 }
 
 .cart-popup .cart-grid {
@@ -229,11 +233,11 @@ svg.icon.icon-remove path {
 
 .cart-popup button.cart-btn {
     width: auto;
-    padding: 10px 20px;
-    font-size: 20px;
+    padding: 10px 15px;
+    font-size: 16px;
     background: #000;
     color: #fff;
-    line-height: 27px;
+    line-height: 24px;
     margin: 10px 0;
     border-radius: 7px
 }
@@ -334,6 +338,29 @@ cart-remove-button .button {
     min-height: 2.5rem !important
 }
 
+@media screen and (max-width:1600px) {
+    .cart-popup .cart-btn {
+        max-width: 49%;
+        min-width: 49%;
+    }
+}
+
+@media screen and (max-width:1400px) {
+    .cart-popup button.cart-btn {
+        font-size: 12px;
+        line-height: 20px;
+        padding: 10px 8px;
+    }
+    .cart-popup p.note {
+        font-size: 15px;
+        line-height: 24px;
+    }
+    .cart-body {
+        gap: 10px;
+        width: 60%;
+    }
+}
+
 @media screen and (max-width:991px) {
 
     .cart-box .cart-left,
@@ -390,13 +417,26 @@ cart-remove-button .button {
     }
 
     .cart-popup button.cart-btn {
-        font-size: 16px
+        font-size: 14px
     }
 
     cart-remove-button .button {
         min-height: 2.5rem !important
     }
 }
+
+
+@media screen and (max-width:480px) {
+    .cart-popup .cart-btn {
+        max-width: 100%;
+        min-width: 100%;
+        margin: 5px 0 !important;
+    }
+    .cart-popup .cart-body {
+        width: 100%;
+    }
+}
+
 
 .cart__footer button.cart-btn.button {
     font-size: 1.5rem;
