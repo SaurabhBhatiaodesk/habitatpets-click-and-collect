@@ -522,7 +522,10 @@ export default function configPage() {
         })
         .catch((error) =>{ console.error(error); setLoading({"config":false});});
     }
-
+    else
+    {
+      setLoading({"config":false});
+    }
   };
 
   const handlePrefEnableDisable = (value, label) => {
@@ -605,29 +608,23 @@ export default function configPage() {
   }
 
   const successStyle = {
-    background: "#c4f1c4",
+    background: "#b4fed2",
     padding: "12px",
     borderRadius: "8px",
     marginBottom: "1rem",
     width: "100%",
     marginTop: "1rem",
+    color: "#0c5132"
   };
 
   const errorStyle = {
-    background: "#ff9e9e",
+    background: "#fed3d1",
     padding: "12px",
     borderRadius: "8px",
     marginBottom: "1rem",
     width: "100%",
     marginTop: "1rem",
-  };
-  const infoStyle = {
-    background: "#f4f573",
-    padding: "12px",
-    borderRadius: "8px",
-    marginBottom: "1rem",
-    width: "100%",
-    marginTop: "1rem",
+    color: "#8e1f0b"
   };
 
   const flexStyle = {
@@ -705,7 +702,7 @@ export default function configPage() {
             <NotificationBar title={notificationMessageError} style={errorStyle} />
           )}
           {notificationMessageInfo !== "" && (
-            <NotificationBar title={notificationMessageInfo} style={infoStyle} />
+            <NotificationBar title={notificationMessageInfo} style={errorStyle} />
           )}
           
             <div style={{ width: "100%",marginTop:"10px",minWidth:"32pc" }}>
@@ -934,7 +931,7 @@ export default function configPage() {
                  <Card>
                   <div style={{textAlign: 'center'}} >
                   <Badge
-                    tone={credentialFormStatus ? 'success' : undefined}
+                    tone={credentialFormStatus ? 'success' : 'critical'}
                     toneAndProgressLabelOverride={`Setting is ${credentialFormStatus ? 'Connected' : 'Not Connected'}`}
                   >
                     {credentialFormStatus ? 'Connected' : 'Not Connected'}

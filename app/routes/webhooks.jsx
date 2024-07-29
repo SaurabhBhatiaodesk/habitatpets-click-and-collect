@@ -34,6 +34,7 @@ export const action = async ({ request }) => {
           .then((response) => response.text())
           .then((result) => console.log(result))
           .catch((error) => console.error(error));
+        await db.userConnection.deleteMany({ where: { shop } });
         await db.session.deleteMany({ where: { shop } });
       }
 
