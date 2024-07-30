@@ -128,6 +128,8 @@ export default function configPage() {
   const user_data = data?.user_data;
   const items = [];
   const [loader, setLoader] = useState("");
+  const [configLoader, setConfigLoader] = useState("");
+  const [mapLoader, setMapLoader] = useState("");
   const [required, setRequired] = useState();
   const [showerror, setError] = useState();
   const [cerror, setCerror] = useState([]);
@@ -221,6 +223,12 @@ export default function configPage() {
 
     setDataLimit({ start: 0, end: 2 });
     setLoader('prefyes');
+    setConfigLoader('configyes');
+    setMapLoader('mapyes');
+
+    
+    setConfig();
+    setMapping();
     setPreferenceActiveTab(itemContent);
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + data.store.token);
@@ -244,7 +252,7 @@ export default function configPage() {
       console.log("preference ", preference);
       setPreference(preference);
       setLoader('prefno');
-      setLoader('configyes');
+      
       if(preference.meta.is_enabled) {
         setDataLimit({ start: 0, end: 2 });
       }
@@ -258,7 +266,7 @@ export default function configPage() {
         requestOptions,
       );
       if (!response2.ok) {
-        setLoader('configno');
+        setConfigLoader('configno');
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const requireds = [];
@@ -282,9 +290,9 @@ export default function configPage() {
       console.log("required:::::", requireds);
       console.log("config ", configform);
       setConfig(configform);
-      setLoader('configno');
+      setConfigLoader('configno');
       /**************************************** Mapping **************************************************** */
-      setLoader('mapyes');
+     
       const response3 = await fetch(
         `https://main.dev.saasintegrator.online/api/v1/${itemContent}/mapping`,
         requestOptions,
@@ -295,10 +303,10 @@ export default function configPage() {
       let mapping = await response3.json();
       console.log("mapping ", mapping);
       setMapping(mapping);
-      setLoader('mapno');
+      setMapLoader('mapno');
     }
     } catch (error) {
-      setLoader('mapno');
+      setMapLoader('mapno');
       console.error("Error fetching config-form:", error);
       throw error;
     }
@@ -822,8 +830,7 @@ export default function configPage() {
                   </LegacyCard>
                )}
                  
-                 {prefEnableDisable != 0 && loader=="configyes" && 
-                    configform?.config_form?.filter(mango => mango?.fields.length > 0)?(<LegacyCard title="Config" sectioned >
+                 {prefEnableDisable != 0 && configLoader=="configyes" ?(<LegacyCard title="Config" sectioned >
                   <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(  
                   <>
                   {prefEnableDisable != 0 &&
@@ -911,7 +918,7 @@ export default function configPage() {
                   )}
                   {prefEnableDisable != 0 && (
                     <>
-                  {loader=="mapyes"?(<LegacyCard title="Mapping" sectioned >
+                  {mapLoader=="mapyes"?(<LegacyCard title="Mapping" sectioned >
                     <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(
                     <>
                   <MAPPING mapping={mapping?.items} plugin={selectedValue} preference={preference} token={data?.store?.token || ''} setNotificationMessage={setNotificationMessage}  
