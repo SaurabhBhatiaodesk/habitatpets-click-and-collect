@@ -134,6 +134,7 @@ export default function configPage() {
   const [showerror, setError] = useState();
   const [cerror, setCerror] = useState([]);
   const [loading, setLoading] = useState({});
+  const [hideshow, setHideshow] = useState({});
   
 
   console.log("dataaaaaaaa ::", data);
@@ -200,6 +201,7 @@ export default function configPage() {
   const handleSecondButtonClick = useCallback(() => {
     setNavbar(true);
     setProduct(null);
+    setNotificationMessage("");
     handleItemClick("store");
     // setConfig(null);
     if (!isFirstButtonActive) return;
@@ -284,6 +286,10 @@ export default function configPage() {
             console.log("valueeeeeeeeee", value);
             requireds.push(value);
           }
+          setHideshow((prevState) => ({
+            ...prevState,
+            [cf.name]: true, // Dynamically update state based on input name
+          }));
         })
       })
       setRequired(requireds);
@@ -456,6 +462,9 @@ export default function configPage() {
           }
           setLoading({"config_loading": false});
           setNotificationMessage(result?.message);
+          setTimeout(() => {
+            setNotificationMessage("")
+          }, 5000);
           // console.log("allValid ::", allValid)
           console.log("credentialFormStatus ::", credentialFormStatus)
         })
@@ -682,7 +691,7 @@ export default function configPage() {
 
           <Layout>
             
-              {credentialFormStatus && (
+              {/* {credentialFormStatus && ( */}
                 <div style={{ width: "100%" }}>
                 <LegacyCard title="Configuration" sectioned >
                   <ButtonGroup variant="segmented">
@@ -701,7 +710,7 @@ export default function configPage() {
                   </ButtonGroup>
                 </LegacyCard>
                 </div>
-              )}
+              {/* )} */}
             
             {notificationMessage !== "" && (
             <NotificationBar title={notificationMessage} style={successStyle} />
@@ -836,14 +845,9 @@ export default function configPage() {
                   {prefEnableDisable != 0 &&
                     configform?.config_form
                     ?.filter(mango => mango?.fields.length > 0)
-                    .map((mango, index, filteredArray) => {
-                      console.log("mango :::", mango);
-                  
+                    .map((mango, index, filteredArray) => {                  
                       const isLast = index === filteredArray.length - 1;
-                  
-                      console.log("isLast :::", isLast);
-                      console.log("index :::", index);
-                      console.log("mango?.fields.length :::", mango?.fields.length);
+                      
                       return (
                         <>
 
@@ -858,7 +862,7 @@ export default function configPage() {
                                     {mango?.fields?.map((field) => (
                                       // <Card type={field.input_type} field={field} />
                                       
-                                      <div style={{ width: "48%" }}>
+                                      <div style={hideshow?.[field.name]?{ width: "48%" }:{display:"none"}}>
                                         {(() => {
                                           {console.log(field.input_type,"field.input_typefield.input_typefield.input_type");}
                                           switch (field.input_type) {
@@ -874,6 +878,7 @@ export default function configPage() {
                                                   handleconfigChange={handleconfigChange}
                                                   mango={{ plugin_id: mango?.plugin_id }}
                                                   error={showerror}
+                                                  setHideshow={setHideshow}
                                                 />
                                               );
                                             case "select":
@@ -886,6 +891,7 @@ export default function configPage() {
                                                     handleconfigChange={handleconfigChange}
                                                     mango={mango}
                                                     error={showerror}
+                                                    setHideshow={setHideshow}
                                                   />
                                                 </>
                                               );
@@ -898,6 +904,7 @@ export default function configPage() {
                                                   handleconfigChange={handleconfigChange}
                                                   mango={{ plugin_id: mango?.plugin_id }}
                                                   error={showerror}
+                                                  setHideshow={setHideshow}
                                                 />
                                               );
                                             default:
@@ -1014,7 +1021,7 @@ export default function configPage() {
                   </FormLayout>
                   
                   {loading.config_loading ? (
-                    <button style={{backgroundColor:"#000",color:"#fff",padding:"4px 8px",borderRadius:"10px",marginTop:"15px"}}  variant="primary">
+                    <button style={{backgroundColor:"#fff",color:"#fff",padding:"4px 8px",borderRadius:"10px",marginTop:"15px"}}  variant="primary">
                     <Spinner accessibilityLabel="Config Form" size="small" />
                   </button>
                   ):(

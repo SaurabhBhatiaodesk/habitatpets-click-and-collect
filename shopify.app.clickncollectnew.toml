@@ -3,7 +3,7 @@
 client_id = "c0acbe1ea218ca74db8c10d1234659d6"
 name = "clickncollectnew"
 handle = "clickncollectnew"
-application_url = "https://fifteen-happened-ho-dev.trycloudflare.com"
+application_url = "https://deemed-shake-theoretical-portrait.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,9 +16,9 @@ scopes = "read_inventory,read_locales,read_locations,read_product_listings,read_
 
 [auth]
 redirect_urls = [
-  "https://fifteen-happened-ho-dev.trycloudflare.com/auth/callback",
-  "https://fifteen-happened-ho-dev.trycloudflare.com/auth/shopify/callback",
-  "https://fifteen-happened-ho-dev.trycloudflare.com/api/auth/callback"
+  "https://deemed-shake-theoretical-portrait.trycloudflare.com/auth/callback",
+  "https://deemed-shake-theoretical-portrait.trycloudflare.com/auth/shopify/callback",
+  "https://deemed-shake-theoretical-portrait.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

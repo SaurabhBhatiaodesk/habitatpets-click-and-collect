@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button } from "@shopify/polaris";
-import { PlusIcon } from '@shopify/polaris-icons';
+import { PlusIcon,MinusIcon } from '@shopify/polaris-icons';
 
 
-const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, error }) => {
+const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, error, setHideshow }) => {
   const [fields, setFields] = useState([{ value: '' }]);
   const [showError, setShowError] = useState('');
   const [show, setShow] = useState(true);
@@ -33,7 +33,12 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
     if (valuesString) {
       const valuesArray = valuesString.split(',');
       setShow(valuesArray.includes(valueToCheck));
+      setHideshow((prevState) => ({
+        ...prevState,
+        [field.name]: valuesArray?.includes(valueToCheck), // Dynamically update state based on input name
+      }));
     }
+    
   }, [inputValues, field.name, field.value, mango?.plugin_id, error, field.show_in, field.show_in_value]);
 
   const handleChange = (value, index) => {
@@ -46,7 +51,13 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
   const addField = () => {
     setFields([...fields, { value: '' }]);
   };
-
+  const removeField = (index) => {
+    if (fields.length > 1) {
+      const newFields = fields.filter((_, i) => i !== index);
+      setFields(newFields);
+      handleconfigChange(newFields.map(f => f.value), field.name, mango?.plugin_id);
+    }
+  };
   return (
     <>
       {show && (
@@ -63,6 +74,9 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
                 helpText={field.description}
                 requiredIndicator={field.required}
               />
+              {fields.length > 1 && (
+                    <Button icon={MinusIcon} onClick={() => removeField(index)} plain />
+                  )}
               {index === fields.length - 1 && field.is_cloneable && (
                 <Button icon={PlusIcon} onClick={addField} plain />
               )}
