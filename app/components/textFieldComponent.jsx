@@ -74,13 +74,19 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
                 helpText={field.description}
                 requiredIndicator={field.required}
               />
+              <span style={{"margin":"20px 0px 0px 5px",padding:"5px"}}>
               {fields.length > 1 && (
+                
                     <Button icon={MinusIcon} onClick={() => removeField(index)} plain />
                   )}
               {index === fields.length - 1 && field.is_cloneable && (
+                <span style={{"marginLeft":"5px"}}>
                 <Button icon={PlusIcon} onClick={addField} plain />
+                </span>
               )}
+              </span>
             </div>
+            
           ))}
           <span style={{ color: "red" }}>{showError}</span>
         </div>

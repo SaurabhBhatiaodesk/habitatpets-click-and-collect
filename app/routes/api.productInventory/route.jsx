@@ -11,19 +11,30 @@ export async function action({ request }) {
     where: { shop },
   });
 
-  let query=`query { product(id: "gid://shopify/Product/${productId}") { tags title tracksInventory collections(first: 10) { nodes { id title handle } } variants(first: 10) { nodes { inventoryItem { inventoryLevels(first: 10) { edges { node { location { activatable name } id quantities(names: "available") { name id quantity } } } } } id } } } }`;
-  console.log("query: " ,query)
-  console.log("token.accessToken: " ,token.accessToken,`https://${shop}/admin/api/2024-04/graphql.json`);
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Shopify-Access-Token", token.accessToken);
   
-    let response = await fetch(`https://${shop}/admin/api/2024-04/graphql.json`, {     
-      method: "POST", headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": token.accessToken },
-      body: JSON.stringify({ query: query, variables: {} })
-    });
-    console.log(response);
-    if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
-    let data = await response.json();
-    return await cors(request, json({ data }));
+  const graphql = JSON.stringify({
+    query: `query MyQuery {\r\n  product(id: \"gid://shopify/Product/${productId}\") {\r\n        tags\r\n    title\r\n    tracksInventory\r\n    collections(first: 10) {\r\n      nodes {\r\n        id\r\n        title\r\n        handle\r\n      }\r\n    }\r\n    variants(first: 10) {\r\n      nodes {\r\n        inventoryItem {\r\n          inventoryLevels(first: 10) {\r\n            edges {\r\n              node {\r\n                location {\r\n                  activatable\r\n                  name\r\n                }\r\n                id\r\n                quantities(names: \"available\") {\r\n                  name\r\n                  id\r\n                  quantity\r\n                }\r\n              }\r\n            }\r\n          }\r\n        }\r\n      }\r\n    }\r\n  }\r\n}\r\n`,
+    variables: {}
+  })
+  console.log('query', graphql);
+  const requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: graphql,
+    redirect: "follow"
+  };
   
+  let response= await fetch(`https://${shop}/admin/api/2024-04/graphql.json`, requestOptions)
+   
+    let data=await response.json();
+
+    return await cors(request, json({ "data": data}));
+  
+    
+ // } catch (error) {console.error("Error fetching inventory locations:", error);return await cors(request, json({ "error":"500" }));}
   // console.log(token);
   
 
