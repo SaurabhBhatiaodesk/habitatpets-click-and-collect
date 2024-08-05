@@ -23,8 +23,8 @@ export async function loader({ request }) {
   myHeaders.append("X-Shopify-Access-Token", auth_session?.accessToken);
   console.log('apiKey1111111', apiKey1.apikey);    
       
-  let apikey = apiKey1?.apikey;
-  //let apikey= 'AIzaSyBXNyT9zcGdvhAUCUEYTm6e_qPw26AOPgI';
+  //let apikey = apiKey1?.apikey;
+  let apikey= 'AIzaSyBXNyT9zcGdvhAUCUEYTm6e_qPw26AOPgI';
 
 
   const graphql = JSON.stringify({
