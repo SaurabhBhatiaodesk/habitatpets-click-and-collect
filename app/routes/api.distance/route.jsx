@@ -14,10 +14,18 @@ export async function loader({ request }) {
   const apiKey1 = await db.googleApi.findFirst({
     where: { shop },
   });
-  
-  console.log('apiKey1111111', apiKey1);    
+  const auth_session = await db.session.findFirst({
+    where: { shop },
+  });
+
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("X-Shopify-Access-Token", auth_session?.accessToken);
+  console.log('apiKey1111111', apiKey1.apikey);    
       
-  let apikey= 'AIzaSyBXNyT9zcGdvhAUCUEYTm6e_qPw26AOPgI';
+  let apikey = apiKey1?.apikey;
+  //let apikey= 'AIzaSyBXNyT9zcGdvhAUCUEYTm6e_qPw26AOPgI';
+
 
   const graphql = JSON.stringify({
     query: "query MyQuery {\r\n  locations(first: 10) {\r\n    nodes {\r\n      activatable\r\n      hasActiveInventory\r\n      isActive\r\n      localPickupSettingsV2 {\r\n        instructions\r\n        pickupTime\r\n      }\r\n      name\r\n      id\r\n    }\r\n  }\r\n}\r\n",
