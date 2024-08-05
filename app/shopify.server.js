@@ -33,7 +33,6 @@ const shopify = shopifyApp({
       await getAuthToken(session);
 
     },
-
   },
   future: {
     v3_webhookAdminContext: true,
