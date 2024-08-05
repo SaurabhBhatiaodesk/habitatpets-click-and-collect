@@ -21,7 +21,7 @@ export async function loader({ request }) {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
   myHeaders.append("X-Shopify-Access-Token", auth_session?.accessToken);
-  console.log('apiKey1111111', apiKey1.apikey);    
+  console.log('apiKey1111111', apiKey1?.apikey);    
       
   //let apikey = apiKey1?.apikey;
   let apikey= 'AIzaSyBXNyT9zcGdvhAUCUEYTm6e_qPw26AOPgI';
@@ -56,8 +56,7 @@ export async function loader({ request }) {
 
   console.log('destinationsArr : ',destinationsArr, '  testres : ',testres)
     
-  // let apikey= 'AIzaSyCko7Eg7TvcKwILrpqnwiRlWY9OlF31TpA';
-  // let apikey = apiKey1.apikey;
+   
   const requestOptions = {
     method: "GET",
     redirect: "follow"
