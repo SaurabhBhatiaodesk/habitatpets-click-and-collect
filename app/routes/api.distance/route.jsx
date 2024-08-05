@@ -28,7 +28,7 @@ export async function loader({ request }) {
 
 
   const graphql = JSON.stringify({
-    query: "query MyQuery {\r\n  locations(first: 10) {\r\n    nodes {\r\n      activatable\r\n      hasActiveInventory\r\n      isActive\r\n      localPickupSettingsV2 {\r\n        instructions\r\n        pickupTime\r\n      }\r\n      name\r\n      id\r\n    }\r\n  }\r\n}\r\n",
+    query: "query MyQuery {locations(first: 10) {nodes {activatable hasActiveInventory isActive localPickupSettingsV2 { instructions pickupTime } name id address {zip provinceCode province phone longitude latitude formatted countryCode country city address2 address1 } } } }",
     variables: {}
   })
   console.log('query', graphql);
