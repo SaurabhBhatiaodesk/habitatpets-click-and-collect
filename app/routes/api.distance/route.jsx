@@ -57,20 +57,20 @@ export async function loader({ request }) {
   console.log('destinationsArr : ',destinationsArr)
     
    
-  // const requestOptions = {
-  //   method: "GET",
-  //   redirect: "follow"
-  // };
-  // const mapUrl = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='+customerlocation+'&destinations='+destinationsArr.join("|")+'&key='+apikey;
-  // const response = await fetch(mapUrl, requestOptions);
-  // const data = await response.json();
-  // // console.log('data ',data);
+  const requestOptions = {
+    method: "GET",
+    redirect: "follow"
+  };
+  const mapUrl = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='+customerlocation+'&destinations='+destinationsArr.join("|")+'&key='+apikey;
+  const response = await fetch(mapUrl, requestOptions);
+  const data = await response.json();
+  // console.log('data ',data);
 
-  // if (!response.ok) {
-  //   console.log('error ',response)
-  // }else{
-  //   console.log('response ',response);
-  // }
+  if (!response.ok) {
+    console.log('error ',response)
+  }else{
+    console.log('response ',response);
+  }
 
   //   var arr = {
   //     data: [],
@@ -78,5 +78,5 @@ export async function loader({ request }) {
   // };
   //   arr['data'].push(data.rows[0]);
   //   arr['origin'].push(data.origin_addresses);
-  return await cors(request, json(testres));
+  return await cors(request, json(data));
 }
