@@ -43,7 +43,7 @@ export async function loader({ request }) {
   let testres=await locationsResult.json();
   const destinationsArr = [];
 
-  if (testres.data.locations.nodes.length > 0) {
+  if (testres?.data?.locations?.nodes?.length > 0) {
     const locations = testres?.data?.locations?.nodes;
      if (locations) {
       for (const location of locations) {
