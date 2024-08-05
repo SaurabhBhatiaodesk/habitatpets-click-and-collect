@@ -114,7 +114,7 @@ async function getAuthToken(session) {
             const data = {
               shop:session.shop,
               ...result.data.connection,
-              token: result.data.token,
+              token: result?.data?.token,
               email: email
           };
           console.log('testings ', data);

@@ -42,7 +42,7 @@ export async function loader({ request }) {
   let locationsResult= await fetch(`https://${shop}/admin/api/2024-04/graphql.json`, requestOptionslocations)
   let testres=await locationsResult.json();
   const destinationsArr = [];
-  console.log( '  testres : ',testres)
+  console.log(testres?.data?.locations?.nodes, '  testres : ',testres)
   if (testres?.data?.locations?.nodes?.length > 0) {
     const locations = testres?.data?.locations?.nodes;
      if (locations) {
@@ -56,12 +56,12 @@ export async function loader({ request }) {
 
   console.log('destinationsArr : ',destinationsArr)
     
-   
   const requestOptions = {
     method: "GET",
     redirect: "follow"
   };
   const mapUrl = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins='+customerlocation+'&destinations='+destinationsArr.join("|")+'&key='+apikey;
+  console.log('requestOptions mapurl--- : ',mapUrl);
   const response = await fetch(mapUrl, requestOptions);
   const data = await response.json();
   // console.log('data ',data);
