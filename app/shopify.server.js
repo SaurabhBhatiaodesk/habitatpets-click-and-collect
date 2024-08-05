@@ -163,7 +163,7 @@ if (existingUserConnection) {
           // updated_at: data.updated_at,
           // status: data.status,
           // active_subscription_id: data.active_subscription_id,
-          token: data.tokens
+          token: data?.token
       },
   });
   return updatedUserConnection;
@@ -186,7 +186,7 @@ if (existingUserConnection) {
             updated_at: data.updated_at,
             status: data.status,
             active_subscription_id: data.active_subscription_id,
-            token: data.token,
+            token: data?.token,
             email: data.email,
         },
     });
