@@ -46,8 +46,8 @@ export async function loader({ request }) {
     const locations = testres?.data?.locations?.nodes;
      if (locations) {
       for (const location of locations) {
-        if (location.address.zip && location?.localPickupSettingsV2 != null) {
-          destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`);
+        if (location.address?.zip && location?.localPickupSettingsV2 != null) {
+          destinationsArr.push(`${location.address?.address1} ${location.address?.city} ${location.address?.zip} ${location.address?.province} ${location.address?.country}`);
         }
       }
     }
