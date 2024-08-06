@@ -1,9 +1,7 @@
 function setCookie(name,value,days){let expires="";if(days){let date=new Date();date.setTime(date.getTime()+(days*86400000));expires="; expires="+date.toUTCString()}document.cookie=`${name}=${value}${expires}; path=/`;}
 function getCookie(name){let cookies=document.cookie.split(";").map(cookie=>cookie.trim().split("="));for(let i=0;i<cookies.length;i++){if(cookies[i][0]===name){return decodeURIComponent(cookies[i][1]);}}return null;}
 async function fetchData(url) { try { let response = await fetch(url); if (!response.ok) throw new Error(`Failed to fetch data from ${url}`); return await response.json(); } catch (error) { console.error("Error: ", error); throw error;  }}
-async function fetchQuantity() {try { let response = await fetch(`https://clickncollect-12d7088d53ee.herokuapp.com/api/quantity?shop=${location.hostname}`, {	headers: {"Content-Type": "application/json", Accept: "application/json" } });
-		if (!response.ok) throw new Error("Network response not ok."); return await response.json()	} catch (error) { console.error("Error token:", error);		throw error;	}}
-  async function getLocations(selectedLocation = "") { try {  
+async function getLocations(selectedLocation = "") { try {  
         const pickuplcurl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/pickupLocation?shop=${location.hostname}`;
         const testres = await fetchData(pickuplcurl); 
         const locations = testres?.data?.locations?.nodes;  const destinationsArr = []; if (locations) { for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) {  destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`);}}}
@@ -14,9 +12,9 @@ async function fetchQuantity() {try { let response = await fetch(`https://clickn
                   for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) {  const zipcode= location.address.zip; 
                       for (let index = 0; index < destinationsArr.length; index++) { const distanceElement = res?.rows[0]?.elements[index]; const destinationAddress = destinationsArr[index];
                           if(destinationAddress.includes(zipcode) ){
-                          if (distanceElement?.status == "OK" && distanceElement?.status != "ZERO_RESULTS" && distanceElement?.distance?.value < 50000) { const distanceText = distanceElement?.distance.text; const parsedDistance = parseInt(distanceText.replace(/,/g, "").replace(" km", ""));
+                          if (distanceElement?.status == "OK"  && distanceElement?.distance?.value < 50000) { const distanceText = distanceElement?.distance.text; const parsedDistance = parseInt(distanceText.replace(/,/g, "").replace(" km", ""));
                               sortedLocations.push({ id: location.id, distance: parsedDistance, distanceText, origin: res.origin_addresses, ...location });   
-                      }else if (distanceElement?.status == "OK" && distanceElement?.status != "ZERO_RESULTS"  && distanceElement?.distance?.value > 1){ count = count +1; } } }  }} sortedLocations.sort((a, b) => a.distance - b.distance); renderLocations(sortedLocations, selectedLocation, count); } }
+                      }else if (distanceElement?.status == "OK"   && distanceElement?.distance?.value > 1){ count = count +1; } } }  }} sortedLocations.sort((a, b) => a.distance - b.distance); renderLocations(sortedLocations, selectedLocation, count); } }
           document.querySelector(".popup-box .address-popup").style.display = "block"; let popupModal = document.querySelector(".popup-modal");    if (popupModal) { popupModal.style.display = "block"; popupModal.classList.add("showmodal"); }
           if (getCookie("storelocationName")){ /*console.log('locationName ',getCookie("storelocationName")) */}
           else{  /* console.log('locationName ',getCookie("storelocationName")) */ }
@@ -30,18 +28,16 @@ async function getInventoryLocations(callback) {
   } catch (error) {console.error("Error fetching inventory locations:", error); callback(error, null);}
 }
 async function handleInventoryLocationsResponse(data) { console.log('data ',data)
-  data= data.data;  var quantityres = getCookie("fetchQuantity"); let storeLocationName = getCookie("storelocationName");  let productVariantId = document.querySelector(".product-form .product-variant-id").value;
+   var quantityres = data?.quantity; let storeLocationName = getCookie("storelocationName");  let productVariantId = document.querySelector(".product-form .product-variant-id").value;
   for (let i = 0; i < data.product.variants.nodes.length; i++) { let variant = data.product.variants.nodes[i]; let variantIdParts = variant.id.split("/");  let variantId = variantIdParts[variantIdParts.length - 1];
     if (variantId === productVariantId) { let isInStock = false;  if (variant.inventoryItem && variant.inventoryItem.inventoryLevels) { for (let j = 0; j < variant.inventoryItem.inventoryLevels.edges.length; j++) {  let inventoryLevel = variant.inventoryItem.inventoryLevels.edges[j].node;
-          if (inventoryLevel.location.name === storeLocationName) { let quantity = inventoryLevel.quantities[0].quantity; isInStock = quantity > quantityres.quantity; }
+          if (inventoryLevel.location.name === storeLocationName) { let quantity = inventoryLevel.quantities[0].quantity; isInStock = quantity > quantityres; }
         } } let inventoryStatusElement = document.querySelector(".inventory_status"); let stockElement = document.querySelector(".inventory_status .stock"); if (isInStock) { inventoryStatusElement.classList.add("in-stock"); inventoryStatusElement.classList.remove("out-stock"); stockElement.textContent = "In-stock"; } else { inventoryStatusElement.classList.add("out-stock"); inventoryStatusElement.classList.remove("in-stock"); stockElement.textContent = "Out of Stock"; }  document.querySelector(".inventory-details .broadway .dropdown b").textContent = storeLocationName; }
   }   for (let i = 0; i < data.product.collections.nodes.length; i++) { if (data.product.collections.nodes[i].handle === "automated-collection") { } } for (let i = 0; i < data.product.tags.length; i++) { if (data.product.tags[i] === "Accessory") {  } }
 const inventoryDetails = document.querySelector('.loader'); if(inventoryDetails){ inventoryDetails.classList.remove('loader'); }  
 }
 async function refreshInventoryLocations() { try {  
   getInventoryLocations((error, data) => { if (data) {  handleInventoryLocationsResponse(data); 
-    var quantityres = fetchQuantity();
-    setCookie("fetchQuantity",quantityres); 
   } else { console.error("Error:", error); } }); } catch (error) { console.error("Error refreshing inventory locations:", error); }}
 document.addEventListener("click", event => { if (!event.target.closest(".inventory-details")) { refreshInventoryLocations(); }}); const crossElement = document.querySelector(".popup-close-cross");
 function showModal(){let storeLocationName=getCookie("storelocationName"); getLocations(storeLocationName); refreshInventoryLocations()}

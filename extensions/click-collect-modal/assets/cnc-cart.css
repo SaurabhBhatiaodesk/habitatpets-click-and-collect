@@ -88,7 +88,7 @@ button.cart-btn.gotocheckout.checkoutbtn.disabled {
   font-size: 17px;
   border-radius: 0 10px 10px 0;
   margin-left: -70px;
-  position: absolute;
+  /* position: absolute; */
   margin-top: -1px;
 }
 
@@ -661,6 +661,10 @@ span.redish {
   display: block;
   position: relative;
   z-index: -1;
+}
+
+.col-os.radio-btn.in-stock span.radio-title-os {
+  color: green !important;
 }
 .radio-btn.green 
  span.radio-text-os {
