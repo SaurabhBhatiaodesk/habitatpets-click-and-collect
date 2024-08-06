@@ -24,6 +24,7 @@ CREATE TABLE "GoogleApi" (
     "id" SERIAL NOT NULL,
     "shop" TEXT NOT NULL,
     "apikey" TEXT NOT NULL,
+    "ipkey" TEXT NOT NULL,
 
     CONSTRAINT "GoogleApi_pkey" PRIMARY KEY ("id")
 );

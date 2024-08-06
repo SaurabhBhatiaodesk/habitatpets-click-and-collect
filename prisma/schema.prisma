@@ -36,6 +36,7 @@ model GoogleApi {
   id          Int       @id @default(autoincrement())
   shop        String
   apikey      String
+  ipkey       String
 }
 
 model UserConnection {

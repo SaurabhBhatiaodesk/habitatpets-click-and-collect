@@ -18,6 +18,7 @@ import { useSubmit, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 import db from "../db.server";
+import NotificationBar from "../components/NotificationBar";
 
 export async function loader({ request }) {
   const admin = await authenticate.admin(request);
@@ -34,9 +35,11 @@ export async function action({ request }) {
   const admin = await authenticate.admin(request);
   const shop = admin.session.shop;
   const body = await request.formData();
+  console.log("bodybodybodybodybodybodybodybodybody:::::", body);
   const apikey = body.get("apikey");
+  const ipkey = body.get("ipkey");
 
-  console.log("apikeyapikeyapikey",apikey);
+  console.log("apikeyapikeyapikey",apikey,"ipkeyipkeyipkey",ipkey);
 
   const existingSearchClass = await db.googleApi.findFirst({
     where: { shop },
@@ -46,7 +49,8 @@ export async function action({ request }) {
     await db.googleApi.create({
       data: {
         shop,
-        apikey: apikey
+        apikey: apikey,
+        ipkey: ipkey,
       },
     });
   } else {
@@ -54,7 +58,7 @@ export async function action({ request }) {
       where: { shop },
       data: {
         apikey: apikey,
-        // html :html,
+        ipkey :ipkey,
       },
     });
   }
@@ -67,44 +71,60 @@ export default function AdditionalPage() {
   const submit = useSubmit();
   const invoices = useLoaderData();
 
-  console.log("invoicesinvoices",invoices);
   const prevData = invoices?.searchClass?.apikey;
+  const prevD = invoices?.searchClass?.ipkey;
+  const [notificationMessage, setNotificationMessage] = useState("");
 
-  console.log("prevDataprevDataprevData",prevData);
-  // const htmlprevData = invoices?.html;
   
   const [data, setdata] = useState(prevData || "");
-  // const [htmldata, sethtmldata] = useState(htmlprevData || "");
+  const [ipdata, setipdata] = useState(prevD || "");
   
   const handleSubmit = useCallback(() => {
-    submit({ apikey: data, }, { method: "post" });
-  }, [data, submit]);
+    console.log("ipdata", ipdata);
+    submit({ apikey: data,ipkey:ipdata }, { method: "post" });
+    setNotificationMessage("Form submitted successfully");
+          setTimeout(() => {
+            setNotificationMessage("")
+          }, 5000);
+  }, [ipdata,data, submit]);
 
   const handleDataChange = useCallback((value) => setdata(value), []);
-
+  const handleIpDataChange = useCallback((value) => setipdata(value), []);
+  const successStyle = {
+    background: "#b4fed2",
+    padding: "12px",
+    borderRadius: "8px",
+    marginBottom: "1rem",
+    width: "100%",
+    marginTop: "1rem",
+    color: "#0c5132"
+  };
   return (
     <Page>
       <Layout>
         <Layout.Section>
           <LegacyCard title="Enter Google Api Key" sectioned>
+          {notificationMessage !== "" && (
+            <NotificationBar title={notificationMessage} style={successStyle} />
+          )}
             <Form onSubmit={handleSubmit}>
               <FormLayout>
                 <TextField
                   value={data}
                   onChange={handleDataChange}
-                  // label="Enter input data"
+                  label="Enter the key for Distance"
                   type="text"
                   autoComplete="off"
                   name="apikey"
                 />
-                 {/* <TextField
-                  value={htmldata}
-                  onChange={handleHtmlDataChange}
-                  // label="Enter input data"
+                 <TextField
+                  value={ipdata}
+                  onChange={handleIpDataChange}
+                  label="Enter the Key for fetching IP"
                   type="text"
                   autoComplete="off"
                   name="html"
-                />  */}
+                /> 
                 <Button textAlign="center" submit>
                   Save
                 </Button>
