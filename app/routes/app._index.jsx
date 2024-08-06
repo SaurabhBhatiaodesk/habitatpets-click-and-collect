@@ -39,8 +39,9 @@ export const loader = async ({ request }) => {
   const store = await db.userConnection.findFirst({
     where: { shop },
   });
+  console.log("store:::", store)
   const myHeaders = new Headers();
-  myHeaders.append("Authorization", "Bearer " + store.token);
+  myHeaders.append("Authorization", "Bearer " + store?.token);
   const requestOptions = {
     method: "GET",
     headers: myHeaders,

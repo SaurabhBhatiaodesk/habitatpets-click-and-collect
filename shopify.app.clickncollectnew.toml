@@ -3,7 +3,7 @@
 client_id = "c0acbe1ea218ca74db8c10d1234659d6"
 name = "clickncollectnew"
 handle = "clickncollectnew"
-application_url = "https://membrane-wax-river-tablet.trycloudflare.com"
+application_url = "https://shut-verde-pitch-gate.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_customers,read_inventory,read_locales,read_locations,read_orders,
 
 [auth]
 redirect_urls = [
-  "https://membrane-wax-river-tablet.trycloudflare.com/auth/callback",
-  "https://membrane-wax-river-tablet.trycloudflare.com/auth/shopify/callback",
-  "https://membrane-wax-river-tablet.trycloudflare.com/api/auth/callback"
+  "https://shut-verde-pitch-gate.trycloudflare.com/auth/callback",
+  "https://shut-verde-pitch-gate.trycloudflare.com/auth/shopify/callback",
+  "https://shut-verde-pitch-gate.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

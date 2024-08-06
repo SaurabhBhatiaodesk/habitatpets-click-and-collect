@@ -1,11 +1,11 @@
 -- CreateTable
 CREATE TABLE "Session" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "shop" TEXT NOT NULL,
     "state" TEXT NOT NULL,
     "isOnline" BOOLEAN NOT NULL DEFAULT false,
     "scope" TEXT,
-    "expires" DATETIME,
+    "expires" TIMESTAMP(3),
     "accessToken" TEXT NOT NULL,
     "userId" BIGINT,
     "firstName" TEXT,
@@ -14,19 +14,23 @@ CREATE TABLE "Session" (
     "accountOwner" BOOLEAN,
     "locale" TEXT,
     "collaborator" BOOLEAN,
-    "emailVerified" BOOLEAN
+    "emailVerified" BOOLEAN,
+
+    CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "GoogleApi" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "shop" TEXT NOT NULL,
-    "apikey" TEXT NOT NULL
+    "apikey" TEXT NOT NULL,
+
+    CONSTRAINT "GoogleApi_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "UserConnection" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "shop" TEXT NOT NULL,
     "connection_id" TEXT,
     "uid" TEXT,
@@ -39,12 +43,14 @@ CREATE TABLE "UserConnection" (
     "is_sync_enabled" BOOLEAN DEFAULT false,
     "is_plugins_connected" BOOLEAN DEFAULT false,
     "config" TEXT,
-    "created_at" DATETIME,
-    "updated_at" DATETIME,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
     "status" TEXT,
     "active_subscription_id" TEXT,
     "token" TEXT NOT NULL,
-    "email" TEXT
+    "email" TEXT,
+
+    CONSTRAINT "UserConnection_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
