@@ -71,12 +71,15 @@ export async function loader({ request }) {
 
     let response = await fetch(`https://${shop}/admin/api/2024-04/graphql.json`, requestOptions);
 
-    // Check if the response is OK and has a valid JSON body
     if (!response.ok) {
       throw new Error(`GraphQL request failed with status ${response.status}`);
     }
 
-    let data = await response.json();
+    let graphQLData = await response.json();
+
+    if (!graphQLData.data) {
+      throw new Error("Invalid GraphQL response structure");
+    }
 
     const store = await db.userConnection.findFirst({
       where: { shop },
@@ -106,6 +109,11 @@ export async function loader({ request }) {
       }
 
       let dataQty = await responseQty.json();
+
+      if (!Array.isArray(dataQty.config_form)) {
+        throw new Error("Invalid quantity response structure");
+      }
+
       let quantity = 0;
 
       dataQty.config_form.forEach(item => {
@@ -115,12 +123,12 @@ export async function loader({ request }) {
         }
       });
 
-      const newData = [...data, { quantity }];
+      const newData = { ...graphQLData.data, quantity };
       return cors(request, json({ data: newData }));
 
     } catch (error) {
       console.error("Error fetching quantity data:", error);
-      return cors(request, json({ data: [...data, { quantity: 0 }] }));
+      return cors(request, json({ error: "Quantity fetch failed", data: { ...graphQLData.data, quantity: 0 } }));
     }
 
   } catch (error) {
