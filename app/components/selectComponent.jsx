@@ -1,30 +1,26 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Select, Button, ChoiceList } from "@shopify/polaris";
-import { PlusIcon,MinusIcon } from '@shopify/polaris-icons';
+import { PlusIcon, MinusIcon } from '@shopify/polaris-icons';
 
-const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,setHideshow }) => {
+const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error, setHideshow }) => {
   const [fields, setFields] = useState([{ value: '' }]);
   const [showError, setShowError] = useState('');
   const [show, setShow] = useState(true);
   const [choicelistValue, setChoicelistValue] = useState([]);
 
   useEffect(() => {
-    
     const pluginInputValues = inputValues?.[mango?.plugin_id] || {};
     const fieldInputValues = pluginInputValues[field.name];
     const initialValues = Array.isArray(fieldInputValues) ? fieldInputValues : [fieldInputValues || ''];
 
     console.log('Initial Values:', initialValues);
-    if(field.multiple==false) {
-    setFields(fields => 
-      fields.length === 1 && fields[0].value === ''
-        ? initialValues.map(value => ({ value }))
-        : fields
-    );
-    }
-    else{
-      //setFields( initialValues);
-      console.log('Initial Values',initialValues);
+    if (field.multiple === false) {
+      setFields(fields =>
+        fields.length === 1 && fields[0].value === ''
+          ? initialValues.map(value => ({ value }))
+          : fields
+      );
+    } else {
       setChoicelistValue(initialValues);
     }
     const fieldError = error?.find(e => field?.name === e?.name);
@@ -44,19 +40,20 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
       setShow(valuesArray?.includes(valueToCheck));
       setHideshow((prevState) => ({
         ...prevState,
-        [field.name]: valuesArray?.includes(valueToCheck), // Dynamically update state based on input name
+        [field.name]: valuesArray?.includes(valueToCheck),
       }));
     }
-    
   }, [inputValues, field.name, field.value, mango?.plugin_id, error, field.show_in, field.show_in_value]);
 
   const handleChange = (value, index) => {
-    if (value !== null && value !== '') {
-      const newFields = [...fields];
-      newFields[index].value = value;
-      setFields(newFields);
+    const newFields = [...fields];
+    newFields[index].value = value;
+    setFields(newFields);
+
+    // Only update if the selected value is not blank
+  //  if (value !== '') {
       handleconfigChange(newFields.map(f => f.value), field.name, mango?.plugin_id);
-    }
+    //}
   };
 
   const handleChangec = useCallback((value, index) => {
@@ -74,6 +71,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
 
   console.log('Fields:', fields);
   console.log('Show:', show);
+
   const removeField = (index) => {
     if (fields.length > 1) {
       const newFields = fields.filter((_, i) => i !== index);
@@ -100,7 +98,11 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                 <Select
                   name={`${field.name}_${index}`}
                   label={field.label}
-                  options={[{ value: '', label: 'Select' }, ...field.options]}
+                  options={
+                    field.options[0]?.value !== ''
+                      ? [{ value: '', label: 'Select' }, ...field.options]
+                      : field.options
+                  }
                   onChange={(value) => handleChange(value, index)}
                   value={fieldData.value}
                   required={field.required}
@@ -108,9 +110,9 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                   requiredIndicator={field.required}
                 />
               )}
-               {fields.length > 1 && (
-                    <Button icon={MinusIcon} onClick={() => removeField(index)} plain />
-                  )}
+              {fields.length > 1 && (
+                <Button icon={MinusIcon} onClick={() => removeField(index)} plain />
+              )}
               {index === fields.length - 1 && field.is_cloneable && (
                 <Button icon={PlusIcon} onClick={addField} plain />
               )}

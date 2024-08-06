@@ -142,6 +142,7 @@ const existingUserConnection = await prisma.userConnection.findFirst({
 });
 
 if (existingUserConnection) {
+  if(data?.token){
   const updatedUserConnection = await prisma.userConnection.update({
       where: {
           shop: data.shop,
@@ -166,6 +167,10 @@ if (existingUserConnection) {
       },
   });
   return updatedUserConnection;
+  }
+  else{
+    return existingUserConnection;
+  }
 } else {
     const newUserConnection = await prisma.userConnection.create({
         data: {
