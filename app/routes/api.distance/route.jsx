@@ -10,7 +10,6 @@ export async function loader({ request }) {
   let customerlocation = searchParams.get("customerlocation");
   let destinations = searchParams.get("destinations");
 
-
   const apiKey1 = await db.googleApi.findFirst({
     where: { shop },
   });
