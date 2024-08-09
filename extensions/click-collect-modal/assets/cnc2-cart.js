@@ -24,6 +24,7 @@ async function cartUpdate(updates, flag = false) {
 			checkoutButton.classList.remove("disabled");
 			let cartResponse = await fetch("/cart.json");
 			let cartData = await cartResponse.json();
+			fetchInventoryForCartItems(cartData);
 			let totalPrice = parseFloat((cartData.original_total_price / 100).toFixed(2)).toLocaleString("en-UA", {
 				style: "currency",
 				currency: cartData.currency
@@ -102,12 +103,12 @@ async function getCartLocations(selectedLocationName = "") {
 						}
 					}
 				}
-				console.log('count =======  ',count)
+				// console.log('count =======  ',count)
 				sortedLocations.sort((a, b) => a.distance - b.distance);
 				let locationsss = locationData.join(', ');
 				setCookie('sortedLocations', locationsss);
 				// // console.log('sortedLocations ',sortedLocations)
-				console.log('19 -------------------- ')
+				// console.log('19 -------------------- ')
 			
 				for (let i = 0; i < sortedLocations.length; i++) {
 					// // console.log('19')
@@ -154,19 +155,19 @@ async function getCartLocations(selectedLocationName = "") {
 					locationsElement.appendChild(radioBtnDiv);   
 				}
 			}			 if(count == 0 && km=='no'){
-				console.log('20 -------------------- ')
+				// console.log('20 -------------------- ')
 				let noStoresElement = document.createElement("div");
 				noStoresElement.classList.add("popup-inner-col11");
 				noStoresElement.innerHTML = '<div class="add11">Stores are not available within a 50 km range</div>';
 				locationsElement.appendChild(noStoresElement);
 			}else if(count == 0 && km=='yes' && sortedLocations.length == 0) {
-				console.log('21 ---------------- ')
+				// console.log('21 ---------------- ')
 				let noStoresElement = document.createElement("div");
 				noStoresElement.classList.add("popup-inner-col11");
 				noStoresElement.innerHTML = '<div class="add11">Stores not available for entered location</div>';
 				locationsElement.appendChild(noStoresElement);
 			}
-			console.log('sortedLocations ',sortedLocations, ' count ',count, destinationsArr, ' ---  destinationsArr' )
+			// console.log('sortedLocations ',sortedLocations, ' count ',count, destinationsArr, ' ---  destinationsArr' )
 
 			document.querySelector(".address-popup11").style.display = "block";
 			document.querySelector('.loader').classList.remove('loader');
@@ -233,7 +234,7 @@ function filterlocations(data, product, quantity) {
 		}
 	}
 
-	console.log('sorted inn  ',sorted);
+	// console.log('sorted inn  ',sorted);
 		let arrr = JSON.parse(localStorage.getItem("testings") || "[]");
 		if(!arrr){
 			localStorage.setItem("testings", JSON.stringify(sorted));
@@ -256,7 +257,7 @@ async function handle_inv_locations(error, data, product) {
 	if (error) { console.error("Error fetching inventory locations:", error); return; }
 	// // console.log('handle data ', data, ' product ----- ',product, 'quantityesss ',data.quantity)
 	 let arrr = filterlocations(data, product, data.quantity);
-	 console.log('arrr kkkkkk  : ',arrr);
+	//  console.log('arrr kkkkkk  : ',arrr);
 	document.querySelectorAll('.cart-popup .radio-btn .locations').forEach((element) => {
 		let isInStock = false;
 		
@@ -344,8 +345,10 @@ async function fetch_inventory_for_cart_items( cartItems) {
 		let cartItem = cartItems.find(item => item.variant_id == cartGridId);
 		if (cartItem) {
 			let quantityElement = cartGrid.querySelector(".item-quantities span b");
+			let quantityInput = cartGrid.querySelector(".item-quantities .quantity input");
 			if (quantityElement) {
 				quantityElement.textContent = cartItem.quantity;
+				quantityInput.value = cartItem.quantity;
 			}    
 			cartGrid.classList.add("matched");
 			get_inv_locations( cartItem);
@@ -445,10 +448,12 @@ async function fetchInventoryForCartItems(data) {
 			var cartItem = cartItems[j];
 			if (cartItem.variant_id == variantId) {
 				matched = true;
-				var itemQuantities = cartGrid.querySelector(".item-quantities span b");
-				if (itemQuantities) {
-					itemQuantities.textContent = cartItem.quantity;
-				}
+			let quantityElement = cartGrid.querySelector(".item-quantities span b");
+			let quantityInput = cartGrid.querySelector(".item-quantities .quantity input");
+			if (quantityElement) {
+				quantityElement.textContent = cartItem.quantity;
+				quantityInput.value = cartItem.quantity;
+			}    
 				let itemprice = parseFloat((cartItem.line_price / 100).toFixed(2)).toLocaleString("en-US", {
 					style: "currency",
 					currency: currency
@@ -585,7 +590,7 @@ document.addEventListener("click", function (event) {
 			var activeErrorMessages = document.querySelectorAll(".cart-grid p.error-massage.active");
 			if (activeErrorMessages.length > 0) {
 				document.querySelector(".remove-allitem").classList.remove("hide");
-				document.querySelector(".remove-allitem").style.display = "block";
+				document.querySelector(".remove-allitem").style.display = "flex";
 				var checkoutButton = document.querySelector("button.cart-btn.gotocheckout.checkoutbtn");
 				checkoutButton.disabled = true;
 				checkoutButton.classList.add("disabled");
@@ -648,3 +653,63 @@ document.addEventListener("click", function (event) {
 		}
 	}
 });
+
+(function () {
+	// Select all quantity containers
+	const quantityContainers = document.querySelectorAll(".quantity");
+  
+	quantityContainers.forEach(container => {
+	  const minusBtn = container.querySelector(".minus");
+	  const plusBtn = container.querySelector(".plus");
+	  const inputBox = container.querySelector(".input-box");
+  
+	  updateButtonStates();
+  
+	  container.addEventListener("click", handleButtonClick);
+	  inputBox.addEventListener("input", handleQuantityChange);
+  
+	  function updateButtonStates() {
+		const value = parseInt(inputBox.value);
+		minusBtn.disabled = value <= 1;
+		plusBtn.disabled = value >= parseInt(inputBox.max);
+	  }
+  
+	  function handleButtonClick(event) {
+		if (event.target.classList.contains("minus")) {
+		  decreaseValue();
+		} else if (event.target.classList.contains("plus")) {
+		  increaseValue();
+		}
+	  }
+  
+	  function decreaseValue() {
+		let value = parseInt(inputBox.value);
+		value = isNaN(value) ? 1 : Math.max(value - 1, 1);
+		inputBox.value = value;
+		updateButtonStates();
+		handleQuantityChange();
+	  }
+  
+	  function increaseValue() {
+		let value = parseInt(inputBox.value);
+		value = isNaN(value) ? 1 : Math.min(value + 1, parseInt(inputBox.max));
+		inputBox.value = value;
+		updateButtonStates();
+		handleQuantityChange();
+	  }
+  
+	  function handleQuantityChange() {
+		let value = parseInt(inputBox.value);
+		value = isNaN(value) ? 1 : value;
+  
+		const cartGrid = container.closest('.cart-grid');
+		const dataId = cartGrid ? cartGrid.getAttribute('data-id') : null;
+		var cartUpdateData = {};
+		cartUpdateData[dataId] = value;
+		cartUpdate(cartUpdateData);
+		console.log(cartUpdateData," --  Quantity changed:", value);
+		console.log("Parent cart-grid data-id:", dataId);
+  
+	  }
+	});
+  })();

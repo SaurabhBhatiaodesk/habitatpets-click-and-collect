@@ -57,12 +57,11 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
   };
 
   const handleChangec = useCallback((value, index) => {
-    if (value?.length > 0 && value.every(v => v !== null && v !== '')) {
       const newFields = [...fields];
       newFields[index].value = value;
       setFields(newFields);
       handleconfigChange(newFields.map(f => f.value), field.name, mango?.plugin_id);
-    }
+    
   }, [fields, handleconfigChange, field.name, mango?.plugin_id]);
 
   const addField = () => {

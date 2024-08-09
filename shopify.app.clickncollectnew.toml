@@ -3,7 +3,7 @@
 client_id = "c0acbe1ea218ca74db8c10d1234659d6"
 name = "clickncollectnew"
 handle = "clickncollectnew"
-application_url = "https://blackjack-while-argue-temperatures.trycloudflare.com"
+application_url = "https://fits-korea-complications-hobby.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_customers,read_inventory,read_locales,read_locations,read_orders,
 
 [auth]
 redirect_urls = [
-  "https://blackjack-while-argue-temperatures.trycloudflare.com/auth/callback",
-  "https://blackjack-while-argue-temperatures.trycloudflare.com/auth/shopify/callback",
-  "https://blackjack-while-argue-temperatures.trycloudflare.com/api/auth/callback"
+  "https://fits-korea-complications-hobby.trycloudflare.com/auth/callback",
+  "https://fits-korea-complications-hobby.trycloudflare.com/auth/shopify/callback",
+  "https://fits-korea-complications-hobby.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

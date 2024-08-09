@@ -216,14 +216,32 @@
                 <h3>
                   <a href="{{ item.url }}" class="cart-item__name h4 break">{{ item.product.title | escape }}</a>
                 </h3>
-                <!-- <quantity-input class="quantity"> -->
-                <div class="item-quantities">
+                <div class="item-quantities" style="display: flex; gap:5px; align-items:center;margin-top: 10px;">
+                  <div class="hidden" style="display: none;"> 
                   <label> Quantity: </label>
                   <span
                     ><b>{{ item.quantity }}</b></span
                   >
+                  </div>
+                  <div class="quantity">
+                    <button class="minus" aria-label="Decrease">&minus;</button>
+                    <input type="number" class="input-box" value="1" min="1" max="100000000000">
+                    <button class="plus" aria-label="Increase">&plus;</button>
+                  </div>
+                  <cart-remove-button
+                  class="cart-remove-button"
+                  id="Remove-{{ item.index | plus: 1 }}"
+                  data-index="{{ item.index | plus: 1 }}"
+                >
+                  <a
+                    href="{{ item.url_to_remove }}"
+                    class="button button--tertiary"
+                  >
+                    {% render 'icon-remove' %}
+                  </a>
+                </cart-remove-button>
                 </div>
-                <!-- </quantity-input> -->
+           
               </div>
             </div>
             <span>
@@ -251,18 +269,7 @@
               {%- endif -%}
             </span>
 
-            <cart-remove-button
-              class="cart-remove-button"
-              id="Remove-{{ item.index | plus: 1 }}"
-              data-index="{{ item.index | plus: 1 }}"
-            >
-              <a
-                href="{{ item.url_to_remove }}"
-                class="button button--tertiary"
-              >
-                {% render 'icon-remove' %}
-              </a>
-            </cart-remove-button>
+         
 
             <p class="error-massage" style="display:none;">
               <span class="redish">Not avaialable on click & collect at</span>
@@ -272,7 +279,7 @@
         {% endfor %}
       </div>
       <div class="remove-allitem">
-        <p>Remove all unavailable items</p>
+        <span>Remove all unavailable items</span>
         <cart-remove-button>
           <a
             href=""

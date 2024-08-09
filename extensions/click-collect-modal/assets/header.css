@@ -40,15 +40,34 @@
 }
 
 select.cls-pickuplocations-select {
-    padding: 5px 5px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 600;
-    text-transform: capitalize;
+  padding: 9px 5px;
+  border-radius: 0px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-left: 10px;
 }
 
 .dropdown.cls-pickuplocations-div select > option {
     border-radius: 4px;
     font-size: 14px;
     font-weight: 500;
+}
+
+@media screen and (max-width: 480px) {
+a.header__heading-link.link.link--text.focus-inset {
+  display: none !important;
+}
+select.cls-pickuplocations-select {
+  padding: 7px 4px !important;
+  border-radius: 4px;
+  font-size: 12px !important;
+}
+.dropdown.cls-pickuplocations-div {
+  display: flex !important;
+  align-items: center;
+}
+.header {
+  padding: 10px 1rem 10px 1rem !important;
+}
 }

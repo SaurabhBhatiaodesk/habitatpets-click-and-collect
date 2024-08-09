@@ -61,6 +61,9 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
   };
 
   const handleMapping = () => {
+    if(!field?.label){
+      return true;
+    }
     setLoading({ "mapping": true });
     const formattedValues = Object.entries(selectedValue)
       .filter(([key]) => checked[key])
@@ -126,6 +129,7 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
                     checked={checked[v.id] || false}
                     onChange={() => handleChange(v.id)}
                   />
+                  {field?.label && (
                   <Select
                     name={`${field.name}:${v.id}`}
                     label={`${field.label}`}
@@ -134,6 +138,7 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
                     value={selectedValue[v.id]}
                     disabled={!checked[v.id]}
                   />
+                )}
                 </div>
               ))}
             </div>

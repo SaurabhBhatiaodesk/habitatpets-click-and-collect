@@ -4,7 +4,7 @@
 }
 
 .popup-modal {
-    background: #000000db;
+    background: #00000042;
     height: 100vh;
     width: 100%;
     position: fixed;
@@ -16,13 +16,14 @@
 .popup-box {
     background: #fff;
     box-shadow: 0 0 10px #ddd;
-    max-width: 464px;
+    max-width: 550px;
     margin: 2em auto;
     padding: 18px 20px;
     border-radius: 20px
 }
 .notecls{
     color:#141414 !important;
+    font-weight: 300 !important;
 }
 
 .popup-modal .address-popup h4 {
@@ -33,6 +34,9 @@
     gap: 10px;
     margin: 5px 0;
     font-size: 18px;
+    color: #141414;
+    font-weight: 600;
+    font-family: "Poppins", sans-serif;
 }
 
 .popup-inner-col .add {
@@ -49,21 +53,24 @@
 }
 
 .popup-box h3 {
-    font-size: 20px;
-    line-height: 30px;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 33px;
     color: #141414;
     text-align: center;
-    margin-bottom: 0;
-    margin-top: 10px
+    margin-bottom: 20px !important;
+    margin-top: 10px;
+    font-family: "Poppins", sans-serif;
 }
 
 .popup-box p {
-    margin: 10px 0;
-    font-size: 15px;
+    margin: 15px 0;
+    font-size: 18px;
     line-height: 22px;
-    font-weight: 300;
+    font-weight: 400;
     text-align: center;
-    color: #000
+    color: #141414;
+    font-family: "Poppins", sans-serif;
 }
 
 .locationss .popup-inner-col ul.order-list {
@@ -78,30 +85,36 @@
 }
 
 .popup-modal .check-btn input {
-    border: 1px solid #000;
+    border: 1px solid #00000080;
     min-height: 50px;
     padding-left: 15px;
     padding-right: 25px;
     border-radius: 10px 0 0 10px;
-    min-width: 70%
+    min-width: 77%
 }
 
 .popup-modal .check-btn input::placeholder {
     font-size: 15px;
     line-height: 25px
 }
-
+/* span.errow {
+    font-size: 22px;
+    position: relative;
+    top: 5px;
+} */
 .popup-modal button.check-btn {
     cursor: pointer;
     background: #141414;
     color: #fff;
-    min-height: 52px;
+    font-family: "Poppins", sans-serif;
+    min-height: 50px;
     padding: 0 30px;
-    font-size: 15px;
+    font-size: 18px;
+    font-weight: 600;
     border-radius: 0 10px 10px 0;
     margin-left: -10px;
-    position: absolute;
-    margin-top: -1px
+    position: absolute; 
+    border: none;
 }
 
 .popup-modal ul.order-list li {
@@ -109,12 +122,27 @@
     margin: 1px 0;
     font-size: 14px;
     line-height: 22px;
-    color: #141414
+    color: #141414;
+    font-family: "Poppins", sans-serif;
 }
-
+.popup-inner-col .add {
+    margin-bottom: 10px;
+}
+.add span {
+    display: flex;
+}
+.locations {
+    accent-color: #093530;
+    height: 20px;
+    width: 20px;
+}
+.popup-inner-col .add h4 {
+    font-size: 14px;
+}
 .popup-modal .popup-inner-col button {
     margin: 20px 0;
-    border: none
+    border: none;
+    background: none !important;
 }
 
 .popup-btn,
@@ -129,7 +157,8 @@
 }
 
 .popup-modal .popup-inner-col .add label {
-    font-size: 17px;
+    font-size: 16px;
+    font-family: "Poppins", sans-serif;
     line-height: 27px;
     font-weight: 600;
     color: #141414;
@@ -144,13 +173,13 @@
 .popup-modal .popup-box a.cross img,
 .popup-modal .popup-box a.popup-close-cross img {
     background: #d40000;
-    padding: 6px;
+    padding: 5px 6px;
     border-radius: 50%;
     color: #fff;
     text-decoration: none;
     position: absolute;
-    right: -13px; 
-    top: -9px;
+    right: -10px;
+    top: -7px;
     width: 27px
 }
 
@@ -168,7 +197,7 @@
 }
 
 .popup-modal .check-btn {
-    max-width: 80%;
+    max-width: 90%;
     margin: auto
 }
 
@@ -194,12 +223,37 @@
 }
 
 @media screen and (max-width:575px) {
+    .popup-box p {
+        font-size: 14px !important;
+    }
+    .popup-modal .check-btn {
+        max-width: 89% !important;
+        margin: auto;
+    }
+    .popup-modal .check-btn input { 
+        min-width: 65% !important;
+    }
     .popup-box {
         max-width: 90%
     }
 
     .address-popup {
         max-height: 215px !important
+    }
+    .popup-modal .popup-box a.popup-close-cross img {
+        padding: 5px 6px !important; 
+        width: 26px !important;
+    }
+    .popup-box p {
+        margin: 10px 0 !important; 
+    }
+    .popup-box h3 {
+        line-height: 22px !important;
+        font-size: 18px !important;
+        margin-bottom: 0px !important;
+    }
+    .popup-modal button.check-btn{
+        padding: 0 16px !important;
     }
 }
 
@@ -211,6 +265,10 @@
 }
 
 @media screen and (max-width:370px) {
+    .popup-modal .check-btn {
+        max-width: 96% !important;
+        margin: auto;
+    }
     .popup-modal .check-btn {
         padding: 0;
     }

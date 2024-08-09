@@ -5,7 +5,7 @@ function getCookie(e){const t=document.cookie.split(";").map(e=>e.trim().split("
                 const pickuplcurl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/pickupLocation?shop=${location.hostname}`;
                 const testres = await fetchData(pickuplcurl); 
                 const locations = testres?.data?.locations?.nodes;
-                const destinationsArr = []; if (locations) { for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) { console.log('location rrr ',location.name); destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`);}}}
+                const destinationsArr = []; if (locations) { for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) { destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`);}}}
               if (destinationsArr.length > 0) {  const customerLocation = getCookie("customerlocation");
                 document.querySelector(".location").value = customerLocation;
                 let mapUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&shop=${location.hostname}`;
@@ -35,7 +35,7 @@ function renderLocations(locations, selectedLocation, count = 0) {
     const locationsContainer = document.querySelector(".popup-box .address-popup .locationss"); locationsContainer.innerHTML = "";
     if (locations.length > 0) { locations.forEach(location => {
             if (location.name !== "Snow City Warehouse") { const locationElement = document.createElement("div"); locationElement.classList.add("popup-inner-col");
-                locationElement.innerHTML = `<div class="add"><span><input type="radio" id="${location.id}" class="locations" data-name="${location.name}" name="locations" value="HTML" ${location.name === selectedLocation ? 'checked="checked"' : ''}><label for="${location.id}">${location.name}</label></span><h4>${location.distanceText}</h4></div><ul class="order-list"><li>${location.address.country}</li> <li>Address: ${location.address.address1}</li><li>Phone: ${location.address.phone}</li> </ul><button type="submit"> <a href="https://www.google.com/maps/dir/${location.origin}/${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}" target="_blank"> Get Directions >> </a></button>`;
+                locationElement.innerHTML = `<div class="add"><span><input type="radio" id="${location.id}" class="locations" data-name="${location.name}" name="locations" value="HTML" ${location.name === selectedLocation ? 'checked="checked"' : ''}><label for="${location.id}">${location.name}</label></span><h4>${location.distanceText}</h4></div><ul class="order-list"><li>${location.address.country}</li> <li>Address: ${location.address.address1}</li><li>Phone: ${location.address.phone}</li> </ul><button type="submit"> <a href="https://www.google.com/maps/dir/${location.origin}/${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}" target="_blank"> Get Directions <span class="errow"> >> </span> </a></button>`;
                 locationsContainer.appendChild(locationElement);
             }  }); }else if(count > 0 && locations.length == 0){
                 const noStoresElement = document.createElement("div"); noStoresElement.classList.add("popup-inner-col"); noStoresElement.innerHTML = '<div class="add">Stores are not available within a 50 km range </div>'; locationsContainer.appendChild(noStoresElement);
@@ -50,7 +50,14 @@ if (document.querySelector(".popup-modal")) { document.addEventListener("DOMCont
     document.querySelector(".setlocationbtn").addEventListener("click", event => { event.preventDefault(); const popupModal = document.querySelector(".popup-modal");
         popupModal.style.display = "none"; document.querySelector(".setlocationbtn").style.display = "none"; popupModal.classList.remove("showmodal");});
     document.body.addEventListener("click", event => {if (!event.target.closest(".popup-modal")) {document.querySelector(".popup-modal").style.display = "none"; }});
-    document.addEventListener("click", event => { if (event.target.matches("button.check-btn")) { const zipcode = document.querySelector(".location").value; setCookie("customerlocation", zipcode); getLocations(''); }
+    document.addEventListener("click", event => { if (event.target.matches("button.check-btn")) { const zipcode = document.querySelector(".location").value;
+        if(zipcode != "" ){
+            setCookie("customerlocation", zipcode);
+            getLocations('');
+        }else{   
+            const locationsContainer = document.querySelector(".popup-box .address-popup .locationss"); locationsContainer.innerHTML = "";
+            const noStoresElement = document.createElement("div"); noStoresElement.classList.add("popup-inner-col"); noStoresElement.innerHTML = '<div class="add">Please enter the postal code </div>'; locationsContainer.appendChild(noStoresElement);
+     } }
     });
     document.addEventListener("change", event => { if (event.target.matches(".popup-modal .address-popup input.locations")) {  document.querySelector(".setlocationbtn").style.display = "block"; setCookie("storelocationName", event.target.nextElementSibling.textContent); setCookie("storelocation", event.target.id);
         } });});  if (getCookie("storelocationName")) {  }else{ showModal(); }
