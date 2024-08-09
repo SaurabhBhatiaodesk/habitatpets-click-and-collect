@@ -692,7 +692,7 @@ export default function configPage() {
 
           <Layout>
             
-               {/* {credentialFormStatus && (  */}
+               {credentialFormStatus && ( 
                 <div style={{ width: "100%" }}>
                 <LegacyCard title="Configuration" sectioned >
                   <ButtonGroup variant="segmented">
@@ -711,7 +711,7 @@ export default function configPage() {
                   </ButtonGroup>
                 </LegacyCard>
                 </div>
-              {/* )}  */}
+              )} 
             
             {notificationMessage !== "" && (
             <NotificationBar title={notificationMessage} style={successStyle} />
