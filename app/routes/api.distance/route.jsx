@@ -104,7 +104,7 @@ export async function loader({ request }) {
 
     let kilo = await config.json();
     let quantity = 0;
-    let kilometer = 50;
+    let kilometer = 50*1000;
 
     kilo.config_form.forEach(item => {
       console.log('Processing config item:', item);
@@ -115,7 +115,7 @@ export async function loader({ request }) {
       }
 
       if (item?.saved_values?.shopify_radius_kilometer_for_location_search !== 'undefined' && item?.saved_values?.shopify_radius_kilometer_for_location_search >0) {
-        kilometer = item.saved_values.shopify_radius_kilometer_for_location_search;
+        kilometer = item.saved_values.shopify_radius_kilometer_for_location_search*1000;
       }
     });
 
