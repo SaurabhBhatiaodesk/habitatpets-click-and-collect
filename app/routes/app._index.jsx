@@ -138,7 +138,7 @@ export const loader = async ({ request }) => {
   }
 };
 async function getAuthToken(session) {
-  await db.session.deleteMany({ where: { shop } });
+  //await db.session.deleteMany({ where: { shop } });
   console.log("getAuthToken ------------------->")
   try {
     console.log(session,'session');
