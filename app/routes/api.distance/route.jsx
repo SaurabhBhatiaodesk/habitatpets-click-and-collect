@@ -80,17 +80,22 @@ export async function loader({ request }) {
   let kilo = await config.json();
   let quantity = 0;
   let kilometer = 50;
-  kilo.config_form.map((item, index) => {
-    if (item?.saved_values?.shopify_minimum_pickup_stock_quantity_check=='yes' && item?.saved_values?.shopify_minimum_pickup_stock_quantity_value!='') {
-      quantity = item.saved_values?.shopify_minimum_pickup_stock_quantity_value;
+
+  kilo.config_form.forEach((item, index) => {
+    console.log('Processing item:', item);
+
+    if (item?.saved_values?.shopify_minimum_pickup_stock_quantity_check === 'yes' &&
+        item?.saved_values?.shopify_minimum_pickup_stock_quantity_value !== '') {
+      quantity = item.saved_values.shopify_minimum_pickup_stock_quantity_value;
     }
-    if(item?.saved_values?.shopify_radius_kilometer_for_location_search!='')
-    {
-      kilometer=item.saved_values?.shopify_radius_kilometer_for_location_search;
+
+    if (item?.saved_values?.shopify_radius_kilometer_for_location_search !== '') {
+      kilometer = item.saved_values.shopify_radius_kilometer_for_location_search;
     }
   });
-  const newdata={...data,quantity,kilometer};
-  console.log("newdata",newdata);
+
+  const newdata = { ...data, quantity, kilometer };
+  console.log("newdata", newdata);
   //   var arr = {
   //     data: [],
   //     origin: []
