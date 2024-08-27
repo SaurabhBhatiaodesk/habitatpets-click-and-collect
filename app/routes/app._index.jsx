@@ -10,7 +10,6 @@ import RadioGroupComponent from "../components/radioGroupComponent";
 import TextFieldComponent from "../components/textFieldComponent";
 import SelectComponent from "../components/selectComponent";
 import MAPPING from "../components/MAPPING";
-import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "./db.server";
 
 // Handles form submission
