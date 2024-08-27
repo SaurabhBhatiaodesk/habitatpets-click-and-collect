@@ -49,7 +49,7 @@ export const loader = async ({ request }) => {
     });
 
     if (!store) {
-      getAuthToken(admin.session);
+      await getAuthToken(admin.session);
        store = await db.userConnection.findFirst({
         where: { shop },
       });
