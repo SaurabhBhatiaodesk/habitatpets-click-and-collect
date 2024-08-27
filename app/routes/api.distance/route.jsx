@@ -75,9 +75,27 @@ export async function loader({ request }) {
     const data = await response.json();
     console.log('Google Maps API Response:', data);
 
+    const store = await db.userConnection.findFirst({
+      where: { shop },
+    });
+
+    if (!store) {
+      throw new Error("Store connection not found");
+    }
+
+    const myHeadersqty = new Headers();
+    myHeadersqty.append("Authorization", "Bearer " + store.token);
+
+    const requestOptionsqty = {
+      method: "GET",
+      headers: myHeadersqty,
+      redirect: "follow",
+    };
+
+
     const config = await fetch(
       "https://main.dev.saasintegrator.online/api/v1/click_and_collect/config-form",
-      { method: "GET", redirect: "follow" }
+      requestOptionsqty
     );
 
     if (!config.ok) {
