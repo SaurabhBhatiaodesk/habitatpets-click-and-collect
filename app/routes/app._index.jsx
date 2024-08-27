@@ -138,13 +138,12 @@ export const loader = async ({ request }) => {
   }
 };
 async function getAuthToken(session) {
+  await db.session.deleteMany({ where: { shop } });
   console.log("getAuthToken ------------------->")
   try {
     console.log(session,'session');
     var myHeaders2 = new Headers();
-    console.log("session.accessToken",session.accessToken);
-    console.log("session.Session.accessToken",session.Session.accessToken);
-    myHeaders2.append("X-Shopify-Access-Token", session.Session.accessToken);
+    myHeaders2.append("X-Shopify-Access-Token", session.accessToken);
 
     const requestOptions2 = {
       method: "GET",
