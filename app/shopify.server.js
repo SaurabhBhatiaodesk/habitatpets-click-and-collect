@@ -134,66 +134,64 @@ async function getAuthToken(session) {
 
 
 async function createOrUpdateUserConnection(data) {
-// console.log('createOrUpdateUserConnection ',data)
-const existingUserConnection = await prisma.userConnection.findFirst({
-  where: {
-      shop: data.shop,
-  },
-});
+  try {
+      // Log the incoming data for debugging
+      console.log('createOrUpdateUserConnection - Incoming Data:', data);
 
-if (existingUserConnection) {
-  if(data?.token){
-  const updatedUserConnection = await prisma.userConnection.update({
-      where: {
-          shop: data.shop,
-      },
-      data: {
-          // connection_id: data.id,
-          // uid: data.uid,
-          // user_id: data.user_id,
-          // plan_id: data.plan_id,
-          // custom_name: data.custom_name,
-          // custom_note: data.custom_note,
-          // sync_type: data.sync_type,
-          // configured: data.configured,
-          // is_sync_enabled: data.is_sync_enabled,
-          // is_plugins_connected: data.is_plugins_connected,
-          // config: data.config,
-          // created_at: data.created_at,
-          // updated_at: data.updated_at,
-          // status: data.status,
-          // active_subscription_id: data.active_subscription_id,
-          token: data?.token
-      },
-  });
-  return updatedUserConnection;
+      // Check if the shop exists
+      const existingUserConnection = await prisma.userConnection.findFirst({
+          where: {
+              shop: data.shop,
+          },
+      });
+
+      if (existingUserConnection) {
+          // If a token is provided, update the existing user connection
+          if (data?.token) {
+              const updatedUserConnection = await prisma.userConnection.update({
+                  where: {
+                      shop: data.shop,
+                  },
+                  data: {
+                      token: data.token, // Only updating the token for simplicity
+                      // Add more fields if necessary
+                  },
+              });
+              console.log('User connection updated:', updatedUserConnection);
+              return updatedUserConnection;
+          } else {
+              console.log('Returning existing user connection:', existingUserConnection);
+              return existingUserConnection;
+          }
+      } else {
+          // If no existing user connection is found, create a new one
+          const newUserConnection = await prisma.userConnection.create({
+              data: {
+                  connection_id: data.id,
+                  shop: data.shop,
+                  uid: data.uid,
+                  user_id: data.user_id,
+                  plan_id: data.plan_id,
+                  custom_name: data.custom_name,
+                  custom_note: data.custom_note,
+                  sync_type: data.sync_type,
+                  configured: data.configured,
+                  is_sync_enabled: data.is_sync_enabled,
+                  is_plugins_connected: data.is_plugins_connected,
+                  config: data.config,
+                  created_at: data.created_at,
+                  updated_at: data.updated_at,
+                  status: data.status,
+                  active_subscription_id: data.active_subscription_id,
+                  token: data?.token,
+                  email: data.email,
+              },
+          });
+          console.log('New user connection created:', newUserConnection);
+          return newUserConnection;
+      }
+  } catch (error) {
+      console.error('Error in createOrUpdateUserConnection:', error);
+      throw new Error('Failed to create or update user connection');
   }
-  else{
-    return existingUserConnection;
-  }
-} else {
-    const newUserConnection = await prisma.userConnection.create({
-        data: {
-            connection_id: data.id,
-            shop: data.shop,
-            uid: data.uid,
-            user_id: data.user_id,
-            plan_id: data.plan_id,
-            custom_name: data.custom_name,
-            custom_note: data.custom_note,
-            sync_type: data.sync_type,
-            configured: data.configured,
-            is_sync_enabled: data.is_sync_enabled,
-            is_plugins_connected: data.is_plugins_connected,
-            config: data.config,
-            created_at: data.created_at,
-            updated_at: data.updated_at,
-            status: data.status,
-            active_subscription_id: data.active_subscription_id,
-            token: data?.token,
-            email: data.email,
-        },
-    });
-    return newUserConnection;
-}
 }
