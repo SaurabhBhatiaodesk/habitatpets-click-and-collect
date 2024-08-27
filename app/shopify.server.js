@@ -134,6 +134,7 @@ async function getAuthToken(session) {
 
 
 async function createOrUpdateUserConnection(data) {
+// console.log('createOrUpdateUserConnection ',data)
 const existingUserConnection = await prisma.userConnection.findFirst({
   where: {
       shop: data.shop,
