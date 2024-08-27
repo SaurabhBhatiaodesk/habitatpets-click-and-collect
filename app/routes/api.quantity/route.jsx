@@ -36,15 +36,20 @@ export async function loader({ request }) {
     }
     let data = await response.json();
     let quantity = 0;
+    let kilometer = 50;
     data.config_form.map((item, index) => {
       if (item?.saved_values?.shopify_minimum_pickup_stock_quantity_check=='yes' && item?.saved_values?.shopify_minimum_pickup_stock_quantity_value!='') {
         quantity = item.saved_values?.shopify_minimum_pickup_stock_quantity_value;
       }
+      if(item?.saved_values?.shopify_radius_kilometer_for_location_search!='')
+      {
+        kilometer=item.saved_values?.shopify_radius_kilometer_for_location_search;
+      }
     });
-    return await cors(request, json({ quantity: quantity }));
+    return await cors(request, json({ quantity: quantity,kilometer:kilometer }));
     }
     catch(error) {
-        return await cors(request, json({ quantity: 0 }));
+        return await cors(request, json({ quantity: 0,kilometer:50 }));
     }
   
 
