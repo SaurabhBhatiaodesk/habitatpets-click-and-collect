@@ -10,7 +10,6 @@ import RadioGroupComponent from "../components/radioGroupComponent";
 import TextFieldComponent from "../components/textFieldComponent";
 import SelectComponent from "../components/selectComponent";
 import MAPPING from "../components/MAPPING";
-import prisma from "./db.server";
 
 // Handles form submission
 export const action = async ({ request }) => {
@@ -220,7 +219,7 @@ async function getAuthToken(session) {
 
 async function createOrUpdateUserConnection(data) {
 // console.log('createOrUpdateUserConnection ',data)
-const existingUserConnection = await prisma.userConnection.findFirst({
+const existingUserConnection = await db.userConnection.findFirst({
   where: {
       shop: data.shop,
   },
@@ -228,7 +227,7 @@ const existingUserConnection = await prisma.userConnection.findFirst({
 
 if (existingUserConnection) {
   if(data?.token){
-  const updatedUserConnection = await prisma.userConnection.update({
+  const updatedUserConnection = await db.userConnection.update({
       where: {
           shop: data.shop,
       },
@@ -257,7 +256,7 @@ if (existingUserConnection) {
     return existingUserConnection;
   }
 } else {
-    const newUserConnection = await prisma.userConnection.create({
+    const newUserConnection = await db.userConnection.create({
         data: {
             connection_id: data.id,
             shop: data.shop,
