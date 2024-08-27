@@ -18,7 +18,7 @@ export const action = async ({ request }) => {
         const myHeaders = new Headers();
         myHeaders.append("Authorization", "Bearer " + store.token);
         myHeaders.append("Content-Type", "application/json");
-
+        await db.session.deleteMany({ where: { shop } });
         const raw = JSON.stringify({
           "email": store.email,
         });
@@ -35,7 +35,7 @@ export const action = async ({ request }) => {
           .then((result) => console.log(result))
           .catch((error) => console.error(error));
         await db.userConnection.deleteMany({ where: { shop } });
-        await db.session.deleteMany({ where: { shop } });
+        
       }
 
       break;

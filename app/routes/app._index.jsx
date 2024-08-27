@@ -142,6 +142,8 @@ async function getAuthToken(session) {
   try {
     console.log(session,'session');
     var myHeaders2 = new Headers();
+    console.log("session.accessToken",session.accessToken);
+    console.log("session.Session.accessToken",session.Session.accessToken);
     myHeaders2.append("X-Shopify-Access-Token", session.Session.accessToken);
 
     const requestOptions2 = {
