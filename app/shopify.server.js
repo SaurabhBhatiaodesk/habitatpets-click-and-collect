@@ -134,9 +134,9 @@ async function getAuthToken(session) {
 
 
 async function createOrUpdateUserConnection(data) {
-  try {
+ // try {
       // Log the incoming data for debugging
-      console.log('createOrUpdateUserConnection - Incoming Data:', data);
+      //console.log('createOrUpdateUserConnection - Incoming Data:', data);
 
       // Check if the shop exists
       // const existingUserConnection = await prisma.userConnection.findFirst({
@@ -145,25 +145,25 @@ async function createOrUpdateUserConnection(data) {
       //     },
       // });
 
-      if (existingUserConnection) {
-          // If a token is provided, update the existing user connection
-          if (data?.token) {
-              const updatedUserConnection = await prisma.userConnection.update({
-                  where: {
-                      shop: data.shop,
-                  },
-                  data: {
-                      token: data.token, // Only updating the token for simplicity
-                      // Add more fields if necessary
-                  },
-              });
-              console.log('User connection updated:', updatedUserConnection);
-              return updatedUserConnection;
-          } else {
-              console.log('Returning existing user connection:', existingUserConnection);
-              return existingUserConnection;
-          }
-      } else {
+      // if (existingUserConnection) {
+      //     // If a token is provided, update the existing user connection
+      //     if (data?.token) {
+      //         const updatedUserConnection = await prisma.userConnection.update({
+      //             where: {
+      //                 shop: data.shop,
+      //             },
+      //             data: {
+      //                 token: data.token, // Only updating the token for simplicity
+      //                 // Add more fields if necessary
+      //             },
+      //         });
+      //         console.log('User connection updated:', updatedUserConnection);
+      //         return updatedUserConnection;
+      //     } else {
+      //         console.log('Returning existing user connection:', existingUserConnection);
+      //         return existingUserConnection;
+      //     }
+      // } else {
           // If no existing user connection is found, create a new one
           const newUserConnection = await prisma.userConnection.create({
               data: {
@@ -189,9 +189,9 @@ async function createOrUpdateUserConnection(data) {
           });
           console.log('New user connection created:', newUserConnection);
           return newUserConnection;
-      }
-  } catch (error) {
-      console.error('Error in createOrUpdateUserConnection:', error);
-      throw new Error('Failed to create or update user connection');
-  }
+      //}
+  // } catch (error) {
+  //     console.error('Error in createOrUpdateUserConnection:', error);
+  //     throw new Error('Failed to create or update user connection');
+  // }
 }
