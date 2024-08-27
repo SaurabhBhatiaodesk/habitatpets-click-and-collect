@@ -180,7 +180,7 @@
     position: absolute;
     right: -10px;
     top: -7px;
-    width: 27px
+    width: 25px
 }
 
 .popup-modal .popup-box {
@@ -201,21 +201,24 @@
     margin: auto
 }
 
-.popup-modal ::-webkit-scrollbar {
-    width: 2px
-}
-
-.popup-modal ::-webkit-scrollbar-track {
-    background: 0 0
-}
-
-.popup-modal ::-webkit-scrollbar-thumb {
-    background: 0 0
-}
-
-.popup-modal ::-webkit-scrollbar-thumb:hover {
-    background: 0 0
-}
+.address-popup::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  /* Track */
+  .address-popup::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  /* Handle */
+  .address-popup::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+  
+  /* Handle on hover */
+  .address-popup::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 
 .popup-btn {
     width: 100%;

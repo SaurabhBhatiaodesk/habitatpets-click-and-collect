@@ -42,7 +42,7 @@ export async function loader({ request }) {
     }
 
     let graphQLData = await response.json();
-
+      console.log(graphQLData);
     if (!graphQLData.data) {
       throw new Error("Invalid GraphQL response structure");
     }

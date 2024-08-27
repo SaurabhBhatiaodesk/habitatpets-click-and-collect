@@ -1,46 +1,71 @@
 async function fetchData(e){try{  const t=await fetch(e);if(!t.ok)throw new Error("Network response was not ok");return await t.json()}catch(e){return console.error("Error fetching data:",e),null}}
 function setCookie(name,value,days){let expires="";if(days){let date=new Date();date.setTime(date.getTime()+(days*86400000));expires="; expires="+date.toUTCString()}document.cookie=`${name}=${value}${expires}; path=/`;}
 function getCookie(name){let cookies=document.cookie.split(";").map(cookie=>cookie.trim().split("="));for(let i=0;i<cookies.length;i++){if(cookies[i][0]===name){return decodeURIComponent(cookies[i][1]);}}return null;}
-// function toggleDropdown() { document.getElementById("myDropdown").classList.toggle("show");  }
 async function getLocationsDropdown( selectedLocation = "") {
     try {
       const pickuplcurl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/pickupLocation?shop=${location.hostname}`;
       const testres = await fetchData(pickuplcurl); 
       const locations = testres?.data?.locations?.nodes;
 
-      // console.log('locations testres ',testres, selectedLocation)
       const destinationsArr = [];
   
       if (locations && selectedLocation != null) {
-        // console.log('tesinss  selectedLocation ',selectedLocation)
         for (const location of locations) {
           if (location?.address?.zip && location?.localPickupSettingsV2 != null) {
-            // console.log('location rrr ', location.name);
-            destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`);
+              destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`);
           }
         }
       }
 
       const dropdownDiv = document.querySelector('.cls-pickuplocations-div');
-      dropdownDiv.innerHTML = ''; 
+      dropdownDiv.innerHTML = '';
+      const dropdwndiv = document.createElement("div");
+      dropdwndiv.className = 'cnc-dropdwndiv';
+      const delivertextdiv = document.createElement("div");
+      delivertextdiv.className = 'cnc-delivertextdiv';
+      
       const dropdownSelect = document.createElement("select");
       dropdownSelect.className = "cls-pickuplocations-select";
    
       const anchor = document.createElement('a');
       anchor.href = 'javascript:void(0)';
       anchor.className = 'cnc-modal-open';
-      anchor.text= 'see store info';
+      anchor.setAttribute('for', 'dropdown-icon');
+      // anchor.text= 'see store info';     
        const icon = document.createElement('i');
-      icon.className = 'fa fa-info';
+      icon.className = 'fa fa-map-marker';
       icon.setAttribute('aria-hidden', 'true');
+      icon.setAttribute('id', 'dropdown-icon');
+
+      const lable = document.createElement('label');
+      lable.className = 'cnc-dropdown-lable';
+      lable.textContent = "You're Shopping"; 
 
       anchor.appendChild(icon);
       dropdownDiv.style.display = 'block';
-   
       dropdownDiv.appendChild(anchor);
+      
+      dropdownDiv.appendChild(dropdwndiv);
+      dropdwndiv.appendChild(lable);
     
+      
       if (destinationsArr.length > 0 && selectedLocation != null) {
         const customerLocation = getCookie("customerlocation");
+      
+        const lable2 = document.createElement('label');
+        lable2.className = 'cnc-dropdown-delver';
+        lable2.textContent = "Delivering To"; 
+  
+        const delivertext = document.createElement('span');
+        delivertext.className = 'cnc-dropdown-text';
+        delivertext.textContent = customerLocation; 
+    
+        delivertextdiv.appendChild(lable2);
+        delivertextdiv.appendChild(delivertext);
+        dropdownDiv.appendChild(delivertextdiv);
+
+
+
         const mapUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&shop=${location.hostname}`;
         const res = await fetchData(mapUrl);
         var count = 0;
@@ -84,7 +109,7 @@ async function getLocationsDropdown( selectedLocation = "") {
                 dropdownSelect.appendChild(option);
                 }   
            
-            dropdownDiv.appendChild(dropdownSelect); 
+                dropdwndiv.appendChild(dropdownSelect); 
 
             dropdownDiv.style.display = 'block';
             dropdownSelect.addEventListener('change', handleDropdownChange);
@@ -111,6 +136,9 @@ async function getLocationsDropdown( selectedLocation = "") {
         // dropdownDiv.appendChild(dropdownSelect); // append the select element to the div
 
       }
+
+     
+
       document.querySelector('.pickup-locations-dropdown-header').parentElement.classList.add('cnc-cls-headericons');
 
     } catch (error) {
@@ -119,7 +147,6 @@ async function getLocationsDropdown( selectedLocation = "") {
   }
 
   function showdropdown() {
-    // console.log('testings show dropdown');
        try{
             // getCookie("storelocationName"); 
             const selectedLocation = getCookie("storelocationName");
@@ -144,17 +171,23 @@ async function getLocationsDropdown( selectedLocation = "") {
   let storeLocationName = getCookie("storelocation");
 	const pickupLocationSelect = document.querySelector('.cls-pickuplocations-select');
 	if (pickupLocationSelect !== null && pickupLocationSelect.value !== "") {
-		pickupLocationSelect.value = storeLocationName;
+    try {
+
+      pickupLocationSelect.value = storeLocationName;
+    }catch(e){
+      getLocationsDropdown(storeLocationName);
+    }
 	}
  })
 document.addEventListener("click", event => {
-   if (event.target.classList.contains("cnc-modal-open")) { 
+   if (event.target.classList.contains("cnc-modal-open") || event.target.id.includes("dropdown-icon")) { 
     const popupModal = document.querySelector(".popup-modal"); if (popupModal){
     // console.log('testings ');
     showModal();  
   }else {
-    
+    document.getElementsByClassName('button.cart-btn.button')[0].click();
   }
+
    
 }
    

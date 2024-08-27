@@ -1,3 +1,6 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css');
+
+  
   .cls-pickuplocations .cls-pickuplocations .dropdown-content {
     display: none;
   }
@@ -40,34 +43,163 @@
 }
 
 select.cls-pickuplocations-select {
-  padding: 9px 5px;
+  padding: 0 5px;
   border-radius: 0px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 400;
   text-transform: capitalize;
-  margin-left: 10px;
+  margin-left: -9px;
+  border: none;
+  margin-top: 0;
 }
-
+.cnc-delivertextdiv label.cnc-dropdown-delver {
+  font-size: 14px;
+  line-height: 18px;
+  color: #000;
+  letter-spacing: 0;
+  font-weight: 600;
+  width: 100%;
+  float: left;
+  text-align: left;
+}
 .dropdown.cls-pickuplocations-div select > option {
     border-radius: 4px;
     font-size: 14px;
     font-weight: 500;
 }
 
-@media screen and (max-width: 480px) {
-a.header__heading-link.link.link--text.focus-inset {
-  display: none !important;
+/*-----27-08-2024----*/
+.disclosure button.disclosure__button span {
+  font-weight: bold;
+  letter-spacing: 0;
 }
+.pickup-locations-dropdown-header .dropdown.cls-pickuplocations-div a {
+  font-weight: bold;
+  color: #000;
+  text-decoration: none;
+  letter-spacing: 0;
+  position: relative;
+  top: 3px;
+  margin-right: 10px;
+}
+.pickup-locations-dropdown-header .dropdown.cls-pickuplocations-div i {
+  font-size: 26px;
+  line-height: 36px;
+}
+.header__icons.header__icons--localization.header-localization.cnc-cls-headericons {
+  position: relative;
+}
+.pickup-locations-dropdown-header {
+  position: absolute;
+  left: -300px;
+  width: 100%;
+  text-align: center;
+  top: 5px;
+  min-width: 300px;
+}
+.cnc-dropdwndiv {
+  margin-right: 25px;
+}
+.dropdown.cls-pickuplocations-div {
+  display: flex !important;
+  margin: 0;
+}
+.cnc-dropdwndiv label.cnc-dropdown-lable {
+  float: left;
+  padding-left: 0;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 16px;
+  color: #000;
+  letter-spacing: 0;
+  width: 100%;
+  text-align: left;
+}
+.cnc-dropdwndiv, .cnc-delivertextdiv {
+  float: left;
+  max-width: 50%;
+}
+.desktop-localization-wrapper {
+  display: none;
+}
+.cnc-delivertextdiv span.cnc-dropdown-text {
+  float: left;
+  font-size: 14px;
+  color: #000;
+  font-weight: 400;
+}
+
+
+@media screen and (max-width:989px) {
+  .pickup-locations-dropdown-header {
+    left: -260px;
+    min-width: 260px;
+  }
+  select.cls-pickuplocations-select {
+    max-width: 150px;
+  } 
+  .header__heading, .header__heading-link {
+    justify-self: start !important;
+  } 
+  h1.header__heading {
+    position: absolute;
+    left: 60px;
+  } 
+}
+
+@media screen and (max-width:767px) {
+  h1.header__heading span.h2 {
+    font-size: 16px;
+  } 
+  .cnc-dropdwndiv {
+    margin-right: 10px;
+  } 
+  .dropdown.cls-pickuplocations-div {
+    display: flex !important;
+    align-items: start;
+  }
+  .header {
+    padding: 10px 1rem 10px 1rem;
+  } 
+}
+
+@media screen and (max-width:600px) {
+  select.cls-pickuplocations-select {
+    font-size: 12px;
+  } 
+  select.cls-pickuplocations-select {
+    max-width: 130px;
+  }
+  h1.header__heading span.h2 {
+    font-size: 13px;
+  }
+.cnc-delivertextdiv {
+  display: none;
+}
+.pickup-locations-dropdown-header {
+  left: -160px;
+  min-width: 230px;
+}
+}
+
+@media screen and (max-width: 480px) {
 select.cls-pickuplocations-select {
   padding: 7px 4px !important;
   border-radius: 4px;
   font-size: 12px !important;
 }
-.dropdown.cls-pickuplocations-div {
-  display: flex !important;
-  align-items: center;
-}
 .header {
   padding: 10px 1rem 10px 1rem !important;
+}
+h1.header__heading {
+  left: 40px;
+}
+.cnc-dropdwndiv {
+  display: none;
+}
+.pickup-locations-dropdown-header {
+  left: -26px;
+  min-width: inherit;
+  top: 2px;
 }
 }
