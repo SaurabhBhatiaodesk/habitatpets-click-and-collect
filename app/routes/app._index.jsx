@@ -317,6 +317,7 @@ export default function configPage() {
   const [cerror, setCerror] = useState([]);
   const [loading, setLoading] = useState({});
   const [hideshow, setHideshow] = useState({});
+  const [checkModule,setCheckModule] = useState([]);
   
 
   console.log("dataaaaaaaa ::", data);
@@ -403,100 +404,417 @@ export default function configPage() {
   const handleSelectChange = (value) => {
     setSelectedValue(value);
   };
-  async function handleItemClick(itemContent) {
-
-    setDataLimit({ start: 0, end: 2 });
-    setLoader('prefyes');
-    setConfigLoader('configyes');
-    setMapLoader('mapyes');
-
-    
-    setConfig();
-    setMapping();
-    setPreferenceActiveTab(itemContent);
+  async function getMenu(token)
+  {
     const myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer " + data.store.token);
+    myHeaders.append("Authorization", "Bearer " + token);
 
     const requestOptions = {
       method: "GET",
       headers: myHeaders,
       redirect: "follow",
     };
-    console.log(`Item clicked: ${itemContent}`);
-    try {
-      /**************************************  Preference  ****************************************************** */
-      const response = await fetch(
-        `https://main.dev.saasintegrator.online/api/v1/${itemContent}/preference`,
-        requestOptions,
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      let preference = await response.json();
-      console.log("preference ", preference);
-      setPreference(preference);
-      setLoader('prefno');
-      
-      if(preference.meta.is_enabled) {
-        setDataLimit({ start: 0, end: 2 });
-      }
-      else{
-        setDataLimit({ start: 0, end: 1 });
-      }
-      if(preference?.meta?.is_enabled){
-      /****************************************** config-form  ************************************************** */
-      const response2 = await fetch(
-        `https://main.dev.saasintegrator.online/api/v1/${itemContent}/config-form`,
-        requestOptions,
-      );
-      if (!response2.ok) {
-        setConfigLoader('configno');
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const requireds = [];
-      let PluginID = '';
-      let configform = await response2.json();
-      configform?.config_form?.map((config) => {
-        console.log(config, "CCCCCCCCCCCCCCCCCCCOOOOOOOONNNNNFIFFFFFGGF")
-        PluginID = config.plugin_id;
-        console.log("PluginIDPluginID", PluginID)
-        config?.fields?.map((cf) => {
-          if (cf.required) {
+    const formResponse = await fetch(
+      "https://main.dev.saasintegrator.online/api/v1/menus",
+      requestOptions
+    );
 
-            const value = []
-            value.push({ "plugin": PluginID, "name": cf.name })
-            console.log("valueeeeeeeeee", value);
-            requireds.push(value);
-          }
-          setHideshow((prevState) => ({
-            ...prevState,
-            [cf.name]: true, // Dynamically update state based on input name
-          }));
-        })
-      })
-      setRequired(requireds);
-      console.log("required:::::", requireds);
-      console.log("config ", configform);
-      setConfig(configform);
-      setConfigLoader('configno');
-      /**************************************** Mapping **************************************************** */
-     
-      const response3 = await fetch(
-        `https://main.dev.saasintegrator.online/api/v1/${itemContent}/mapping`,
-        requestOptions,
-      );
-      if (!response3.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      let mapping = await response3.json();
-      console.log("mapping ", mapping);
-      setMapping(mapping);
-      setMapLoader('mapno');
+    if (!formResponse.ok) {
+      throw new Error(`Failed to fetch menus. Status: ${formResponse.status}`);
     }
-    } catch (error) {
-      setMapLoader('mapno');
-      console.error("Error fetching config-form:", error);
-      throw error;
+
+    const form_data = await formResponse.json();
+    console.log("Form Data:", form_data);
+    return form_data;
+  }
+  async function handleItemClick(itemContent) {
+
+    setDataLimit({ start: 0, end: 2 });
+    setLoader('prefyes');
+    setConfigLoader('configyes');
+    setMapLoader('mapyes');
+    console.log('item clicked',itemContent);
+    
+    setConfig();
+    setMapping();
+    setPreferenceActiveTab(itemContent);
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer " + data.store.token);
+    var menu=await getMenu(data.store.token);
+    switch(itemContent)
+    {
+      case "seller":
+        var insert=[];
+        
+        menu.map((item)=>{
+          switch(item.module)
+          {
+            case "store":
+              if(!item.is_configured)
+              {
+                insert.push('Store');
+              }
+              break;
+              case "currency":
+              if(!item.is_configured)
+              {
+                insert.push('Currency');
+              }
+              break;
+              case "tax":
+              if(!item.is_configured)
+              {
+                insert.push('Tax');
+              }
+              break;
+              case "payment_method":
+              if(!item.is_configured)
+              {
+                insert.push(`Payment Method`);
+              }
+              break;
+          }
+        })
+        setCheckModule(insert);
+        break;
+        case "product":
+          var insert=[];
+        menu.map((item)=>{
+          switch(item.module)
+          {
+            case "store":
+              if(!item.is_configured)
+              {
+                insert.push('Store');
+              }
+              break;
+              case "currency":
+              if(!item.is_configured)
+              {
+                insert.push('Currency');
+              }
+              break;
+              case "tax":
+              if(!item.is_configured)
+              {
+                insert.push('Tax');
+              }
+              break;
+              case "payment_method":
+              if(!item.is_configured)
+              {
+                insert.push(`Payment Method`);
+              }
+              break;
+              case "attribute":
+              if(!item.is_configured)
+              {
+                insert.push(`Attribute`);
+              }
+              break;
+          }
+        })
+        setCheckModule(insert);
+        break;
+        case "inventory":
+          var insert=[];
+        menu.map((item)=>{
+          switch(item.module)
+          {
+            case "store":
+              if(!item.is_configured)
+              {
+                insert.push('Store');
+              }
+              break;
+              case "currency":
+              if(!item.is_configured)
+              {
+                insert.push('Currency');
+              }
+              break;
+              case "tax":
+              if(!item.is_configured)
+              {
+                insert.push('Tax');
+              }
+              break;
+              case "payment_method":
+              if(!item.is_configured)
+              {
+                insert.push(`Payment Method`);
+              }
+              break;
+              case "product":
+              if(!item.is_configured)
+              {
+                insert.push(`Product`);
+              }
+              break;
+          }
+        })
+        setCheckModule(insert);
+        break;
+        case "customer":
+          var insert=[];
+        menu.map((item)=>{
+          switch(item.module)
+          {
+            case "store":
+              if(!item.is_configured)
+              {
+                insert.push('Store');
+              }
+              break;
+              case "currency":
+              if(!item.is_configured)
+              {
+                insert.push('Currency');
+              }
+              break;
+              case "tax":
+              if(!item.is_configured)
+              {
+                insert.push('Tax');
+              }
+              break;
+              case "payment_method":
+              if(!item.is_configured)
+              {
+                insert.push(`Payment Method`);
+              }
+              break;
+          }
+        })
+        setCheckModule(insert);
+        break;
+        case "loyalty_point":
+          var insert=[];
+        menu.map((item)=>{
+          switch(item.module)
+          {
+            case "customer":
+              if(!item.is_configured)
+              {
+                insert.push('Customer');
+              }
+              break;
+              case "order":
+              if(!item.is_configured)
+              {
+                insert.push('Order');
+              }
+              break;
+          }
+        })
+        setCheckModule(insert);
+        break;
+        case "order":
+          var insert=[];
+        menu.map((item)=>{
+          switch(item.module)
+          {
+            case "store":
+              if(!item.is_configured)
+              {
+                insert.push('Store');
+              }
+              break;
+              case "currency":
+              if(!item.is_configured)
+              {
+                insert.push('Currency');
+              }
+              break;
+              case "tax":
+              if(!item.is_configured)
+              {
+                insert.push('Tax');
+              }
+              break;
+              case "payment_method":
+              if(!item.is_configured)
+              {
+                insert.push(`Payment Method`);
+              }
+              break;
+              case "product":
+              if(!item.is_configured)
+              {
+                insert.push(`Product`);
+              }
+              break;
+              case "customer":
+              if(!item.is_configured)
+              {
+                insert.push(`Customer`);
+              }
+              break;
+          }
+        })
+        setCheckModule(insert);
+        break;
+        case "click_and_collect":
+          var insert=[];
+        menu.map((item)=>{
+          switch(item.module)
+          {
+            case "product":
+              if(!item.is_configured)
+              {
+                insert.push('Product');
+              }
+              break;
+              case "order":
+              if(!item.is_configured)
+              {
+                insert.push('Order');
+              }
+              break;
+          }
+        })
+        setCheckModule(insert);
+        break;
+        case "purchase_order":
+          var insert=[];
+        menu.map((item)=>{
+          switch(item.module)
+          {
+            case "product":
+              if(!item.is_configured)
+              {
+                insert.push('Product');
+              }
+              break;
+          }
+        })
+        setCheckModule(insert);
+        break;
+        case "tier_price":
+          var insert=[];
+        menu.map((item)=>{
+          switch(item.module)
+          {
+            case "store":
+              if(!item.is_configured)
+              {
+                insert.push('Store');
+              }
+              break;
+              case "currency":
+              if(!item.is_configured)
+              {
+                insert.push('Currency');
+              }
+              break;
+              case "tax":
+              if(!item.is_configured)
+              {
+                insert.push('Tax');
+              }
+              break;
+              case "payment_method":
+              if(!item.is_configured)
+              {
+                insert.push(`Payment Method`);
+              }
+              break;
+              case "product":
+              if(!item.is_configured)
+              {
+                insert.push(`Product`);
+              }
+              break;
+          }
+        })
+        setCheckModule(insert);
+        break;
+        default:
+          setCheckModule([]);
+          break;
+    }
+    if(checkModule.length==0){
+      const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow",
+      };
+      console.log(`Item clicked: ${itemContent}`);
+      try {
+        /**************************************  Preference  ****************************************************** */
+        const response = await fetch(
+          `https://main.dev.saasintegrator.online/api/v1/${itemContent}/preference`,
+          requestOptions,
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        let preference = await response.json();
+        console.log("preference ", preference);
+        setPreference(preference);
+        setLoader('prefno');
+        
+        if(preference.meta.is_enabled) {
+          setDataLimit({ start: 0, end: 2 });
+        }
+        else{
+          setDataLimit({ start: 0, end: 1 });
+        }
+        if(preference?.meta?.is_enabled){
+        /****************************************** config-form  ************************************************** */
+        const response2 = await fetch(
+          `https://main.dev.saasintegrator.online/api/v1/${itemContent}/config-form`,
+          requestOptions,
+        );
+        if (!response2.ok) {
+          setConfigLoader('configno');
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const requireds = [];
+        let PluginID = '';
+        let configform = await response2.json();
+        configform?.config_form?.map((config) => {
+          console.log(config, "CCCCCCCCCCCCCCCCCCCOOOOOOOONNNNNFIFFFFFGGF")
+          PluginID = config.plugin_id;
+          console.log("PluginIDPluginID", PluginID)
+          config?.fields?.map((cf) => {
+            if (cf.required) {
+
+              const value = []
+              value.push({ "plugin": PluginID, "name": cf.name })
+              console.log("valueeeeeeeeee", value);
+              requireds.push(value);
+            }
+            setHideshow((prevState) => ({
+              ...prevState,
+              [cf.name]: true, // Dynamically update state based on input name
+            }));
+          })
+        })
+        setRequired(requireds);
+        console.log("required:::::", requireds);
+        console.log("config ", configform);
+        setConfig(configform);
+        setConfigLoader('configno');
+        /**************************************** Mapping **************************************************** */
+      
+        const response3 = await fetch(
+          `https://main.dev.saasintegrator.online/api/v1/${itemContent}/mapping`,
+          requestOptions,
+        );
+        if (!response3.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        let mapping = await response3.json();
+        console.log("mapping ", mapping);
+        setMapping(mapping);
+        setMapLoader('mapno');
+      }
+      } catch (error) {
+        setMapLoader('mapno');
+        console.error("Error fetching config-form:", error);
+        throw error;
+      }
     }
     // You can add any other logic you need here
   }
@@ -905,6 +1223,14 @@ export default function configPage() {
           )}
           
             <div style={{ width: "100%",marginTop:"10px",minWidth:"32pc" }}>
+              {checkModule && checkModule.length > 0 ? (
+                <>
+                <div>This module cannot be configured.
+
+                  Please check the following modules are configured first</div>
+                  <div>{checkModule.join(",")}</div>
+                  </>
+                  ):(<>
               {preference &&
                 preference != undefined &&
                 navbar ? (
@@ -1215,6 +1541,8 @@ export default function configPage() {
               )}
                 </>
               )}
+              </>
+            )}
             </div>
           </Layout>
         </Page>

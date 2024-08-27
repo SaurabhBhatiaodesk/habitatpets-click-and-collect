@@ -21,7 +21,7 @@ export async function loader({ request }) {
     myHeaders.append("X-Shopify-Access-Token", token.accessToken);
 
     const graphql = JSON.stringify({
-      query : `query MyQuery { product(id: "gid://shopify/Product/${productId}") { tags title tracksInventory collections(first: 10) { nodes { id title handle } } variants(first: 10) { nodes { inventoryItem { inventoryLevels(first: 10) { edges { node { location { activatable name } id quantities(names: "available") { name id quantity } } } } } id } } } }`
+      query : `query MyQuery { product(id: "gid://shopify/Product/${productId}") { tags title tracksInventory collections(first: 10) { nodes { id title handle } } variants(first: 10) { nodes { inventoryItem { inventoryLevels(first: 10) { edges { node { location { activatable name } id quantities(names: "available") { name id quantity } } } } } id } } } } }`
       ,
       variables: {}
     });
@@ -81,24 +81,28 @@ export async function loader({ request }) {
       }
 
       let quantity = 0;
-      let kilometer=50;
+      let kilometer = 50;
+
       dataQty.config_form.forEach(item => {
         if (item?.saved_values?.shopify_minimum_pickup_stock_quantity_check === 'yes' &&
             item?.saved_values?.shopify_minimum_pickup_stock_quantity_value !== '') {
-          quantity = item.saved_values?.shopify_minimum_pickup_stock_quantity_value;
+          quantity = item.saved_values.shopify_minimum_pickup_stock_quantity_value;
         }
-        if(item?.saved_values?.shopify_radius_kilometer_for_location_search!='')
-          {
-            kilometer=item.saved_values?.shopify_radius_kilometer_for_location_search;
-          }
+        if (item?.saved_values?.shopify_radius_kilometer_for_location_search !== '') {
+          kilometer = item.saved_values.shopify_radius_kilometer_for_location_search;
+        }
       });
 
-      const newData = { ...graphQLData.data, quantity,kilometer };
+      console.log("Final Kilometer Value:", kilometer);
+
+      const newData = { ...graphQLData.data, quantity, kilometer };
+      console.log("New Data:", newData);
+
       return cors(request, json({ data: newData }));
 
     } catch (error) {
       console.error("Error fetching quantity data:", error);
-      return cors(request, json({ error: "Quantity fetch failed", data: { ...graphQLData.data, quantity: 0,kilometer:50 } }));
+      return cors(request, json({ error: "Quantity fetch failed", data: { ...graphQLData.data, quantity: 0, kilometer: 50 } }));
     }
 
   } catch (error) {
