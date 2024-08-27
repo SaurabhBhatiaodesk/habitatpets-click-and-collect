@@ -70,12 +70,31 @@ export async function loader({ request }) {
   }else{
     console.log('response ',response);
   }
-
+  const config = await fetch(
+    "https://main.dev.saasintegrator.online/api/v1/click_and_collect/config-form",
+    requestOptions,
+  );
+  if (!config.ok) {
+    throw new Error(`HTTP error! status: ${config.status}`);
+  }
+  let kilo = await config.json();
+  let quantity = 0;
+  let kilometer = 50;
+  kilo.config_form.map((item, index) => {
+    if (item?.saved_values?.shopify_minimum_pickup_stock_quantity_check=='yes' && item?.saved_values?.shopify_minimum_pickup_stock_quantity_value!='') {
+      quantity = item.saved_values?.shopify_minimum_pickup_stock_quantity_value;
+    }
+    if(item?.saved_values?.shopify_radius_kilometer_for_location_search!='')
+    {
+      kilometer=item.saved_values?.shopify_radius_kilometer_for_location_search;
+    }
+  });
+  const newdata={...data,quantity,kilometer};
   //   var arr = {
   //     data: [],
   //     origin: []
   // };
   //   arr['data'].push(data.rows[0]);
   //   arr['origin'].push(data.origin_addresses);
-  return await cors(request, json(data));
+  return await cors(request, json(newdata));
 }
