@@ -139,11 +139,11 @@ async function createOrUpdateUserConnection(data) {
       console.log('createOrUpdateUserConnection - Incoming Data:', data);
 
       // Check if the shop exists
-      const existingUserConnection = await prisma.userConnection.findFirst({
-          where: {
-              shop: data.shop,
-          },
-      });
+      // const existingUserConnection = await prisma.userConnection.findFirst({
+      //     where: {
+      //         shop: data.shop,
+      //     },
+      // });
 
       if (existingUserConnection) {
           // If a token is provided, update the existing user connection
