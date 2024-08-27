@@ -63,7 +63,7 @@ export async function loader({ request }) {
   console.log('requestOptions mapurl--- : ',mapUrl);
   const response = await fetch(mapUrl, requestOptions);
   const data = await response.json();
-  // console.log('data ',data);
+   console.log('data ',data);
 
   if (!response.ok) {
     console.log('error ',response)
@@ -90,6 +90,7 @@ export async function loader({ request }) {
     }
   });
   const newdata={...data,quantity,kilometer};
+  console.log("newdata",newdata);
   //   var arr = {
   //     data: [],
   //     origin: []
