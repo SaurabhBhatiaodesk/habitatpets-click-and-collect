@@ -121,10 +121,9 @@ export async function loader({ request }) {
             item?.saved_values?.shopify_minimum_pickup_stock_quantity_value !== '') {
           quantity = item.saved_values?.shopify_minimum_pickup_stock_quantity_value;
         }
-        if(item?.saved_values?.shopify_radius_kilometer_for_location_search!='')
-          {
-            kilometer=item.saved_values?.shopify_radius_kilometer_for_location_search;
-          }
+        if (item?.saved_values?.shopify_radius_kilometer_for_location_search !== 'undefined' && item?.saved_values?.shopify_radius_kilometer_for_location_search >0) {
+          kilometer = item.saved_values.shopify_radius_kilometer_for_location_search*1000;
+        }
       });
 
       const newData = { ...graphQLData.data, quantity,kilometer };
