@@ -21,7 +21,7 @@ export async function loader({ request }) {
     myHeaders.append("X-Shopify-Access-Token", token.accessToken);
 
     const graphql = JSON.stringify({
-      query : `query MyQuery { product(id: "gid://shopify/Product/${productId}") { tags title tracksInventory collections(first: 10) { nodes { id title handle } } variants(first: 10) { nodes { inventoryItem { inventoryLevels(first: 10) { edges { node { location { activatable name } id quantities(names: "available") { name id quantity } } } } } id } } } } }`
+      query : `query MyQuery { product(id: "gid://shopify/Product/${productId}") { tags title tracksInventory collections(first: 10) { nodes { id title handle } } variants(first: 10) { nodes { inventoryItem { inventoryLevels(first: 10) { edges { node { location { activatable name } id quantities(names: "available") { name id quantity } } } } } id } } } }`
       ,
       variables: {}
     });
