@@ -93,7 +93,7 @@ export async function loader({ request }) {
           }
       });
 
-      const newData = { ...graphQLData.data, quantity,kilometer:kilometer };
+      const newData = { ...graphQLData.data, quantity,kilometer };
       return cors(request, json({ data: newData }));
 
     } catch (error) {
