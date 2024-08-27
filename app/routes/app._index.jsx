@@ -30,35 +30,53 @@ export const action = async ({ request }) => {
 
 // Fetches data for the form
 export const loader = async ({ request }) => {
-  const admin = await authenticate.admin(request);
-  const shop = admin.session.shop;
-  const auth = await db.session.findFirst({
-    where: { shop },
-  });
-
-  const store = await db.userConnection.findFirst({
-    where: { shop },
-  });
-  console.log("store:::", store)
-  const myHeaders = new Headers();
-  myHeaders.append("Authorization", "Bearer " + store?.token);
-  const requestOptions = {
-    method: "GET",
-    headers: myHeaders,
-    redirect: "follow",
-  };
-
   try {
+    const admin = await authenticate.admin(request);
+    const shop = admin.session.shop;
+
+    // Fetch session information for the shop
+    const auth = await db.session.findFirst({
+      where: { shop },
+    });
+
+    if (!auth) {
+      throw new Error("Session information not found for the shop.");
+    }
+
+    // Fetch user connection information
+    const store = await db.userConnection.findFirst({
+      where: { shop },
+    });
+
+    if (!store) {
+      throw new Error("User connection information not found for the shop.");
+    }
+
+    console.log("Store Data:", store);
+
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer " + store.token);
+
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    // Fetch credential form
     const response = await fetch(
       "https://main.dev.saasintegrator.online/api/v1/credential-form",
-      requestOptions,
+      requestOptions
     );
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`Failed to fetch credential form. Status: ${response.status}`);
     }
+
     let data = await response.json();
 
-    data.plugin_form.map((item, index) => {
+    // Modify data based on auth information
+    data.plugin_form.forEach((item, index) => {
       if (item?.fields?.base_url) {
         data.plugin_form[index].fields.base_url.value = "https://" + auth.shop;
         data.plugin_form[index].fields.base_url.type = "text";
@@ -68,39 +86,54 @@ export const loader = async ({ request }) => {
         data.plugin_form[index].fields.token.type = "text";
       }
     });
-    // console.log(data, "data changed")
-    const form = await fetch(
-      "https://main.dev.saasintegrator.online/api/v1/menus",
-      requestOptions,
-    );
-    if (!form.ok) {
-      throw new Error(`HTTP error! status: ${form.status}`);
-    }
-    const form_data = await form.json();
-    console.log("form_data ", form_data);
-    const myHead = new Headers();
-    myHead.append("Authorization", "Bearer " + store.token);
 
-    const requestOpt = {
-      method: "GET",
-      headers: myHead,
-      redirect: "follow"
+    // Fetch menu form
+    const formResponse = await fetch(
+      "https://main.dev.saasintegrator.online/api/v1/menus",
+      requestOptions
+    );
+
+    if (!formResponse.ok) {
+      throw new Error(`Failed to fetch menus. Status: ${formResponse.status}`);
+    }
+
+    const form_data = await formResponse.json();
+    console.log("Form Data:", form_data);
+
+    // Fetch user connection data
+    const connectionResponse = await fetch(
+      `https://main.dev.saasintegrator.online/api/v1/user-connection?email=${store.email}`,
+      requestOptions
+    );
+
+    if (!connectionResponse.ok) {
+      throw new Error(`Failed to fetch user connection. Status: ${connectionResponse.status}`);
+    }
+
+    const user = await connectionResponse.json();
+    const user_data = user.connection.find(u => u.uid === store.uid);
+
+    if (!user_data) {
+      throw new Error("User data not found for the specified UID.");
+    }
+
+    console.log("User Data:", user_data);
+
+    // Return the fetched and processed data
+    return {
+      form: form_data,
+      data: data,
+      auth: auth,
+      store: store,
+      user_data: user_data
     };
 
-    const connection = await fetch("https://main.dev.saasintegrator.online/api/v1/user-connection?email=" + store.email, requestOpt);
-    if(!connection.ok)
-    {
-      throw new Error("Couldn't connect to" + connection.status)
-    }
-    const user = await connection.json();
-    const user_data = user.connection.filter(u => u.uid==store.uid);
-    console.log(user_data);
-    return { form: form_data, data: data, auth: auth, store: store, user_data: user_data[0]};
   } catch (error) {
-    console.error("Error fetching config-form:", error);
-    throw error;
+    console.error("Error in loader function:", error);
+    throw new Error("An error occurred while loading the data.");
   }
 };
+
 
 export default function configPage() {
   const [isFirstButtonActive, setIsFirstButtonActive] = useState(true);
