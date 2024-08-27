@@ -114,7 +114,7 @@ export async function loader({ request }) {
         quantity = item.saved_values.shopify_minimum_pickup_stock_quantity_value;
       }
 
-      if (item?.saved_values?.shopify_radius_kilometer_for_location_search !== '') {
+      if (item?.saved_values?.shopify_radius_kilometer_for_location_search !== 'undefined') {
         kilometer = item.saved_values.shopify_radius_kilometer_for_location_search;
       }
     });
