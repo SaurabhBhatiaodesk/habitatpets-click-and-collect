@@ -835,7 +835,7 @@ export default function configPage() {
     }
     else {
       if (!credentialFormStatus) {
-        if(user_data?.is_plugins_connected){
+        if(user_data?.is_plugins_connected || user_data?.status == "active"){
           setCredentialFormStatus(true);
         }
       }

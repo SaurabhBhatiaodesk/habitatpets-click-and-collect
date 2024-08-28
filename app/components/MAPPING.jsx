@@ -62,6 +62,10 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
 
   const handleMapping = async() => {
     if(!field?.label){
+      setLoading({ "mapping": true });
+      setTimeout(() => {
+      setLoading({ "mapping": false });
+    },1000)
       return true;
     }
     setLoading({ "mapping": true });
