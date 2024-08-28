@@ -396,7 +396,7 @@ export default function configPage() {
     var jj = {
       content: item.name,
       tone: item.module==preferenceActiveTab?"primary":"secondary",
-      suffix: item.is_configured?(<span style={{float:"right"}}><Icon source={CheckIcon} tone="textSuccess" /></span>):null,
+      suffix: item.is_configured?(<span style={{position: "absolute",right: "10px"}}><Icon source={CheckIcon} tone="textSuccess" /></span>):null,
       prefix: <Icon source={ChevronRightIcon} />,
       onAction: () => handleItemClick(item.module),
     };
@@ -1236,10 +1236,16 @@ export default function configPage() {
             <div style={{ width: "100%",marginTop:"10px",minWidth:"32pc" }}>
               {checkModule && checkModule.length > 0 ? (
                 <>
-                <div>This module cannot be configured.
+                <div style={{ background: "#fff3cd",padding: "20px",border: "1px solid #ffecb5",borderRadius: "10px"}}>
+                <div style={{fontWeight: "bold",marginBottom: "15px",fontSize: "15px"}}>This module cannot be configured.</div>
 
-                  Please check the following modules are configured first</div>
-                  <div>{checkModule.join(",")}</div>
+                <div style={{fontSize: "15px"}}>  Please check the following modules are configured first</div>
+                </div>
+                  <ul>
+                  {checkModule.map((cm)=>{
+                   return( <li style={{fontSize: "15px",marginBottom: "5px",color: "#565656",fontWeight: "400"}}>{cm}</li>);
+                  })}
+                    </ul>
                   </>
                   ):(<>
               {preference &&
