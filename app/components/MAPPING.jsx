@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { LegacyCard, Card, Checkbox, Select, Spinner } from "@shopify/polaris";
 
-const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, preferenceActiveTab, mappings }) => {
+const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, preferenceActiveTab, mappings, getMenu, setForm }) => {
   const [value, setValue] = useState();
   const [selectValue, setSelectValue] = useState();
   const [checked, setChecked] = useState({});
@@ -60,7 +60,7 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
     }));
   };
 
-  const handleMapping = () => {
+  const handleMapping = async() => {
     if(!field?.label){
       return true;
     }
@@ -93,17 +93,20 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
       redirect: "follow"
     };
 
-    fetch(`https://main.dev.saasintegrator.online/api/v1/${preferenceActiveTab}/save-mapping`, requestOptions)
+    await fetch(`https://main.dev.saasintegrator.online/api/v1/${preferenceActiveTab}/save-mapping`, requestOptions)
       .then((response) => response.text())
-      .then((result) => {
+      .then(async(result) => {
         console.log("mapping result ;;;===>", result);
         setNotificationMessage("Mapping saved successfully");
         setLoading({ "mapping": false });
+        var menu=await getMenu(data.store.token);
+        setForm(menu);
       })
       .catch((error) => {
         console.error(error);
         setLoading({ "mapping": false });
       });
+      
   };
 
   // flex style object

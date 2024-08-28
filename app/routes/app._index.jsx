@@ -305,10 +305,10 @@ export default function configPage() {
   const [configPreFill, setConfigPreFill] = useState({});
   const data = useLoaderData();
   const [product, setProduct] = useState(data.data);
-  const form = data?.form;
+  const [form,setForm] = useState(data?.form);
   const store = data?.store;
   const user_data = data?.user_data;
-  const items = [];
+  const [items,setItems] = useState([]);
   const [loader, setLoader] = useState("");
   const [configLoader, setConfigLoader] = useState("");
   const [mapLoader, setMapLoader] = useState("");
@@ -390,17 +390,21 @@ export default function configPage() {
     if (!isFirstButtonActive) return;
     setIsFirstButtonActive(false);
   }, [isFirstButtonActive]);
-
+  useEffect(() => {
+    let newmenu= [];
   form.map((item) => {
     var jj = {
       content: item.name,
       tone: item.module==preferenceActiveTab?"primary":"secondary",
-      suffix: item.is_configured?(<Icon source={CheckIcon} tone="textSuccess" />):null,
+      suffix: item.is_configured?(<span style={{float:"right"}}><Icon source={CheckIcon} tone="textSuccess" /></span>):null,
       prefix: <Icon source={ChevronRightIcon} />,
       onAction: () => handleItemClick(item.module),
     };
-    items.push(jj);
+    newmenu.push(jj);
   });
+  setItems(newmenu);
+  console.log("sidebar menus",items);
+},[form,preferenceActiveTab]);
   const handleSelectChange = (value) => {
     setSelectedValue(value);
   };
@@ -424,7 +428,7 @@ export default function configPage() {
     }
 
     const form_data = await formResponse.json();
-    console.log("Form Data:", form_data);
+    //console.log("Form Data:", form_data);
     return form_data;
   }
   async function handleItemClick(itemContent) {
@@ -972,7 +976,7 @@ export default function configPage() {
     }
   }
 
-  const handleConfigSubmit = () => {
+  const handleConfigSubmit = async() => {
     setLoading({"config":true});
     console.log("i", inputValues, "These values should be required", required);
 
@@ -1027,17 +1031,20 @@ export default function configPage() {
         redirect: "follow"
       };
 
-      fetch(`https://main.dev.saasintegrator.online/api/v1/${preferenceActiveTab}/config`, requestOptions)
+      await fetch(`https://main.dev.saasintegrator.online/api/v1/${preferenceActiveTab}/config`, requestOptions)
         .then((response) => response.json())
-        .then((result) => {
+        .then(async(result) => {
           console.log("config result:::::::", result)
           setLoading({"config":false});
           setNotificationMessage(result?.message);
           setTimeout(() => {
             setNotificationMessage("")
           }, 5000);
+          var menu=await getMenu(data.store.token);
+        setForm(menu);
         })
         .catch((error) =>{ console.error(error); setLoading({"config":false});});
+        
     }
     else
     {
@@ -1087,9 +1094,9 @@ export default function configPage() {
       redirect: "follow"
     };
 
-    fetch(`https://main.dev.saasintegrator.online/api/v1/${preferenceActiveTab}/save-preference`, requestOptions)
+    await fetch(`https://main.dev.saasintegrator.online/api/v1/${preferenceActiveTab}/save-preference`, requestOptions)
       .then((response) => response.json())
-      .then((result) => {
+      .then(async(result) => {
         setPreCheckedEnableDisable(preCheckedED);
         setPrefEnableDisable(preCheckedED);
         console.log("result?.status_code ",result?.status_code,"save-preference result: ", result);
@@ -1112,8 +1119,11 @@ export default function configPage() {
         setTimeout(() => {
           setNotificationMessage("")
         }, 5000);
+        var menu=await getMenu(data.store.token);
+      setForm(menu);
       })
       .catch((error) =>{ console.error(error); setLoading({"preference":false});});
+      
     }
     else{
       setNotificationMessageInfo("Please select Source of Truth/Main Plugin");
@@ -1153,6 +1163,7 @@ export default function configPage() {
   
   return (
     <div style={{ display: "flex", gap: "2rem", marginLeft: "1.9rem" }}>
+      {console.log("menu under react return ",items)}
       {navbar && (
         <>
           {/* <ActionList actionRole="menuitem" items={items} /> */}
@@ -1168,7 +1179,7 @@ export default function configPage() {
       textAlign = "left"
       variant={item.tone}
     >
-      <div style={{ display: "flex", float:'left', width: "100%" }}>
+      <div style={{ float:'left', width: "100%" }}>
         <span>{item.content}</span>
         {item.suffix}
       </div>
@@ -1437,7 +1448,7 @@ export default function configPage() {
                     <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(
                     <>
                   <MAPPING mapping={mapping?.items} plugin={selectedValue} preference={preference} token={data?.store?.token || ''} setNotificationMessage={setNotificationMessage}  
-                  preferenceActiveTab={preferenceActiveTab}  mappings={mapping}/>
+                  preferenceActiveTab={preferenceActiveTab}  mappings={mapping} getMenu={getMenu} setForm={setForm}/>
                     </>
                   )}
                   </>
