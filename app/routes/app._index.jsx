@@ -830,15 +830,9 @@ export default function configPage() {
     console.log("initialSelectedValue :::", initialSelectedValue);
     setPrefEnableDisable(initialSelectedValue);
    setSelectedValue(preference?.form[1].value || "");
-    if (preference?.form[1].value) {
+   if(data?.data?.plugin_form[0]?.credentials_is_valid && data?.data?.plugin_form[1]?.credentials_is_valid)
+   {
       setCredentialFormStatus(true);
-    }
-    else {
-      if (!credentialFormStatus) {
-        if(user_data?.is_plugins_connected || user_data?.status == "active"){
-          setCredentialFormStatus(true);
-        }
-      }
     }
   }, [preference]);
 
