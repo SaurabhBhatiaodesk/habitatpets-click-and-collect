@@ -431,6 +431,29 @@ export default function configPage() {
     //console.log("Form Data:", form_data);
     return form_data;
   }
+  async function getModuleStatus(token,itemContent)
+  {
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer " + token);
+
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+    const formResponse = await fetch(
+      `https://main.dev.saasintegrator.online/api/v1/${itemContent}/module-status`,
+      requestOptions
+    );
+
+    if (!formResponse.ok) {
+      throw new Error(`Failed to fetch menus. Status: ${formResponse.status}`);
+    }
+
+    const form_data = await formResponse.json();
+    //console.log("Form Data:", form_data);
+    return form_data;
+  }
   async function handleItemClick(itemContent) {
 
     setDataLimit({ start: 0, end: 2 });
@@ -439,11 +462,13 @@ export default function configPage() {
     setMapLoader('mapyes');
     console.log('item clicked',itemContent);
     
+
     setConfig();
     setMapping();
     setPreferenceActiveTab(itemContent);
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + data.store.token);
+    const getModuleStatus=getModuleStatus(data.store.toke,itemContent);
     var menu=await getMenu(data.store.token);
     switch(itemContent)
     {
@@ -801,7 +826,7 @@ export default function configPage() {
         setConfig(configform);
         setConfigLoader('configno');
         /**************************************** Mapping **************************************************** */
-      
+        if(getModuleStatus.can_show_simple_mapping){
         const response3 = await fetch(
           `https://main.dev.saasintegrator.online/api/v1/${itemContent}/mapping`,
           requestOptions,
@@ -814,11 +839,13 @@ export default function configPage() {
         setMapping(mapping);
         setMapLoader('mapno');
       }
+      }
       } catch (error) {
         setMapLoader('mapno');
         console.error("Error fetching config-form:", error);
         throw error;
       }
+      
     }
     // You can add any other logic you need here
   }
