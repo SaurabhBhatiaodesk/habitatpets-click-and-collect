@@ -470,6 +470,7 @@ export default function configPage() {
     myHeaders.append("Authorization", "Bearer " + data.store.token);
     const getModuleStatus=getModuleStatusData(data.store.token,itemContent);
     var menu=await getMenu(data.store.token);
+    var insert=[];
     switch(itemContent)
     {
       case "seller":
@@ -759,10 +760,11 @@ export default function configPage() {
         setCheckModule(insert);
         break;
         default:
+          console.log("its in default state")
           setCheckModule([]);
           break;
     }
-    if(checkModule.length==0){
+    if(checkModule.length==0 || insert.length==0){
       const requestOptions = {
         method: "GET",
         headers: myHeaders,
