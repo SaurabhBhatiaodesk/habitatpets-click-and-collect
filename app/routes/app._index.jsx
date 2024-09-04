@@ -431,7 +431,7 @@ export default function configPage() {
     //console.log("Form Data:", form_data);
     return form_data;
   }
-  async function getModuleStatus(token,itemContent)
+  async function getModuleStatusData(token,itemContent)
   {
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + token);
@@ -468,7 +468,7 @@ export default function configPage() {
     setPreferenceActiveTab(itemContent);
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + data.store.token);
-    const getModuleStatus=getModuleStatus(data.store.token,itemContent);
+    const getModuleStatus=getModuleStatusData(data.store.token,itemContent);
     var menu=await getMenu(data.store.token);
     switch(itemContent)
     {
