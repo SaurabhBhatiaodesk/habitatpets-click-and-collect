@@ -839,8 +839,9 @@ export default function configPage() {
         let mapping = await response3.json();
         console.log("mapping ", mapping);
         setMapping(mapping);
-        setMapLoader('mapno');
       }
+        setMapLoader('mapno');
+      
       }
       } catch (error) {
         setMapLoader('mapno');
