@@ -50,18 +50,14 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
     newFields[index].value = value;
     setFields(newFields);
 
-    // Only update if the selected value is not blank
-  //  if (value !== '') {
-      handleconfigChange(newFields.map(f => f.value), field.name, mango?.plugin_id);
-    //}
+    handleconfigChange(newFields.map(f => f.value), field.name, mango?.plugin_id);
   };
 
   const handleChangec = useCallback((value, index) => {
-      const newFields = [...fields];
-      newFields[index].value = value;
-      setFields(newFields);
-      handleconfigChange(newFields.map(f => f.value), field.name, mango?.plugin_id);
-    
+    const newFields = [...fields];
+    newFields[index].value = value;
+    setFields(newFields);
+    handleconfigChange(newFields.map(f => f.value), field.name, mango?.plugin_id);
   }, [fields, handleconfigChange, field.name, mango?.plugin_id]);
 
   const addField = () => {
@@ -83,41 +79,60 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
     <>
       {show && (
         <div style={{ margin: "4px" }}>
-          {fields.map((fieldData, index) => (
-            <div key={`${field.name}_${index}`} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-              {field.multiple ? (
-                <ChoiceList
-                  allowMultiple
-                  title={field.label}
-                  choices={field.options}
-                  selected={choicelistValue}
-                  onChange={(value) => handleChangec(value, index)}
-                />
-              ) : (
-                <Select
-                  name={`${field.name}_${index}`}
-                  label={field.label}
-                  options={
-                    field.options[0]?.value !== ''
-                      ? [{ value: '', label: 'Select' }, ...field.options]
-                      : field.options
-                  }
-                  onChange={(value) => handleChange(value, index)}
-                  value={fieldData.value}
-                  required={field.required}
-                  helpText={field.description}
-                  requiredIndicator={field.required}
-                />
-              )}
-              {fields.length > 1 && (
-                <Button icon={MinusIcon} onClick={() => removeField(index)} plain />
-              )}
-              {index === fields.length - 1 && field.is_cloneable && (
-                <Button icon={PlusIcon} onClick={addField} plain />
-              )}
+          {field.is_cloneable ? (
+            fields.map((fieldData, index) => (
+              <div key={`${field.name}_${index}`} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                {field.multiple ? (
+                  <ChoiceList
+                    allowMultiple
+                    title={field.label}
+                    choices={field.options}
+                    selected={choicelistValue}
+                    onChange={(value) => handleChangec(value, index)}
+                  />
+                ) : (
+                  <Select
+                    name={`${field.name}_${index}`}
+                    label={field.label}
+                    options={
+                      field.options[0]?.value !== ''
+                        ? [{ value: '', label: 'Select' }, ...field.options]
+                        : field.options
+                    }
+                    onChange={(value) => handleChange(value, index)}
+                    value={fieldData.value}
+                    required={field.required}
+                    helpText={field.description}
+                    requiredIndicator={field.required}
+                  />
+                )}
+                {fields.length > 1 && (
+                  <Button icon={MinusIcon} onClick={() => removeField(index)} plain />
+                )}
+                {index === fields.length - 1 && (
+                  <Button icon={PlusIcon} onClick={addField} plain />
+                )}
+              </div>
+            ))
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+              <Select
+                name={field.name}
+                label={field.label}
+                options={
+                  field.options[0]?.value !== ''
+                    ? [{ value: '', label: 'Select' }, ...field.options]
+                    : field.options
+                }
+                onChange={(value) => handleChange(value, 0)}
+                value={fields[0].value}
+                required={field.required}
+                helpText={field.description}
+                requiredIndicator={field.required}
+              />
+              <span style={{ color: "red" }}>{showError}</span>
             </div>
-          ))}
-          <span style={{ color: "red" }}>{showError}</span>
+          )}
         </div>
       )}
     </>
