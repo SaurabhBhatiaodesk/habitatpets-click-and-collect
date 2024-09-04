@@ -468,7 +468,7 @@ export default function configPage() {
     setPreferenceActiveTab(itemContent);
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + data.store.token);
-    const getModuleStatus=getModuleStatus(data.store.toke,itemContent);
+    const getModuleStatus=getModuleStatus(data.store.token,itemContent);
     var menu=await getMenu(data.store.token);
     switch(itemContent)
     {
