@@ -3,7 +3,7 @@
 client_id = "c0acbe1ea218ca74db8c10d1234659d6"
 name = "clickncollectnew"
 handle = "clickncollectnew"
-application_url = "https://paypal-francis-indexes-guidance.trycloudflare.com"
+application_url = "https://episode-brooks-drivers-maximize.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_customers,read_inventory,read_locales,read_locations,read_orders,
 
 [auth]
 redirect_urls = [
-  "https://paypal-francis-indexes-guidance.trycloudflare.com/auth/callback",
-  "https://paypal-francis-indexes-guidance.trycloudflare.com/auth/shopify/callback",
-  "https://paypal-francis-indexes-guidance.trycloudflare.com/api/auth/callback"
+  "https://episode-brooks-drivers-maximize.trycloudflare.com/auth/callback",
+  "https://episode-brooks-drivers-maximize.trycloudflare.com/auth/shopify/callback",
+  "https://episode-brooks-drivers-maximize.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

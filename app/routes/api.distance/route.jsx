@@ -70,6 +70,7 @@ export async function loader({ request }) {
         apikey:apiKey1.apikey
        },
     });
+    let data;
     if(!haveResult || haveResult.length === 0) {
       const mapUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${customerlocation}&destinations=${destinationsArr.join("|")}&key=${apiKey1.apikey}`;
       console.log('Google Maps API URL:', mapUrl);
@@ -80,26 +81,14 @@ export async function loader({ request }) {
         throw new Error(`Google Maps API request failed with status ${response.status}`);
       }
 
-      const data = await response.json();
+       data = await response.json();
       console.log('Google Maps API Response:', data);
-      console.log({
-        "shop":shop,
-        "customerlocation":customerlocation,
-        "destinationsArr": destinationsArr.join("|"),
-        "apikey": apiKey1.apikey,
-        "resultsArr": JSON.stringify(data) // Convert the data object to a JSON string
-    });
-     let result= await db.googleData.create({
-        shop,
-        customerlocation,
-        destinationsArr: destinationsArr.join("|"),
-        apikey: apiKey1.apikey,
-        resultsArr: JSON.stringify(data) // Convert the data object to a JSON string
-    });
+      console.log({"shop":shop, "customerlocation":customerlocation,"destinationsArr": destinationsArr.join("|"),"apikey": apiKey1.apikey,"resultsArr": JSON.stringify(data)});
+     let result= await db.googleData.create({data: {"shop":shop, "customerlocation":customerlocation,"destinationsArr": destinationsArr.join("|"),"apikey": apiKey1.apikey,"resultsArr": JSON.stringify(data)}});
     console.log('Created record:', result);
     }
     else{
-      const data = parseJSON(haveResults.resultsArr);
+      data = JSON.parse(haveResult?.resultsArr);
     }
 
     const store = await db.userConnection.findFirst({

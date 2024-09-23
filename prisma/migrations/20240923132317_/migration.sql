@@ -32,11 +32,11 @@ CREATE TABLE "GoogleApi" (
 -- CreateTable
 CREATE TABLE "GoogleData" (
     "id" SERIAL NOT NULL,
-    "shop" TEXT,
+    "shop" TEXT NOT NULL,
     "apikey" TEXT,
     "customerlocation" TEXT,
     "destinationsArr" TEXT,
-    "resultsArr" TEXT,
+    "resultsArr" JSONB NOT NULL,
 
     CONSTRAINT "GoogleData_pkey" PRIMARY KEY ("id")
 );
