@@ -3,7 +3,7 @@
 client_id = "c2aef3cf60c016454d3da1bc06566b9e"
 name = "clickncollect"
 handle = "clickncollect-1"
-application_url = "https://clickncollect-12d7088d53ee.herokuapp.com/"
+application_url = "https://insured-anchor-casa-undertake.trycloudflare.com/"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_customers,read_inventory,read_locales,read_locations,read_orders,
 
 [auth]
 redirect_urls = [
-  "https://clickncollect-12d7088d53ee.herokuapp.com/auth/callback",
-  "https://clickncollect-12d7088d53ee.herokuapp.com/auth/shopify/callback",
-  "https://clickncollect-12d7088d53ee.herokuapp.com/api/auth/callback"
+  "https://insured-anchor-casa-undertake.trycloudflare.com/auth/callback",
+  "https://insured-anchor-casa-undertake.trycloudflare.com/auth/shopify/callback",
+  "https://insured-anchor-casa-undertake.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
@@ -29,4 +29,4 @@ api_version = "2024-04"
 embedded = false
 
 [app_preferences]
-url = "https://clickncollect-12d7088d53ee.herokuapp.com/"
+url = "https://insured-anchor-casa-undertake.trycloudflare.com/"

@@ -138,10 +138,11 @@ export const loader = async ({ request }) => {
   }
 };
 async function getAuthToken(session) {
-  console.log("getAuthToken ------------------->")
+  console.log("getAuthToken ------------------->");
+  
   try {
-    console.log(session,'session');
-    var myHeaders2 = new Headers();
+    console.log(session, 'session');
+    const myHeaders2 = new Headers();
     myHeaders2.append("X-Shopify-Access-Token", session.accessToken);
 
     const requestOptions2 = {
@@ -150,70 +151,67 @@ async function getAuthToken(session) {
       redirect: "follow"
     };
 
-  await fetch('https://'+ session.shop + "/admin/api/2024-04/shop.json", requestOptions2)
-    .then((response) => response.json())
-    .then(async(result) => {
-      console.log(result, 'result');
-      const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-      
-        
+    const response = await fetch('https://' + session.shop + "/admin/api/2024-04/shop.json", requestOptions2);
+    const result = await response.json();
+    console.log(result, 'result');
 
-      const requestOpt = {
-        method: "GET",
-        redirect: "follow"
-      };
-      
-      let plugin=await fetch("https://main.dev.saasintegrator.online/api/v1/platforms", requestOpt);
-      console.log(plugin,":::plugin");
-      let plugin_data=await plugin.json();
-      console.log(plugin_data,":::plugin_data");
-      let filter_data = plugin_data.platforms.filter((pd) => pd.name === "o360-retail-express" || pd.name === "o360-shopify"); 
-      console.log(filter_data,":::filter_data");
-       const plugin_ids=[];
-       filter_data.map((fd)=>{
-        plugin_ids.push(fd.id);
-       });
-       const raw =  JSON.stringify({
-        ...session,
-        "state": session?.state.trim() !== "" ? session?.state : null,
-        'email' : result.shop?.email,
-        "plugin_ids":plugin_ids
-      });
-         console.log('testing ', raw);
-        const requestOptions = {
-          method: "POST",
-          headers: myHeaders,
-          body: raw,
-          redirect: "follow"
-        };
-        const email = result.shop?.email;
-      await fetch("https://main.dev.saasintegrator.online/api/v1/user-connection", requestOptions)
-        .then((response) => response.json())
-        .then((result) => {
-     
-          console.log('testing result', result);
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
-            const data = {
-              shop:session.shop,
-              ...result.data.connection,
-              token: result?.data?.token,
-              email: email
-          };
-          console.log('testings ', data);
-        
-        createOrUpdateUserConnection(data)
-            .then(result => {
-                console.log("User connection created or updated:", result);
-            });
-        });
+    const requestOpt = {
+      method: "GET",
+      redirect: "follow"
+    };
 
+    const pluginResponse = await fetch("https://main.dev.saasintegrator.online/api/v1/platforms", requestOpt);
+    console.log(pluginResponse, "::plugin");
+    
+    const plugin_data = await pluginResponse.json();
+    console.log(plugin_data, "::plugin_data");
+    
+    const filter_data = plugin_data.platforms.filter(pd => 
+      pd.name === "o360-retail-express" || pd.name === "o360-shopify"
+    );
+    console.log(filter_data, "::filter_data");
+
+    const plugin_ids = filter_data.map(fd => fd.id);
+    
+    const raw = JSON.stringify({
+      ...session,
+      "state": session?.state.trim() !== "" ? session?.state : null,
+      'email': result.shop?.email,
+      "plugin_ids": plugin_ids
     });
-  }
-  catch(error){
-    console.log('error',error);
-  }
+    console.log('testing ', raw);
 
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+
+    const email = result.shop?.email;
+    
+    const userConnectionResponse = await fetch("https://main.dev.saasintegrator.online/api/v1/user-connection", requestOptions);
+    const userConnectionResult = await userConnectionResponse.json();
+    
+    console.log('testing result', userConnectionResult);
+
+    const data = {
+      shop: session.shop,
+      ...userConnectionResult.data.connection,
+      token: userConnectionResult?.data?.token,
+      email: email
+    };
+    console.log('testings ', data);
+
+    const userUpdateResult = await createOrUpdateUserConnection(data);
+    console.log("User connection created or updated:", userUpdateResult);
+    
+  } catch (error) {
+    console.log('error', error);
+  }
 }
 
 

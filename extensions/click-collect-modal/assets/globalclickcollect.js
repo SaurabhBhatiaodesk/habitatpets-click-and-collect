@@ -2,13 +2,13 @@ async function fetchData(e){try{const t=await fetch(e);if(!t.ok)throw new Error(
 function getCookie(e){const t=document.cookie.split(";").map(e=>e.trim().split("=")),o=t.find(t=>t[0]===e);return o?decodeURIComponent(o[1]):null}function setCookie(e,t,o){let n="";o&&(n=new Date,n.setTime(n.getTime()+24*o*60*60*1e3),n="; expires="+n.toUTCString()),document.cookie=`${e}=${t}${n}; path=/`}
       async function getLocations( selectedLocation = "") {
             try { 
-                const pickuplcurl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/pickupLocation?shop=${location.hostname}`;
+                const pickuplcurl = `https://insured-anchor-casa-undertake.trycloudflare.com/api/pickupLocation?shop=${location.hostname}`;
                 const testres = await fetchData(pickuplcurl); 
                 const locations = testres?.data?.locations?.nodes;
                 const destinationsArr = []; if (locations) { for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) { destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`);}}}
               if (destinationsArr.length > 0) {  const customerLocation = getCookie("customerlocation");
                 document.querySelector(".location").value = customerLocation;
-                let mapUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&shop=${location.hostname}`;
+                let mapUrl = `https://insured-anchor-casa-undertake.trycloudflare.com/api/distance?customerlocation=${customerLocation}&shop=${location.hostname}`;
                 const res = await fetchData(mapUrl); var count = 0;
                 if (res) {  const sortedLocations = [];
                     for (let index = 0; index < locations.length; index++){ const location = locations[index]; if (location.address.zip && location?.localPickupSettingsV2 != null) {  const zipcode= location.address.zip; const  fulladdress= location.address.address1 + ' '+zipcode ;
@@ -74,7 +74,7 @@ async function getUserLocation() { const accessToken = '7a1891347cf4af'; try {co
         getUserLocation();
 // async function getUserLocation() { 
 //     try {
-//         const response = await fetch(`https://clickncollect-12d7088d53ee.herokuapp.com/api/ip?shop=${location.hostname}`);
+//         const response = await fetch(`https://insured-anchor-casa-undertake.trycloudflare.com/api/ip?shop=${location.hostname}`);
 //         var data = await response.json();
 //         data = data.data; 
 //         let loctionsss = getCookie("customerlocation")

@@ -3,7 +3,7 @@ function setCookie(name,value,days){let expires="";if(days){let date=new Date();
 function getCookie(name){let cookies=document.cookie.split(";").map(cookie=>cookie.trim().split("="));for(let i=0;i<cookies.length;i++){if(cookies[i][0]===name){return decodeURIComponent(cookies[i][1]);}}return null;}
 async function getLocationsDropdown( selectedLocation = "") {
     try {
-      const pickuplcurl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/pickupLocation?shop=${location.hostname}`;
+      const pickuplcurl = `https://insured-anchor-casa-undertake.trycloudflare.com/api/pickupLocation?shop=${location.hostname}`;
       const testres = await fetchData(pickuplcurl); 
       const locations = testres?.data?.locations?.nodes;
 
@@ -66,7 +66,7 @@ async function getLocationsDropdown( selectedLocation = "") {
 
 
 
-        const mapUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&shop=${location.hostname}`;
+        const mapUrl = `https://insured-anchor-casa-undertake.trycloudflare.com/api/distance?customerlocation=${customerLocation}&shop=${location.hostname}`;
         const res = await fetchData(mapUrl);
         var count = 0;
         if (res) {

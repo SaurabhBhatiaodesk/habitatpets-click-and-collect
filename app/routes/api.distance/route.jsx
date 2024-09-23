@@ -62,18 +62,45 @@ export async function loader({ request }) {
     if (destinationsArr.length === 0) {
       throw new Error("No valid destinations found");
     }
+    const haveResult = await db.googleData.findFirst({
+      where: { 
+        shop,
+        customerlocation,
+        destinationsArr:destinationsArr.join("|"),
+        apikey:apiKey1.apikey
+       },
+    });
+    if(!haveResult || haveResult.length === 0) {
+      const mapUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${customerlocation}&destinations=${destinationsArr.join("|")}&key=${apiKey1.apikey}`;
+      console.log('Google Maps API URL:', mapUrl);
 
-    const mapUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${customerlocation}&destinations=${destinationsArr.join("|")}&key=${apiKey1.apikey}`;
-    console.log('Google Maps API URL:', mapUrl);
+      const response = await fetch(mapUrl, { method: "GET", redirect: "follow" });
 
-    const response = await fetch(mapUrl, { method: "GET", redirect: "follow" });
+      if (!response.ok) {
+        throw new Error(`Google Maps API request failed with status ${response.status}`);
+      }
 
-    if (!response.ok) {
-      throw new Error(`Google Maps API request failed with status ${response.status}`);
+      const data = await response.json();
+      console.log('Google Maps API Response:', data);
+      console.log({
+        "shop":shop,
+        "customerlocation":customerlocation,
+        "destinationsArr": destinationsArr.join("|"),
+        "apikey": apiKey1.apikey,
+        "resultsArr": JSON.stringify(data) // Convert the data object to a JSON string
+    });
+     let result= await db.googleData.create({
+        shop,
+        customerlocation,
+        destinationsArr: destinationsArr.join("|"),
+        apikey: apiKey1.apikey,
+        resultsArr: JSON.stringify(data) // Convert the data object to a JSON string
+    });
+    console.log('Created record:', result);
     }
-
-    const data = await response.json();
-    console.log('Google Maps API Response:', data);
+    else{
+      const data = parseJSON(haveResults.resultsArr);
+    }
 
     const store = await db.userConnection.findFirst({
       where: { shop },

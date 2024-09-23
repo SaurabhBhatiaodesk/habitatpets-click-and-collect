@@ -30,7 +30,7 @@ const shopify = shopifyApp({
 
       shopify.registerWebhooks({ session });
 
-      await getAuthToken(session);
+      //await getAuthToken(session);
 
     },
   },

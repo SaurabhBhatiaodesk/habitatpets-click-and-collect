@@ -30,6 +30,18 @@ CREATE TABLE "GoogleApi" (
 );
 
 -- CreateTable
+CREATE TABLE "GoogleData" (
+    "id" SERIAL NOT NULL,
+    "shop" TEXT,
+    "apikey" TEXT,
+    "customerlocation" TEXT,
+    "destinationsArr" TEXT,
+    "resultsArr" TEXT,
+
+    CONSTRAINT "GoogleData_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "UserConnection" (
     "id" SERIAL NOT NULL,
     "shop" TEXT NOT NULL,
