@@ -826,6 +826,7 @@ export default function configPage() {
         setConfig(configform);
         setConfigLoader('configno');
         /**************************************** Mapping **************************************************** */
+        console.log("Mapping ********************************",getModuleStatus);
         if(getModuleStatus.can_show_simple_mapping){
         const response3 = await fetch(
           `https://main.dev.saasintegrator.online/api/v1/${itemContent}/mapping`,
