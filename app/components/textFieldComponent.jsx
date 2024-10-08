@@ -20,7 +20,11 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
     // Check if the field is cloneable (multiple values) or not
     if (field.is_cloneable) {
       // Initialize fields for multiple values
-      setFields(initialValues.map(value => ({ value: value.trim() })));
+      if (value && typeof value === 'string') {
+        setFields(initialValues.map(value => ({ value: value.trim() })));
+    }
+    
+      
     } else {
       // Initialize single field value
       setSingleField(initialValues[0] || ''); // Use the first value if multiple values are returned
