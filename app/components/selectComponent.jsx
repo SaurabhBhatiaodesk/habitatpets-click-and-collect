@@ -124,7 +124,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                   selected={choicelistValue}
                   onChange={(value) => {
                     setChoicelistValue(value);
-                    handleChangec(value, index); // Update parent component
+                    handleChangec(value, 0); // Update parent component
                   }}
                 />
               ) : (
