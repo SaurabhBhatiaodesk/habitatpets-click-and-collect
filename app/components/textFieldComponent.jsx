@@ -79,7 +79,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
 
   return (
     <>
-    <Text variant="headingLg" as="h5">
+    <Text variant="headingMd" as="h6">
         {field.label}
       </Text>
       <div style={{display: "flex", gap: "12px"}}>
