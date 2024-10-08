@@ -94,6 +94,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
                   required
                   helpText={field.description}
                   requiredIndicator={field.required}
+                  error={showError ?? showError}
                 />
                 <span style={{ margin: "20px 0px 0px 5px", padding: "5px" }}>
                   {fields.length > 1 && (
@@ -118,9 +119,9 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
               required
               helpText={field.description}
               requiredIndicator={field.required}
+              error={showError ?? showError}
             />
           )}
-          <span style={{ color: "red" }}>{showError}</span>
         </div>
       )}
     </>
