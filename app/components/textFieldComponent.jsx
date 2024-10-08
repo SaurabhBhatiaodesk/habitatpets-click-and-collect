@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button } from "@shopify/polaris";
+import { TextField, Button, Text } from "@shopify/polaris";
 import { PlusIcon, MinusIcon } from '@shopify/polaris-icons';
 
 const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, error, setHideshow }) => {
@@ -79,6 +79,10 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
 
   return (
     <>
+    <Text variant="headingLg" as="h5">
+        {field.label}
+      </Text>
+      <div style={{display: "flex", gap: "12px"}}>
       {show && (
         <div style={{ margin: "4px" }}>
           {field.is_cloneable ? (
@@ -87,6 +91,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
               <div key={`${field.name}_${index}`} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
                 <TextField
                   label={field.label}
+                  labelHidden="true"
                   value={fieldData.value}
                   onChange={(value) => handleChange(value, index)}
                   name={`${field.name}_${index}`}
@@ -112,6 +117,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
             // Single field handling
             <TextField
               label={field.label}
+              labelHidden="true"
               value={singleField}
               onChange={handleChange}
               name={field.name}
@@ -124,6 +130,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
           )}
         </div>
       )}
+    </div>
     </>
   );
 };

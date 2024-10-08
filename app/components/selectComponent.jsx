@@ -95,6 +95,8 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                   <Text variant="headingLg" as="h5">
                     {field.label}
                   </Text>
+                  <div style={{display: "flex", gap: "12px"}}>
+
                   <Select
                     name={`${field.name}_${index}`}
                     label={field.label}
@@ -111,6 +113,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                     requiredIndicator={field.required}
                     error={showError ?? showError}
                   />
+                  </div>
                   </>
                 )}
                 {fields.length > 1 && (
@@ -139,6 +142,8 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                   <Text variant="headingLg" as="h5">
                     {field.label}
                   </Text>
+                  <div style={{display: "flex", gap: "12px"}}>
+
                 <Select
                   name={field.name}
                   label={field.label}
@@ -154,6 +159,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                   helpText={field.description}
                   requiredIndicator={field.required}
                   error={showError ?? showError}               />
+                  </div>
                   </>
               )}
             </div>
