@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Select, Button, ChoiceList } from "@shopify/polaris";
+import { Select, Button, ChoiceList, Text } from "@shopify/polaris";
 import { PlusIcon, MinusIcon } from '@shopify/polaris-icons';
 
 const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error, setHideshow }) => {
