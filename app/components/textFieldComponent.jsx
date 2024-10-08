@@ -82,7 +82,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
     <Text variant="headingMd" as="h6">
         {field.label}
       </Text>
-      <div style={{display: "flex", gap: "12px"}}>
+      <div style={{display: "flex", gap: "12px", marginBottom: '18px'}}>
       {show && (
         <div style={{ margin: "4px" }}>
           {field.is_cloneable ? (
