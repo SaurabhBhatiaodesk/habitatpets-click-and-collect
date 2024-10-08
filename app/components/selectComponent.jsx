@@ -116,35 +116,35 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
             ))
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-  {field.multiple ? (
-    <ChoiceList
-      allowMultiple
-      title={field.label}
-      choices={field.options}
-      selected={choicelistValue}
-      onChange={(value) => {
-        setChoicelistValue(value);
-        handleChangec(value, index); // Update parent component
-      }}
-    />
-  ) : (
-    <Select
-      name={field.name}
-      label={field.label}
-      options={
-        field.options[0]?.value !== ''
-          ? [{ value: '', label: 'Select' }, ...field.options]
-          : field.options
-      }
-      onChange={(value) => handleChange(value, 0)}
-      value={fields[0].value}
-      required={field.required}
-      helpText={field.description}
-      requiredIndicator={field.required}
-    />
-  )}
-  <span style={{ color: "red", marginLeft: "8px" }}>{showError}</span>
-</div>
+              {field.multiple ? (
+                <ChoiceList
+                  allowMultiple
+                  title={field.label}
+                  choices={field.options}
+                  selected={choicelistValue}
+                  onChange={(value) => {
+                    setChoicelistValue(value);
+                    handleChangec(value, index); // Update parent component
+                  }}
+                />
+              ) : (
+                <Select
+                  name={field.name}
+                  label={field.label}
+                  options={
+                    field.options[0]?.value !== ''
+                      ? [{ value: '', label: 'Select' }, ...field.options]
+                      : field.options
+                  }
+                  onChange={(value) => handleChange(value, 0)}
+                  value={fields[0].value}
+                  required={field.required}
+                  helpText={field.description}
+                  requiredIndicator={field.required}
+                />
+              )}
+              <span style={{ color: "red", marginLeft: "8px" }}>{showError}</span>
+            </div>
 
           )}
         </div>
