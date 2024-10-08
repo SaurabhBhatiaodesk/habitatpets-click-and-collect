@@ -104,6 +104,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                     required={field.required}
                     helpText={field.description}
                     requiredIndicator={field.required}
+                    error={showError ?? showError}
                   />
                 )}
                 {fields.length > 1 && (
@@ -141,9 +142,8 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                   required={field.required}
                   helpText={field.description}
                   requiredIndicator={field.required}
-                />
+                  error={showError ?? showError}               />
               )}
-              <span style={{ color: "red", marginLeft: "8px" }}>{showError}</span>
             </div>
 
           )}
