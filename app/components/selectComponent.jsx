@@ -101,7 +101,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                   <Select
                     name={`${field.name}_${index}`}
                     label={field.label}
-                    labelHidden="true"
+                    labelInline
                     options={
                       field.options[0]?.value !== ''
                         ? [{ value: '', label: 'Select' }, ...field.options]
@@ -144,7 +144,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                 <Select
                   name={field.name}
                   label={field.label}
-                  labelHidden="true"
+                  labelInline
                   options={
                     field.options[0]?.value !== ''
                       ? [{ value: '', label: 'Select' }, ...field.options]
