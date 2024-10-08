@@ -25,7 +25,7 @@ const RadioGroupComponent = ({ field, inputValues, handleconfigChange, mango, er
   return (
     <>
   
-      <Text as="h2" variant="bodyMd">
+      <Text variant="headingLg" as="h5">
         {field.label}
       </Text>
       <div style={{display: "flex", gap: "12px"}}>
