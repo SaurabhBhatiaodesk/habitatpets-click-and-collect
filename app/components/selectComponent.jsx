@@ -77,6 +77,10 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
 
   return (
     <>
+    <Text variant="headingLg" as="h5">
+                    {field.label}
+                  </Text>
+                  <div style={{display: "flex", gap: "12px"}}>
       {show && (
         <div style={{ margin: "4px" }}>
           {field.is_cloneable ? (
@@ -85,17 +89,14 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                 {field.multiple ? (
                   <ChoiceList
                     allowMultiple
-                    title={field.label}
+                    title=""
                     choices={field.options}
                     selected={choicelistValue}
                     onChange={(value) => handleChangec(value, index)}
                   />
                 ) : (
                   <>
-                  <Text variant="headingLg" as="h5">
-                    {field.label}
-                  </Text>
-                  <div style={{display: "flex", gap: "12px"}}>
+                  
 
                   <Select
                     name={`${field.name}_${index}`}
@@ -113,7 +114,6 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                     requiredIndicator={field.required}
                     error={showError ?? showError}
                   />
-                  </div>
                   </>
                 )}
                 {fields.length > 1 && (
@@ -129,7 +129,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
               {field.multiple ? (
                 <ChoiceList
                   allowMultiple
-                  title={field.label}
+                  title=""
                   choices={field.options}
                   selected={choicelistValue}
                   onChange={(value) => {
@@ -139,10 +139,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                 />
               ) : (
                 <>
-                  <Text variant="headingLg" as="h5">
-                    {field.label}
-                  </Text>
-                  <div style={{display: "flex", gap: "12px"}}>
+                  
 
                 <Select
                   name={field.name}
@@ -159,7 +156,6 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                   helpText={field.description}
                   requiredIndicator={field.required}
                   error={showError ?? showError}               />
-                  </div>
                   </>
               )}
             </div>
@@ -167,6 +163,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
           )}
         </div>
       )}
+      </div>
     </>
   );
 };
