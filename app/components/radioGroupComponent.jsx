@@ -28,7 +28,7 @@ const RadioGroupComponent = ({ field, inputValues, handleconfigChange, mango, er
       <Text variant="headingMd" as="h6">
         {field.label}
       </Text>
-      <div style={{display: "flex", gap: "12px",  marginBottom: '18px'}}>
+      <div style={{display: "flex", gap: "0px", flexDirection:'column', marginBottom: '18px'}}>
         {field?.options?.map((option) => (
           <RadioButton
             key={option.value}
