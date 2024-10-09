@@ -101,7 +101,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
                   requiredIndicator={field.required}
                   error={showError ?? showError}
                 />
-                <span style={{ margin: "20px 0px 0px 5px", padding: "5px",display:'flex' }}>
+                <span style={{ margin: "-105px 0px 0px 0px", padding: "5px",display:'flex' }}>
                   {fields.length > 1 && (
                     <Button icon={MinusIcon} onClick={() => removeField(index)} plain />
                   )}
