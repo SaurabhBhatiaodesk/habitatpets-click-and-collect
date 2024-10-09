@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Select, Button, ChoiceList, Text,Stack } from "@shopify/polaris";
+import { Select, Button, ChoiceList, Text } from "@shopify/polaris";
 import { PlusIcon, MinusIcon } from '@shopify/polaris-icons';
 
 const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error, setHideshow }) => {
@@ -87,8 +87,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
             fields.map((fieldData, index) => (
               <div key={`${field.name}_${index}`} style={{ display: 'flex', alignItems: 'flex-start', maxHeight:'150px', overflow:'auto', marginBottom: '18px' }}>
                 {field.multiple ? (
-                  <Stack>
-                 <Stack.Item fill>
+                  
                   <ChoiceList
                     allowMultiple
                     title=""
@@ -96,8 +95,6 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                     selected={choicelistValue}
                     onChange={(value) => handleChangec(value, index)}
                   />
-                  </Stack.Item>
-                  </Stack>
                 ) : (
                   <>
                   
