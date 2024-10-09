@@ -125,7 +125,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
               </div>
             ))
           ) : (
-            <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '18px' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '18px', maxHeight:'150px', overflow:'auto', }}>
               {field.multiple ? (
                 <ChoiceList
                   allowMultiple
