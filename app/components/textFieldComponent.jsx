@@ -88,7 +88,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
           {field.is_cloneable ? (
             // Multiple fields handling
             fields.map((fieldData, index) => (
-              <div key={`${field.name}_${index}`} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+              <div key={`${field.name}_${index}`} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '8px' }}>
                 <TextField
                   label={field.label}
                   labelHidden="true"
@@ -101,7 +101,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
                   requiredIndicator={field.required}
                   error={showError ?? showError}
                 />
-                <span style={{ margin: "-105px 0px 0px 0px", padding: "5px",display:'flex' }}>
+                <span style={{ margin: "-3px 0px 0px 0px", padding: "5px",display:'flex' }}>
                   {fields.length > 1 && (
                     <Button icon={MinusIcon} onClick={() => removeField(index)} plain />
                   )}
