@@ -1328,10 +1328,14 @@ export default function configPage() {
 
                                     return (
                                       <>
+                                        <Text variant="headingMd" as="h6">
+                                          {field.label}
+                                        </Text>
                                         {field?.options.length > 0 && (
                                           <Select
                                             name={field.name}
                                             label={field.label}
+                                            labelHidden="true"
                                             options={[{ value: '', label: 'Select source of Truth' }, ...field.options]}
                                             onChange={handleSelectChange}
                                             value={selectedValue} 
@@ -1345,7 +1349,7 @@ export default function configPage() {
                                     return (
                                       <>
                                         
-                                        <Text as="h2" variant="bodyMd">
+                                        <Text variant="headingMd" as="h6">
                                           {field.description}
                                         </Text>
                                         <div style={{display: "flex", gap: "12px"}}>
