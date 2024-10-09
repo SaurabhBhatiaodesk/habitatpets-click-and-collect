@@ -80,12 +80,12 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
       <Text variant="headingMd" as="h6">
                     {field.label}
                   </Text>
-                  <div style={{display: "flex", gap: "12px"}}>
+                  <div style={{display: "flex", gap: "12px", width:"100%"}}>
       {show && (
-        <div style={{ margin: "4px" }}>
+        <div style={{ margin: "4px",width:"100%" }}>
           {field.is_cloneable ? (
             fields.map((fieldData, index) => (
-              <div key={`${field.name}_${index}`} style={{ display: 'flex', alignItems: 'center', marginBottom: '18px' }}>
+              <div key={`${field.name}_${index}`} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '18px',width:"100%" }}>
                 {field.multiple ? (
                   <ChoiceList
                     allowMultiple
@@ -125,7 +125,7 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
               </div>
             ))
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '18px' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '18px',width:"100%" }}>
               {field.multiple ? (
                 <ChoiceList
                   allowMultiple
