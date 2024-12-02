@@ -2,17 +2,17 @@ function setCookie(name,value,days){let expires="";if(days){let date=new Date();
 function getCookie(name){let cookies=document.cookie.split(";").map(cookie=>cookie.trim().split("="));for(let i=0;i<cookies.length;i++){if(cookies[i][0]===name){return decodeURIComponent(cookies[i][1]);}}return null;}
 async function fetchData(url) { try { let response = await fetch(url); if (!response.ok) throw new Error(`Failed to fetch data from ${url}`); return await response.json(); } catch (error) { console.error("Error: ", error); throw error;  }}
 async function getLocations(selectedLocation = "") { try {  
-        const pickuplcurl = `https://insured-anchor-casa-undertake.trycloudflare.com/api/pickupLocation?shop=${location.hostname}`;
+        const pickuplcurl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/pickupLocation?shop=${location.hostname}`;
         const testres = await fetchData(pickuplcurl); 
         const locations = testres?.data?.locations?.nodes;  const destinationsArr = []; if (locations) { for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) {  destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`);}}}
             if (destinationsArr.length > 0) { const customerLocation = getCookie("customerlocation"); document.querySelector(".location").value = customerLocation;
-              const mapUrl = `https://insured-anchor-casa-undertake.trycloudflare.com/api/distance?customerlocation=${customerLocation}&shop=${location.hostname}`;
+              const mapUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&shop=${location.hostname}`;
               const res = await fetchData(mapUrl);
-              if (res) { const sortedLocations = []; var count = 0;
+              if (res) { const sortedLocations = []; var count = 0; 
                   for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) {  const zipcode= location.address.zip; 
                       for (let index = 0; index < destinationsArr.length; index++) { const distanceElement = res?.rows[0]?.elements[index]; const destinationAddress = destinationsArr[index];
                           if(destinationAddress.includes(zipcode) ){
-                          if (distanceElement?.status == "OK"  && distanceElement?.distance?.value < 50000) { const distanceText = distanceElement?.distance.text; const parsedDistance = parseInt(distanceText.replace(/,/g, "").replace(" km", ""));
+                          if (distanceElement?.status == "OK"  && distanceElement?.distance?.value < res?.kilometer ) { const distanceText = distanceElement?.distance.text; const parsedDistance = parseInt(distanceText.replace(/,/g, "").replace(" km", ""));
                               sortedLocations.push({ id: location.id, distance: parsedDistance, distanceText, origin: res.origin_addresses, ...location });   
                       }else if (distanceElement?.status == "OK"   && distanceElement?.distance?.value > 1){ count = count +1; } } }  }} sortedLocations.sort((a, b) => a.distance - b.distance); renderLocations(sortedLocations, selectedLocation, count); } }
           document.querySelector(".popup-box .address-popup").style.display = "block"; let popupModal = document.querySelector(".popup-modal");    if (popupModal) { popupModal.style.display = "block"; popupModal.classList.add("showmodal"); }
@@ -22,7 +22,7 @@ async function getLocations(selectedLocation = "") { try {
   } 
 async function getInventoryLocations(callback) {
   let productId = document.querySelector('.inventory-details').dataset.productid;
-  try { let response = await fetch(`https://insured-anchor-casa-undertake.trycloudflare.com/api/cart?product_id=${productId}&shop=${location.hostname}`); 
+  try { let response = await fetch(`https://clickncollect-12d7088d53ee.herokuapp.com/api/cart?product_id=${productId}&shop=${location.hostname}`); 
     if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
     let data = await response.json(); callback(null, data.data);
   } catch (error) {console.error("Error fetching inventory locations:", error); callback(error, null);}

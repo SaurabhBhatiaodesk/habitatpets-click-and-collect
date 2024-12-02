@@ -10,7 +10,11 @@ async function cartUpdate(updates, flag = false) {
 			})
 		});
 		if (response.ok) {
-
+			let cartResponse = await fetch("/cart.json");
+			let cartData = await cartResponse.json();
+			if(cartData.item_count == 0){
+				location.reload();
+			}
 			if (flag == true) {
 				let errorMessages = document.querySelectorAll(".cart-grid p.error-massage.active");
 				for (let i = 0; i < errorMessages.length; i++) {
@@ -22,8 +26,7 @@ async function cartUpdate(updates, flag = false) {
 			let checkoutButton = document.querySelector("button.cart-btn.gotocheckout.checkoutbtn");
 			checkoutButton.disabled = false;
 			checkoutButton.classList.remove("disabled");
-			let cartResponse = await fetch("/cart.json");
-			let cartData = await cartResponse.json();
+		
 			fetchInventoryForCartItems(cartData);
 			let totalPrice = parseFloat((cartData.original_total_price / 100).toFixed(2)).toLocaleString("en-UA", {
 				style: "currency",
@@ -42,7 +45,7 @@ async function getCartLocations(selectedLocationName = "") {
 	// console.log('1111111 ')
 	try {
 		var count = 0;
-		const pickuplcurl = `https://insured-anchor-casa-undertake.trycloudflare.com/api/pickupLocation?shop=${location.hostname}`;
+		const pickuplcurl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/pickupLocation?shop=${location.hostname}`;
         const testres = await fetchData(pickuplcurl); 
 
 		let arrr = localStorage.getItem("testings");
@@ -63,13 +66,15 @@ async function getCartLocations(selectedLocationName = "") {
 			}
 			// console.log('destinationsArr ',destinationsArr);
 			let locationsElement = document.querySelector(".address-popup11 .locationss");
-			locationsElement.innerHTML = "";
+			let locationsElement2 = document.querySelector(".address-popup11");
+			if(locationsElement){ locationsElement.innerHTML = ""; }
+			locationsElement2.classList.add('loader');
 			let km='yes';
 			if (destinationsArr.length > 0) {
 				// // console.log('10')
 				let customerLocation = getCookie("customerlocation");
 				document.querySelector(".location").value = customerLocation;
-				let distanceApiUrl = `https://insured-anchor-casa-undertake.trycloudflare.com/api/distance?customerlocation=${customerLocation}&shop=${location.hostname}`;
+				let distanceApiUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&shop=${location.hostname}`;
 				let res = await fetchData(distanceApiUrl);		
 				// // console.log('res ',res);
 				let locationData = [];	
@@ -83,7 +88,7 @@ async function getCartLocations(selectedLocationName = "") {
 							const distanceElement = res?.rows[0]?.elements[index]; const destinationAddress = destinationsArr[index];
 							if (destinationAddress.includes(zipcode)) {
 								// // console.log('14')
-								if (distanceElement?.status == "OK"  && distanceElement?.distance?.value < 50000) {
+								if (distanceElement?.status == "OK"  && distanceElement?.distance?.value < res?.kilometer) {
 									// // console.log('15')
 									const distanceText = distanceElement?.distance.text;
 									const parsedDistance = parseInt(distanceText.replace(/,/g, "").replace(" km", ""));
@@ -103,15 +108,13 @@ async function getCartLocations(selectedLocationName = "") {
 						}
 					}
 				}
-				// console.log('count =======  ',count)
+		
 				sortedLocations.sort((a, b) => a.distance - b.distance);
 				let locationsss = locationData.join(', ');
 				setCookie('sortedLocations', locationsss);
 				// // console.log('sortedLocations ',sortedLocations)
-				// console.log('19 -------------------- ')
 			
 				for (let i = 0; i < sortedLocations.length; i++) {
-					// // console.log('19')
 					let location = sortedLocations[i];
 					let loc = location?.name;
 				
@@ -151,18 +154,21 @@ async function getCartLocations(selectedLocationName = "") {
 					label.appendChild(spanRadioText);
 					radioBtnDiv.appendChild(radioInput);
 					radioBtnDiv.appendChild(label);
-				
-					locationsElement.appendChild(radioBtnDiv);   
+					if(radioBtnDiv){ locationsElement.appendChild(radioBtnDiv); }
 				}
-			}			 if(count == 0 && km=='no'){
+			}	if(count == 0 && km=='no'){
 				// console.log('20 -------------------- ')
+				if(locationsElement){ locationsElement.innerHTML = ""; }
 				let noStoresElement = document.createElement("div");
+				noStoresElement.classList.add('loader');
 				noStoresElement.classList.add("popup-inner-col11");
 				noStoresElement.innerHTML = '<div class="add11">Stores are not available within a 50 km range</div>';
 				locationsElement.appendChild(noStoresElement);
 			}else if(count == 0 && km=='yes' && sortedLocations.length == 0) {
 				// console.log('21 ---------------- ')
+				if(locationsElement){ locationsElement.innerHTML = ""; }
 				let noStoresElement = document.createElement("div");
+				noStoresElement.classList.add('loader');
 				noStoresElement.classList.add("popup-inner-col11");
 				noStoresElement.innerHTML = '<div class="add11">Stores not available for entered location</div>';
 				locationsElement.appendChild(noStoresElement);
@@ -170,7 +176,10 @@ async function getCartLocations(selectedLocationName = "") {
 			// console.log('sortedLocations ',sortedLocations, ' count ',count, destinationsArr, ' ---  destinationsArr' )
 
 			document.querySelector(".address-popup11").style.display = "block";
-			document.querySelector('.loader').classList.remove('loader');
+			document.querySelectorAll('.cart-popup .loader').forEach(function(element) {
+				element.classList.remove('loader');
+			});
+			
 		}
 	} catch (error) {
 		console.error("Error getting cart locations:", error);
@@ -179,7 +188,7 @@ async function getCartLocations(selectedLocationName = "") {
 async function get_inv_locations( product) {     
 	try {       
 		// // // console.log('product',product);   
-		let response = await fetch(`https://insured-anchor-casa-undertake.trycloudflare.com/api/cart?product_id=${product.product_id}&shop=${location.hostname}`);
+		let response = await fetch(`https://clickncollect-12d7088d53ee.herokuapp.com/api/cart?product_id=${product.product_id}&shop=${location.hostname}`);
 		if (response.ok) {
 			let data = await response.json();
 			handle_inv_locations(null, data.data, product);   
@@ -424,7 +433,7 @@ function handleInventoryLocations(error, productData, cartData) {
 	}
 	var activeErrorMessages = document.querySelectorAll(".cart-grid p.error-massage.active");
 	if (activeErrorMessages.length > 0) {
-		document.querySelector(".remove-allitem").style.display = "flex";
+		if (activeErrorMessages.length > 1){ document.querySelector(".remove-allitem").style.display = "flex"; }
 		var checkoutButton = document.querySelector("button.cart-btn.gotocheckout.checkoutbtn");
 		checkoutButton.disabled = true;
 		checkoutButton.classList.add("disabled");
@@ -519,7 +528,7 @@ document.addEventListener("change", function (event) {
 				fetchInventoryForCartItems(data);
 				var activeErrorMessages = document.querySelectorAll(".cart-grid p.error-massage.active");
 				if (activeErrorMessages.length > 0) {
-					document.querySelector(".remove-allitem").style.display = "flex";
+					if (activeErrorMessages.length > 1){ document.querySelector(".remove-allitem").style.display = "flex"; }
 					var checkoutButton = document.querySelector("button.cart-btn.gotocheckout.checkoutbtn");
 					checkoutButton.disabled = true;
 					checkoutButton.classList.add("disabled");
@@ -542,22 +551,21 @@ document.addEventListener("change", function (event) {
 });
 document.addEventListener("click", function (event) {
 	if (event.target.matches(".check-btn-os button")) {
-		console.log('testingshsshshss hh')
-		// localStorage.setItem("testings", JSON.stringify([]));
+		let locationsElement = document.querySelector(".address-popup11 .locationss");
 		let customerLocation = document.querySelector(".location").value;
-		console.log("customerLocation ", customerLocation)
-	var storeLocationName = getCookie("storelocationName");
-		getCartLocations( storeLocationName);
-		
-		setCookie("customerlocation", customerLocation);
-
+		var storeLocationName = getCookie("storelocationName");
+		var Location = getCookie("customerlocation");
+		if(customerLocation != Location  ){
+			if(locationsElement){ locationsElement.innerHTML=""; }
+			locationsElement.classList.add('loader');
+			getCartLocations( storeLocationName);		
+			setCookie("customerlocation", customerLocation);
+		}
 		// let dropdownlocation = getCookie("storelocation");
-		
 		// const pickupLocationSelect = document.querySelector('.cls-pickuplocations-select');
 		// if (pickupLocationSelect !== null && pickupLocationSelect.value !== "") {
 		// 	pickupLocationSelect.value = dropdownlocation;
 		// }
-	
 	}
 	if (event.target.matches("button.cart-btn.button")) {
 		localStorage.setItem("testings", JSON.stringify([]));
@@ -590,7 +598,7 @@ document.addEventListener("click", function (event) {
 			var activeErrorMessages = document.querySelectorAll(".cart-grid p.error-massage.active");
 			if (activeErrorMessages.length > 0) {
 				document.querySelector(".remove-allitem").classList.remove("hide");
-				document.querySelector(".remove-allitem").style.display = "flex";
+				if (activeErrorMessages.length > 1) {document.querySelector(".remove-allitem").style.display = "flex"; }
 				var checkoutButton = document.querySelector("button.cart-btn.gotocheckout.checkoutbtn");
 				checkoutButton.disabled = true;
 				checkoutButton.classList.add("disabled");
@@ -610,6 +618,9 @@ document.addEventListener("click", function (event) {
 	}
 	if (event.target.matches(".gotocheckout")) {
 		if (event.target.classList.contains("checkoutbtn")) {
+			
+			const selectedLocation = getCookie("storelocationName"); const customerLocation = getCookie("customerlocation");
+			console.log(customerLocation, ' --  selectedLocation -- ',selectedLocation);
 			event.preventDefault();
 			fetch("/cart/update.js", {
 				method: "POST",
@@ -618,6 +629,8 @@ document.addEventListener("click", function (event) {
 				},
 				body: JSON.stringify({
 					attributes: {
+						'customerLocationName' : selectedLocation,
+						"customerLocationPinCode" : customerLocation,
 						"_order tag": true
 					}
 				})

@@ -1,4 +1,7 @@
- .inventory-details{background:#f1f1f1;border:1px solid #ccc;border-radius:8px;padding:20px}.inventory-details .broadway p,.inventory-details .in-stock .stock,.inventory-details .out-stock .stock,.inventory-details .out-stock p{font-size:14px;line-height:20px;letter-spacing:0;color:#000}.inventory-details .broadway,.inventory-details .in-stock,.inventory-details .out-stock{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;padding:4px 0}.inventory-details div#myDropdown{display:none;flex-wrap:wrap;width:100%}.inventory-details .in-stock .stock,.inventory-details .out-stock .stock{position:relative;min-width:auto}.inventory-details .in-stock .stock::before,.inventory-details .out-stock .stock::before{position:absolute;content:"";background:red;width:10px;height:10px;border-radius:50%;top:50%;left:-16px;transform:translate(0,-50%);-webkit-transform:translate(0,-50%);-moz-transform:translate(0,-50%)}.inventory-details .in-stock .stock::before{background:green!important}.inventory-details .broadway .dropdown .dropbtn svg{width:18px;height:auto;position:relative;top:4px}.inventory-details .broadway .dropdown:hover div#myDropdown{display:block}.inventory-details div#myDropdown a{width:100%;display:flex;flex-wrap:wrap;color:#111;text-decoration:none;font-size:16px;margin:0;padding:0}.inventory-details .broadway,.popup-inner-col .add{cursor:pointer}.popup-modal.showmodal{display:block!important}
+ .inventory-details{background:#f1f1f1;border:1px solid #ccc;border-radius:8px;padding:20px}.inventory-details .broadway p,.inventory-details .in-stock .stock,.inventory-details .out-stock .stock,.inventory-details .out-stock p{font-size:14px;line-height:20px;letter-spacing:0;color:#000}.inventory-details .broadway,.inventory-details .in-stock,.inventory-details .out-stock{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;padding:7px;}.inventory-details div#myDropdown{display:none;flex-wrap:wrap;width:100%}.inventory-details .in-stock .stock,.inventory-details .out-stock .stock{position:relative;min-width:auto}.inventory-details .in-stock .stock::before,.inventory-details .out-stock .stock::before{position:absolute;content:"";background:red;width:10px;height:10px;border-radius:50%;top:50%;left:-16px;transform:translate(0,-50%);-webkit-transform:translate(0,-50%);-moz-transform:translate(0,-50%)}.inventory-details .in-stock .stock::before{background:green!important}.inventory-details .broadway .dropdown .dropbtn svg{width:18px;height:auto;position:relative;top:4px}.inventory-details .broadway .dropdown:hover div#myDropdown{display:block}.inventory-details div#myDropdown a{width:100%;display:flex;flex-wrap:wrap;color:#111;text-decoration:none;font-size:16px;margin:0;padding:0}
+.popup-inner-col .add{cursor:pointer}
+ 
+ .popup-modal.showmodal{display:block!important}
  .inventory-details p {
     margin: 0;
     font-weight: 600;
@@ -60,4 +63,17 @@
             mask-composite: subtract;
     animation: l3 1s infinite linear;
   }
+
+  
+  .inventory-details .loader .dropdown {
+    opacity: 0;
+  }
+
+
+  /*------25-9-2024----*/
+
+  .inventory-details .broadway, .inventory_status.in-stock {
+    padding: 5px 0;
+}
+
   @keyframes l3 {to{transform: rotate(1turn)}}
