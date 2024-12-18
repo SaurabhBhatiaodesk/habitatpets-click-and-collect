@@ -94,6 +94,8 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                     choices={field.options}
                     selected={choicelistValue}
                     onChange={(value) => handleChangec(value, index)}
+                    requiredIndicator={field.required}
+                    error={showError ?? showError}
                   />
                 ) : (
                   <>
@@ -133,6 +135,8 @@ const SelectComponent = ({ field, inputValues, handleconfigChange, mango, error,
                   title=""
                   choices={field.options}
                   selected={choicelistValue}
+                  requiredIndicator={field.required}
+                  error={showError ?? showError}
                   onChange={(value) => {
                     setChoicelistValue(value);
                     handleChangec(value, 0); // Update parent component

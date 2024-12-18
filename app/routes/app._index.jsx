@@ -454,6 +454,7 @@ export default function configPage() {
   }
   async function handleItemClick(itemContent) {
 
+    setNotificationMessage("");
     setDataLimit({ start: 0, end: 2 });
     setLoader('prefyes');
     setConfigLoader('configyes');
@@ -910,96 +911,124 @@ export default function configPage() {
   const handleSubmit = (event) => {
     console.log("formData in handlesubmit", formData);
     event.preventDefault();
-    setLoading({"config_loading": true});
-    if (true) {
-      console.log("entered in iffff")
-      checkData(formData, data);
-    }
-  };
-  console.log("CerrorCerrorCerror:::", cerror)
+    setLoading({ "config_loading": true });
 
-  const checkData = async(formData, apiData) => {
+    if (true) {
+        console.log("entered in iffff");
+        checkData(formData, data);
+    }
+};
+console.log("CerrorCerrorCerror:::", cerror);
+
+const checkData = async (formData, apiData) => {
     console.log("enteredddd");
     let credError = false;
     let push = [];
-    console.log("PUSH: " , push)
-    console.log("credError: " , credError)
-    let transformedData = apiData?.data?.plugin_form?.map(plugin => {
-      let credential_values = {};
-      for (let key in plugin.fields) {
-        if (key != "stocky_token") {
-          credential_values[key] = formData[key] || null;
-          if (credential_values[key] == null || credential_values[key] == null || credential_values[key] == "") {
-            credError = true;
-            push.push({ name: key })
-            setLoading({"config_loading": false});
-          }
-        }
-      }
+    console.log("PUSH: ", push);
+    console.log("credError: ", credError);
 
-      return {
-        "plugin_id": plugin.plugin_id,
-        "credential_values": credential_values
-      };
+    let transformedData = apiData?.data?.plugin_form?.map(plugin => {
+        let credential_values = {};
+        for (let key in plugin.fields) {
+            if (key != "stocky_token") {
+                // Trim the value
+                const trimmedValue = (formData[key] || "").trim();
+
+                // Check if the field type is URL and validate it
+                if (plugin.fields[key].type === "url" && !isValidUrl(trimmedValue)) {
+                    credError = true;
+                    push.push({ name: key, error: "Invalid URL" });
+                    setLoading({ "config_loading": false });
+                } else if (!trimmedValue) {
+                    // General empty field check
+                    credError = true;
+                    push.push({ name: key, error: "This field is required" });
+                    setLoading({ "config_loading": false });
+                }
+
+                credential_values[key] = trimmedValue;
+            }
+        }
+
+        return {
+            "plugin_id": plugin.plugin_id,
+            "credential_values": credential_values
+        };
     });
-    console.log("PUSH: " , push)
+
+    console.log("PUSH: ", push);
     setCerror(push);
+
     transformedData.push({
-      "plugin_id": "general",
-      "credential_values": {
-        "custom_name": apiData?.store?.shop
-      }
+        "plugin_id": "general",
+        "credential_values": {
+            "custom_name": apiData?.store?.shop
+        }
     });
-    console.log("transformedData",transformedData);
+    console.log("transformedData", transformedData);
 
     if (!credError) {
-      const myHeaders = new Headers();
-      myHeaders.append("Authorization", "Bearer " + apiData?.store?.token);
-      myHeaders.append("Content-Type", "application/json");
+        const myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer " + apiData?.store?.token);
+        myHeaders.append("Content-Type", "application/json");
 
-      const raw = JSON.stringify(transformedData);
-      console.log("rawwwwwwwwwwwwww",raw)
+        const raw = JSON.stringify(transformedData);
+        console.log("rawwwwwwwwwwwwww", raw);
 
-      const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body: raw,
-        redirect: "follow"
-      };
-      let responseData = {};
+        const requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow"
+        };
+        let responseData = {};
 
-      await fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOptions)
-        .then((response) => response.json())
-        .then(async(result) => {
-          responseData = result?.data;
-          console.log("result ::", result);
-          console.log("responseData ::", responseData);
+        await fetch("https://main.dev.saasintegrator.online/api/v1/credential-form", requestOptions)
+            .then((response) => response.json())
+            .then(async (result) => {
+                responseData = result?.data;
+                console.log("result ::", result);
+                console.log("responseData ::", responseData);
 
-          // let allValid = true;
-          // Iterate over each key in the data object
-          for (let key in responseData) {
-            if (responseData.hasOwnProperty(key)) {
-              if (responseData[key].credentials_is_valid !== true) {
-                // allValid = false;
-                setCredentialFormStatus(false);
-                break;
-              } else {
-                setCredentialFormStatus(true);
-                
-              }
-            }
-          }
-          setLoading({"config_loading": false});
-          setNotificationMessage(result?.message);
-          setTimeout(() => {
-            setNotificationMessage("")
-          }, 5000);
-          // console.log("allValid ::", allValid)
-          console.log("credentialFormStatus ::", credentialFormStatus)
-        })
-        .catch((error) => {console.error(error); setLoading({"config_loading": false});});
+                for (let key in responseData) {
+                    if (responseData.hasOwnProperty(key)) {
+                        if (responseData[key].credentials_is_valid !== true) {
+                            setCredentialFormStatus(false);
+                            break;
+                        } else {
+                            setCredentialFormStatus(true);
+                        }
+                    }
+                }
+
+                setLoading({ "config_loading": false });
+                setNotificationMessage(result?.message);
+                setTimeout(() => {
+                    setNotificationMessage("");
+                }, 5000);
+                console.log("credentialFormStatus ::", credentialFormStatus);
+            })
+            .catch((error) => {
+                console.error(error);
+                setLoading({ "config_loading": false });
+            });
     }
-  }
+};
+
+// URL validation function
+const isValidUrl = (url) => {
+    const urlPattern = new RegExp(
+        "^(https?:\\/\\/)" + // Protocol
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" + // Domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR IP (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // Port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // Query string
+        "(\\#[-a-z\\d_]*)?$",
+        "i"
+    ); // Fragment locator
+    return !!urlPattern.test(url);
+};
+
 
   const handleConfigSubmit = async() => {
     setLoading({"config":true});
@@ -1151,7 +1180,7 @@ export default function configPage() {
       
     }
     else{
-      setNotificationMessageInfo("Please select Source of Truth/Main Plugin");
+      setNotificationMessageInfo("Please select source of truth(Main Plugin)");
       setLoading({"preference":false});
       setTimeout(() => {
         setNotificationMessageInfo("")
@@ -1277,16 +1306,16 @@ export default function configPage() {
                 preference != undefined &&
                 navbar ? (
                 <>
-                {loader=="prefyes"?(<LegacyCard title="Preference" sectioned >
+                {loader=="prefyes"?(<LegacyCard title="Preferences" sectioned >
                 <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(
-                  <LegacyCard title="Preference" sectioned primaryFooterAction={!loading.preference?{ content: 'Save Preference', onAction: () => handlePreference() }:{content:<Spinner accessibilityLabel="Spinner example" size="small" />}}>
+                  <LegacyCard title="Preferences" sectioned primaryFooterAction={!loading.preference?{ content: 'Save Preferences', onAction: () => handlePreference() }:{content:<Spinner accessibilityLabel="Spinner example" size="small" />}}>
                     <Card title="configform">
                     
                       <FormLayout>
                         <div
                           style={flexStyle}
                         >
-                          {console.log("preference :::", preference)}
+                          {console.log("preferences :::", preference)}
                           {preference?.form.slice(dataLimit.start, dataLimit.end)?.map((field) => (
                             <div style={{ width: "48%" }}>
                               {(() => {
@@ -1407,7 +1436,7 @@ export default function configPage() {
 
                           {mango?.fields.length > 0 && (
                             <LegacyCard title={mango?.label} sectioned 
-                            primaryFooterAction={isLast?!loading.config?{ content: 'Save Config', onAction: () => handleConfigSubmit() }:{ content:<Spinner accessibilityLabel="Spinner example" size="small" />}:null}>
+                            primaryFooterAction={isLast?!loading.config?{ content: 'Save Configuration', onAction: () => handleConfigSubmit() }:{ content:<Spinner accessibilityLabel="Spinner example" size="small" />}:null}>
                               <Card title="configform">
                                 <FormLayout>
                                   <div
@@ -1433,6 +1462,7 @@ export default function configPage() {
                                                   mango={{ plugin_id: mango?.plugin_id }}
                                                   error={showerror}
                                                   setHideshow={setHideshow}
+                                                  helpText={field.description}
                                                 />
                                               );
                                             case "select":
@@ -1446,6 +1476,7 @@ export default function configPage() {
                                                     mango={mango}
                                                     error={showerror}
                                                     setHideshow={setHideshow}
+                                                    helpText={field.description}
                                                   />
                                                 </>
                                               );
@@ -1459,6 +1490,7 @@ export default function configPage() {
                                                   mango={{ plugin_id: mango?.plugin_id }}
                                                   error={showerror}
                                                   setHideshow={setHideshow}
+                                                  helpText={field.description}
                                                 />
                                               );
                                             default:
@@ -1500,9 +1532,9 @@ export default function configPage() {
                   <div style={{textAlign: 'center'}} >
                   <Badge
                     tone={credentialFormStatus ? 'success' : 'critical'}
-                    toneAndProgressLabelOverride={`Setting is ${credentialFormStatus ? 'Connected' : 'Not Connected'}`}
+                    toneAndProgressLabelOverride={`Setting is ${credentialFormStatus ? 'CONNECTED' : 'Not CONNECTED'}`}
                   >
-                    {credentialFormStatus ? 'Connected' : 'Not Connected'}
+                    {credentialFormStatus ? 'CONNECTED' : 'NOT CONNECTED'}
                   </Badge>
                   </div>
         </Card>
@@ -1522,7 +1554,7 @@ export default function configPage() {
                           <Card key={index} title={plugin.label}>
                             <div
                               style={flexStyle}
-                            >
+                            ><h3>Retail Express</h3>
                               {Object.entries(plugin.fields).map(
                                 ([fieldKey, field]) => {
                                   // console.log("fieldKey :::", fieldKey)
@@ -1535,7 +1567,7 @@ export default function configPage() {
                                           case "hidden":
                                           case "password":
                                             return (
-                                              <div>
+                                              <div style={{marginBottom:"10px"}}>
                                                 <TextField
                                                   label={field.label}
                                                   value={formData[fieldKey]}

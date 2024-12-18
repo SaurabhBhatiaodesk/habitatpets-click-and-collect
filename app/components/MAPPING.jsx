@@ -101,7 +101,7 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
       .then((response) => response.text())
       .then(async(result) => {
         console.log("mapping result ;;;===>", result);
-        setNotificationMessage("Mapping saved successfully");
+        setNotificationMessage("Mapping saved successfully.");
         setLoading({ "mapping": false });
         var menu=await getMenu(data.store.token);
         setForm(menu);
