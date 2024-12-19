@@ -139,7 +139,7 @@ export const loader = async ({ request }) => {
 };
 async function getAuthToken(session) {
   console.log("getAuthToken ------------------->");
-  
+
   try {
     console.log(session, 'session');
     const myHeaders2 = new Headers();
@@ -165,17 +165,17 @@ async function getAuthToken(session) {
 
     const pluginResponse = await fetch("https://main.dev.saasintegrator.online/api/v1/platforms", requestOpt);
     console.log(pluginResponse, "::plugin");
-    
+
     const plugin_data = await pluginResponse.json();
     console.log(plugin_data, "::plugin_data");
-    
-    const filter_data = plugin_data.platforms.filter(pd => 
+
+    const filter_data = plugin_data.platforms.filter(pd =>
       pd.name === "o360-retail-express" || pd.name === "o360-shopify"
     );
     console.log(filter_data, "::filter_data");
 
     const plugin_ids = filter_data.map(fd => fd.id);
-    
+
     const raw = JSON.stringify({
       ...session,
       "state": session?.state.trim() !== "" ? session?.state : null,
@@ -192,10 +192,10 @@ async function getAuthToken(session) {
     };
 
     const email = result.shop?.email;
-    
+
     const userConnectionResponse = await fetch("https://main.dev.saasintegrator.online/api/v1/user-connection", requestOptions);
     const userConnectionResult = await userConnectionResponse.json();
-    
+
     console.log('testing result', userConnectionResult);
 
     const data = {
@@ -208,7 +208,7 @@ async function getAuthToken(session) {
 
     const userUpdateResult = await createOrUpdateUserConnection(data);
     console.log("User connection created or updated:", userUpdateResult);
-    
+
   } catch (error) {
     console.log('error', error);
   }
@@ -316,11 +316,11 @@ export default function configPage() {
   const [loading, setLoading] = useState({});
   const [hideshow, setHideshow] = useState({});
   const [checkModule,setCheckModule] = useState([]);
-  
+  const [selectedItemName, setSelectedItemName] = useState("");
 
   console.log("dataaaaaaaa ::", data);
 
-
+console.log("selectedItemNameselectedItemName",selectedItemName)
 
   useEffect(() => {
     if (product && product.plugin_form) {
@@ -390,13 +390,18 @@ export default function configPage() {
   }, [isFirstButtonActive]);
   useEffect(() => {
     let newmenu= [];
+    console.log('newmenunewmenu',newmenu)
   form.map((item) => {
+    console.log('item.nameitem.name',item.name)
     var jj = {
       content: item.name,
       tone: item.module==preferenceActiveTab?"primary":"secondary",
       suffix: item.is_configured?(<span style={{position: "absolute",right: "10px"}}><Icon source={CheckIcon} tone="textSuccess" /></span>):null,
       prefix: <Icon source={ChevronRightIcon} />,
-      onAction: () => handleItemClick(item.module),
+      onAction: () => {
+        handleItemClick(item.module);
+        setSelectedItemName(item.name); // Store the selected item's name
+      },
     };
     newmenu.push(jj);
   });
@@ -454,17 +459,18 @@ export default function configPage() {
   }
   async function handleItemClick(itemContent) {
 
-    setNotificationMessage("");
+    //setNotificationMessage("");
     setDataLimit({ start: 0, end: 2 });
     setLoader('prefyes');
     setConfigLoader('configyes');
     setMapLoader('mapyes');
     console.log('item clicked',itemContent);
-    
+
 
     setConfig();
     setMapping();
     setPreferenceActiveTab(itemContent);
+
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + data.store.token);
     const getModuleStatus=await getModuleStatusData(data.store.token,itemContent);
@@ -474,7 +480,7 @@ export default function configPage() {
     {
       case "seller":
         var insert=[];
-        
+
         menu.map((item)=>{
           switch(item.module)
           {
@@ -783,14 +789,16 @@ export default function configPage() {
         console.log("preference ", preference);
         setPreference(preference);
         setLoader('prefno');
-        
+
         if(preference.meta.is_enabled) {
           setDataLimit({ start: 0, end: 2 });
         }
         else{
           setDataLimit({ start: 0, end: 1 });
         }
+        setNotificationMessage("");
         if(preference?.meta?.is_enabled){
+
         /****************************************** config-form  ************************************************** */
         const response2 = await fetch(
           `https://main.dev.saasintegrator.online/api/v1/${itemContent}/config-form`,
@@ -843,14 +851,14 @@ export default function configPage() {
         setMapping(mapping);
       }
         setMapLoader('mapno');
-      
+
       }
       } catch (error) {
         setMapLoader('mapno');
         console.error("Error fetching config-form:", error);
         throw error;
       }
-      
+
     }
     // You can add any other logic you need here
   }
@@ -1098,7 +1106,7 @@ const isValidUrl = (url) => {
         setForm(menu);
         })
         .catch((error) =>{ console.error(error); setLoading({"config":false});});
-        
+
     }
     else
     {
@@ -1177,7 +1185,7 @@ const isValidUrl = (url) => {
       setForm(menu);
       })
       .catch((error) =>{ console.error(error); setLoading({"preference":false});});
-      
+
     }
     else{
       setNotificationMessageInfo("Please select source of truth(Main Plugin)");
@@ -1213,8 +1221,8 @@ const isValidUrl = (url) => {
     flexWrap: "wrap",
     justifyContent: "space-between",
   }
-  
-  
+
+
   return (
     <div style={{ display: "flex", gap: "2rem", marginLeft: "1.9rem" }}>
       {console.log("menu under react return ",items)}
@@ -1252,13 +1260,15 @@ const isValidUrl = (url) => {
           </ui-title-bar> */}
 
 
-         
+
 
           <Layout>
-            
-               {credentialFormStatus && ( 
+
+               {/* {credentialFormStatus && ( */}
                 <div style={{ width: "100%" }}>
-                <LegacyCard title="Configuration" sectioned >
+                <LegacyCard
+              title={selectedItemName ? ` ${selectedItemName}` : "Stores"} // Dynamic title
+                sectioned >
                   <ButtonGroup variant="segmented">
                     <Button
                       pressed={isFirstButtonActive}
@@ -1275,8 +1285,8 @@ const isValidUrl = (url) => {
                   </ButtonGroup>
                 </LegacyCard>
                 </div>
-              )} 
-            
+              {/* )} */}
+
             {notificationMessage !== "" && (
             <NotificationBar title={notificationMessage} style={successStyle} />
           )}
@@ -1286,7 +1296,7 @@ const isValidUrl = (url) => {
           {notificationMessageInfo !== "" && (
             <NotificationBar title={notificationMessageInfo} style={errorStyle} />
           )}
-          
+
             <div style={{ width: "100%",marginTop:"10px",minWidth:"32pc" }}>
               {checkModule && checkModule.length > 0 ? (
                 <>
@@ -1310,7 +1320,7 @@ const isValidUrl = (url) => {
                 <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(
                   <LegacyCard title="Preferences" sectioned primaryFooterAction={!loading.preference?{ content: 'Save Preferences', onAction: () => handlePreference() }:{content:<Spinner accessibilityLabel="Spinner example" size="small" />}}>
                     <Card title="configform">
-                    
+
                       <FormLayout>
                         <div
                           style={flexStyle}
@@ -1367,7 +1377,7 @@ const isValidUrl = (url) => {
                                             labelHidden="true"
                                             options={[{ value: '', label: 'Select source of Truth' }, ...field.options]}
                                             onChange={handleSelectChange}
-                                            value={selectedValue} 
+                                            value={selectedValue}
                                            // placeholder="Select source of Truth"
                                           />
                                         )}
@@ -1377,7 +1387,7 @@ const isValidUrl = (url) => {
                                   case "radio":
                                     return (
                                       <>
-                                        
+
                                         <Text variant="headingMd" as="h6">
                                           {field.description}
                                         </Text>
@@ -1404,6 +1414,12 @@ const isValidUrl = (url) => {
                                                 )
                                               }
                                             />
+                                              <div>
+        <p style ={{marginTop:'4px'}}>
+          {selectedItemName ? `(${selectedItemName})` : "(Stores)"}
+        </p>
+      </div>
+
                                           </>
                                         ))}
                                         </div>
@@ -1421,21 +1437,21 @@ const isValidUrl = (url) => {
                     </Card>
                   </LegacyCard>
                )}
-                 
+
                  {prefEnableDisable != 0 && configLoader=="configyes" ?(<LegacyCard title="Config" sectioned >
-                  <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(  
+                  <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(
                   <>
                   {prefEnableDisable != 0 &&
                     configform?.config_form
                     ?.filter(mango => mango?.fields.length > 0)
-                    .map((mango, index, filteredArray) => {                  
+                    .map((mango, index, filteredArray) => {
                       const isLast = index === filteredArray.length - 1;
-                      
+
                       return (
                         <>
 
                           {mango?.fields.length > 0 && (
-                            <LegacyCard title={mango?.label} sectioned 
+                            <LegacyCard title={mango?.label} sectioned
                             primaryFooterAction={isLast?!loading.config?{ content: 'Save Configuration', onAction: () => handleConfigSubmit() }:{ content:<Spinner accessibilityLabel="Spinner example" size="small" />}:null}>
                               <Card title="configform">
                                 <FormLayout>
@@ -1444,7 +1460,7 @@ const isValidUrl = (url) => {
                                   >
                                     {mango?.fields?.map((field) => (
                                       // <Card type={field.input_type} field={field} />
-                                      
+
                                       <div style={hideshow?.[field.name]?{ width: "48%" }:{display:"none"}}>
                                         {(() => {
                                           {console.log(field.input_type,"field.input_typefield.input_typefield.input_type");}
@@ -1453,7 +1469,7 @@ const isValidUrl = (url) => {
                                             case "text":
                                             case "password":
                                               return (
-                                                
+
                                                 <TextFieldComponent
                                                   key={field.name}
                                                   field={field}
@@ -1514,7 +1530,7 @@ const isValidUrl = (url) => {
                   {mapLoader=="mapyes"?(<LegacyCard title="Mapping" sectioned >
                     <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(
                     <>
-                  <MAPPING mapping={mapping?.items} plugin={selectedValue} preference={preference} token={data?.store?.token || ''} setNotificationMessage={setNotificationMessage}  
+                  <MAPPING mapping={mapping?.items} plugin={selectedValue} preference={preference} token={data?.store?.token || ''} setNotificationMessage={setNotificationMessage}
                   preferenceActiveTab={preferenceActiveTab}  mappings={mapping} getMenu={getMenu} setForm={setForm}/>
                     </>
                   )}
@@ -1526,10 +1542,11 @@ const isValidUrl = (url) => {
                 {!navbar && (
                   <>
                   <FormLayout>
-                 <LegacyCard title="" sectioned  >
+                 <LegacyCard title="RETAIL EXPRESS" sectioned  >
                   <div style={{marginBottom: '10px'}} >
                  <Card>
                   <div style={{textAlign: 'center'}} >
+
                   <Badge
                     tone={credentialFormStatus ? 'success' : 'critical'}
                     toneAndProgressLabelOverride={`Setting is ${credentialFormStatus ? 'CONNECTED' : 'Not CONNECTED'}`}
@@ -1554,7 +1571,7 @@ const isValidUrl = (url) => {
                           <Card key={index} title={plugin.label}>
                             <div
                               style={flexStyle}
-                            ><h3>Retail Express</h3>
+                            >
                               {Object.entries(plugin.fields).map(
                                 ([fieldKey, field]) => {
                                   // console.log("fieldKey :::", fieldKey)
@@ -1603,9 +1620,9 @@ const isValidUrl = (url) => {
                     );
                   })}
                   </LegacyCard>
-              
+
                   </FormLayout>
-                  
+
                   {loading.config_loading ? (
                     <button style={{backgroundColor:"#fff",color:"#fff",padding:"4px 8px",borderRadius:"10px",marginTop:"15px"}}  variant="primary">
                     <Spinner accessibilityLabel="Config Form" size="small" />

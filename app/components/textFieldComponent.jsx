@@ -25,14 +25,14 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
           value: typeof value === 'string' ? value.trim() : ''
         }))
       );
-      
+
     } else {
       // Initialize single field value
       setSingleField(initialValues[0] || ''); // Use the first value if multiple values are returned
     }
 
     const fieldError = error?.find(e => field?.name === e?.name);
-    setShowError(fieldError ? "This field is Required" : '');
+    setShowError(fieldError ? "This field is required" : '');
 
     const valuesString = field.show_in_value;
     let valueToCheck = inputValues?.[mango?.plugin_id]?.[field.show_in];

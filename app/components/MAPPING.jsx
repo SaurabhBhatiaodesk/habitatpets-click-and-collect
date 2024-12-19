@@ -18,6 +18,7 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
         ...prevChecked,
         [id]: !prevChecked[id], // Toggle checkbox state for the given id
       }));
+      console.log('checkeddd',checked)
     },
     [],
   );
@@ -110,7 +111,7 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
         console.error(error);
         setLoading({ "mapping": false });
       });
-      
+
   };
 
   // flex style object

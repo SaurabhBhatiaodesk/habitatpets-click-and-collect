@@ -57,17 +57,22 @@
   gap: 2rem;
 }
 
-.list > li {
+.list>li {
   max-width: 20rem;
   text-align: left;
 }
+
+.select-os {
+  width: 100%;
+}
+
 
 @media only screen and (max-width: 50rem) {
   .list {
     display: block;
   }
 
-  .list > li {
+  .list>li {
     padding-bottom: 1rem;
   }
 }

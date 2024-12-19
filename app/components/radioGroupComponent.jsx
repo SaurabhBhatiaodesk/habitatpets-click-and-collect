@@ -11,8 +11,8 @@ const RadioGroupComponent = ({ field, inputValues, handleconfigChange, mango, er
     setSelectedValue(initialValue);
     error?.map((e)=>{
       if(field?.name==e?.name){
-          console.log('"This field is Required"',field.name);
-        setShowError("This field is Required");
+          console.log('"This field is required"',field.name);
+        setShowError("This field is required");
       }
     })
   }, [inputValues, field.name, error]);
@@ -24,9 +24,12 @@ const RadioGroupComponent = ({ field, inputValues, handleconfigChange, mango, er
 
   return (
     <>
-  
+
       <Text variant="headingMd" as="h6">
         {field.label}
+      </Text>
+      <Text >
+        {field.description}
       </Text>
       <div style={{display: "flex", gap: "0px", flexDirection:'column', marginBottom: '18px'}}>
         {field?.options?.map((option) => (
@@ -40,6 +43,7 @@ const RadioGroupComponent = ({ field, inputValues, handleconfigChange, mango, er
             required={field.required}
             onChange={() => handleChange(option.value)}
             requiredIndicator={field.required}
+
           />
         ))}
         <span style={{ color: "red" }}>{showError}</span>
