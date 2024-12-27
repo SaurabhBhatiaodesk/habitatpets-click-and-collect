@@ -12,16 +12,8 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
 
   console.log("it is running................................................................");
 
-  const handleChange = useCallback(
-    (id) => {
-      setChecked((prevChecked) => ({
-        ...prevChecked,
-        [id]: !prevChecked[id], // Toggle checkbox state for the given id
-      }));
-      console.log('checkeddd',checked)
-    },
-    [],
-  );
+
+
 
   const pref = preference.form.slice(1, 2)[0].options;
   const opt = { [pref[0].value]: pref[0].label, [pref[1].value]: pref[1].label };
@@ -55,11 +47,42 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
   });
 
   const handleSelectChange = (id, selectedOption) => {
+    if(selectedOption=='')
+    {
+      setChecked((prevChecked) => {
+        const newChecked = {
+          ...prevChecked,
+          [id]: false, // Toggle checkbox state for the given id
+        };
+        return newChecked;
+      });
+    }
     setSelectedValue((prevSelectedValue) => ({
       ...prevSelectedValue,
       [id]: selectedOption,
     }));
   };
+
+  const handleChange = useCallback(
+    (id) => {
+      // Use the current value of `checked` to perform conditional logic
+      if (checked[id] === true) {
+        handleSelectChange(id, ""); // Perform action before state updates
+      }
+      else{
+      // Update the `checked` state and use the new state immediately
+      setChecked((prevChecked) => {
+        const newChecked = {
+          ...prevChecked,
+          [id]: !prevChecked[id], // Toggle checkbox state for the given id
+        };
+        console.log('Updated checked:', newChecked);
+        return newChecked;
+      });
+      }
+    },
+    [checked, handleSelectChange], // Include `checked` and `handleSelectChange` in the dependency array
+  );
 
   const handleMapping = async() => {
     if(!field?.label){
