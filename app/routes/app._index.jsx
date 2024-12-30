@@ -297,6 +297,7 @@ export default function configPage() {
   const [notificationMessageInfo, setNotificationMessageInfo] = useState("");
   const [preferenceActiveTab, setPreferenceActiveTab] = useState("");
   const [selectedValue, setSelectedValue] = useState('');
+  const [selectedModule, setSelectedModule] = useState('');
   const [dataLimit, setDataLimit] = useState({ start: 1, end: 2 });
   const [navbar, setNavbar] = useState(null);
   const [formData, setFormData] = useState({});
@@ -789,7 +790,7 @@ console.log("selectedItemNameselectedItemName",selectedItemName)
         console.log("preference ", preference);
         setPreference(preference);
         setLoader('prefno');
-
+        setSelectedModule(preference?.form[1].value || "");
         if(preference.meta.is_enabled) {
           setDataLimit({ start: 0, end: 2 });
         }
@@ -870,6 +871,7 @@ console.log("selectedItemNameselectedItemName",selectedItemName)
     console.log("initialSelectedValue :::", initialSelectedValue);
     setPrefEnableDisable(initialSelectedValue);
    setSelectedValue(preference?.form[1].value || "");
+   setSelectedModule(preference?.form[1].value || "");
    if(data?.data?.plugin_form[0]?.credentials_is_valid && data?.data?.plugin_form[1]?.credentials_is_valid)
    {
       setCredentialFormStatus(true);
@@ -1264,7 +1266,7 @@ const isValidUrl = (url) => {
 
           <Layout>
 
-               {/* {credentialFormStatus && ( */}
+               {credentialFormStatus && (
                 <div style={{ width: "100%" }}>
                 <LegacyCard
               title={selectedItemName ? ` ${selectedItemName}` : "Stores"} // Dynamic title
@@ -1285,7 +1287,7 @@ const isValidUrl = (url) => {
                   </ButtonGroup>
                 </LegacyCard>
                 </div>
-              {/* )} */}
+              )} 
 
             {notificationMessage !== "" && (
             <NotificationBar title={notificationMessage} style={successStyle} />
@@ -1530,7 +1532,7 @@ const isValidUrl = (url) => {
                   {mapLoader=="mapyes"?(<LegacyCard title="Mapping" sectioned >
                     <Card title="configform"><div style={{textAlign:"center"}}><Spinner accessibilityLabel="Spinner example" size="large" /></div></Card></LegacyCard>):(
                     <>
-                  <MAPPING mapping={mapping?.items} plugin={selectedValue} preference={preference} token={data?.store?.token || ''} setNotificationMessage={setNotificationMessage}
+                  <MAPPING mapping={mapping?.items} plugin={selectedModule} preference={preference} token={data?.store?.token || ''} setNotificationMessage={setNotificationMessage}
                   preferenceActiveTab={preferenceActiveTab}  mappings={mapping} getMenu={getMenu} setForm={setForm}/>
                     </>
                   )}
