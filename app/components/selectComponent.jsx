@@ -9,6 +9,8 @@ const SelectComponent = ({
   mango,
   error,
   setHideshow,
+  required,
+  setRequired
 }) => {
   const [fields, setFields] = useState([{ value: "" }]);
   const [showError, setShowError] = useState("");
@@ -34,24 +36,74 @@ const SelectComponent = ({
     }
     const fieldError = error?.find((e) => field?.name === e?.name);
     setShowError(fieldError ? "This field is required" : "");
+    if (!field.show_in_value) {
+      return; // Exit early if `field.show_in_value` is null or undefined
+    }
 
-    const valuesString = field.show_in_value;
-    let valueToCheck = pluginInputValues[field.show_in];
+    const valuesString = field.show_in_value; // Safe to use now
+    const keysToCheckString = field.show_in || ""; // Ensure this is a string
 
-    for (const key in inputValues) {
-      if (inputValues[key]?.[field.show_in]) {
-        valueToCheck = inputValues[key][field.show_in];
+    let valueToCheck = null;
+
+    // Split `field.show_in` into multiple keys safely
+    const keysToCheck = keysToCheckString.split(",").map((key) => key.trim());
+
+    // Loop through keys and find the first matching value
+    for (const key of keysToCheck) {
+      if (pluginInputValues[key]) {
+        valueToCheck = pluginInputValues[key];
+        break; // Stop checking once a matching key is found
+      }
+
+      for (const inputKey in inputValues) {
+        if (inputValues[inputKey]?.[key]) {
+          valueToCheck = inputValues[inputKey][key];
+          break; // Stop checking once a matching key is found
+        }
       }
     }
 
-    if (valuesString) {
-      const valuesArray = valuesString.split(",");
-      setShow(valuesArray?.includes(valueToCheck));
+    // Process `valuesString` and `valueToCheck` if available
+    if (valueToCheck) {
+      // Split values for both single and comma-separated cases
+      const valuesArray = valuesString.split(",").map((value) => value.trim());
+      const valueToCheckArray = valueToCheck.includes(",")
+        ? valueToCheck.split(",").map((value) => value.trim())
+        : [valueToCheck.trim()]; // Handle single value as an array
+
+      // Check if any value in `valueToCheckArray` exists in `valuesArray`
+      const showField = valueToCheckArray.some((value) =>
+        valuesArray.includes(value)
+      );
+
+      setShow(showField);
+      // Update `requireds` if the field is shown
+  if (showField) {
+    const alreadyExists = required.some((item) => item.name === field.name);
+    if (!alreadyExists) {
+      const updatedRequireds = [...required, { plugin: item.plugin, name: field.name }];
+      setRequired(updatedRequireds);
+    }
+  } else {
+    // Remove from `requireds` if not shown
+    const updatedRequireds = required.filter(
+      (item) => item.name !== field.name
+    );
+    setRequired(updatedRequireds);
+  }
       setHideshow((prevState) => ({
         ...prevState,
-        [field.name]: valuesArray?.includes(valueToCheck),
+        [field.name]: showField,
+      }));
+    } else {
+      // Handle cases where valueToCheck is not available
+      setShow(false);
+      setHideshow((prevState) => ({
+        ...prevState,
+        [field.name]: false,
       }));
     }
+
   }, [
     inputValues,
     field.name,
