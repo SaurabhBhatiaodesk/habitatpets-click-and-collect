@@ -384,8 +384,9 @@ console.log("selectedItemNameselectedItemName",selectedItemName)
     setNavbar(true);
     setProduct(null);
     setNotificationMessage("");
-    handleItemClick("store");
     setSelectedItemName("Stores");
+    handleItemClick("store");
+    
     // setConfig(null);
     if (!isFirstButtonActive) return;
     setIsFirstButtonActive(false);
