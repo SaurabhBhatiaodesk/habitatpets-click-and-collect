@@ -385,6 +385,7 @@ console.log("selectedItemNameselectedItemName",selectedItemName)
     setProduct(null);
     setNotificationMessage("");
     handleItemClick("store");
+    setSelectedItemName("Stores");
     // setConfig(null);
     if (!isFirstButtonActive) return;
     setIsFirstButtonActive(false);
