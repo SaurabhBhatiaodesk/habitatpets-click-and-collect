@@ -68,8 +68,8 @@ const SelectComponent = ({
       // Split values for both single and comma-separated cases
       const valuesArray = valuesString.split(",").map((value) => value.trim());
       const valueToCheckArray = valueToCheck.includes(",")
-        ? valueToCheck.split(",").map((value) => value.trim())
-        : [valueToCheck.trim()]; // Handle single value as an array
+        ? valueToCheck.split(",").map((value) => value)
+        : [valueToCheck]; // Handle single value as an array
 
       // Check if any value in `valueToCheckArray` exists in `valuesArray`
       const showField = valueToCheckArray.some((value) =>
