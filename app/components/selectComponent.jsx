@@ -81,8 +81,8 @@ const SelectComponent = ({
   if (showField) {
     const alreadyExists = required.some((item) => item.name === field.name);
     if (!alreadyExists) {
-      const updatedRequireds = [...required, { plugin: item.plugin, name: field.name }];
-      setRequired(updatedRequireds);
+      //const updatedRequireds = [...required, { plugin: item.plugin, name: field.name }];
+      //setRequired(updatedRequireds);
     }
   } else {
     // Remove from `requireds` if not shown
