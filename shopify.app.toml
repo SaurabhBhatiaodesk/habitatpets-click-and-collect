@@ -1,15 +1,26 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "c2aef3cf60c016454d3da1bc06566b9e"
-name = "click&collect"
-handle = "clickncollect-1"
 application_url = "https://clickncollect-12d7088d53ee.herokuapp.com"
 embedded = true
+name = "click&collect"
+handle = "clickncollect-1"
 
 [build]
 automatically_update_urls_on_dev = false
 dev_store_url = "saas-click-collect.myshopify.com"
 include_config_on_deploy = true
+
+[webhooks]
+api_version = "2024-10"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/scopes_update" ]
+  uri = "/webhooks/app/scopes_update"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/webhooks/app/uninstalled"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
@@ -22,17 +33,6 @@ redirect_urls = [
   "https://clickncollect-12d7088d53ee.herokuapp.com/api/auth/callback",
   "https://clickncollect-12d7088d53ee.herokuapp.com/api/auth"
 ]
-
-[webhooks]
-api_version = "2024-10"
-
-  [[webhooks.subscriptions]]
-  topics = [ "app/scopes_update" ]
-  uri = "/webhooks/app/scopes_update"
-
-  [[webhooks.subscriptions]]
-  topics = [ "app/uninstalled" ]
-  uri = "/webhooks/app/uninstalled"
 
 [pos]
 embedded = false
