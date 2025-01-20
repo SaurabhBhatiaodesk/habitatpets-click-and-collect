@@ -1596,9 +1596,12 @@ const isValidUrl = (url) => {
                                           case "password":
                                             return (
                                               <div style={{marginBottom:"10px"}}>
+                                                <Text variant="headingMd" as="h6">
+                                                        {field.label}
+                                                      </Text>
                                                 <Text>{field.description}</Text>
                                                 <TextField
-                                                  label={field.label}
+                                                 // label={field.label}
                                                   value={formData[fieldKey]}
                                                   onChange={(value) =>
                                                     handleChange(value, fieldKey)
