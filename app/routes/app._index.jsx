@@ -376,7 +376,7 @@ console.log("selectedItemNameselectedItemName",selectedItemName)
     setProduct(data.data);
     setNavbar(false);
     if (isFirstButtonActive) return;
-
+    setCheckModule(null);
     setIsFirstButtonActive(true);
   }, [isFirstButtonActive]);
 
