@@ -93,17 +93,6 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
       return true;
     }
     setLoading({ "mapping": true });
-    
-    setChecked(() => {
-      // Create a new object with all values set to false
-      const newChecked = Object.keys(checked).reduce((acc, key) => {
-        acc[key] = false; // Set each key's value to false
-        return acc;
-      }, {});
-    
-      return newChecked; // Return the new object
-    });
-      
     const formattedValues = Object.entries(selectedValue)
       .filter(([key]) => checked[key])
       .reduce((acc, [key, value]) => {
@@ -114,11 +103,6 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
           newplugin = get.value;
         });
         acc[key] = { [newplugin]: value };
-        setChecked((prevChecked) => {
-          const newChecked = {
-            ...prevChecked,
-            [key]: !prevChecked[key], // Toggle checkbox state for the given id
-          };
         return acc;
       }, {});
 
