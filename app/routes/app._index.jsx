@@ -954,7 +954,7 @@ const checkData = async (formData, apiData) => {
                 } else if (!trimmedValue) {
                     // General empty field check
                     credError = true;
-                    push.push({ name: key, error: "This field is required" });
+                    push.push({ name: key, error: "This field is required." });
                     setLoading({ "config_loading": false });
                 }
 
@@ -1611,7 +1611,7 @@ const isValidUrl = (url) => {
                                                 <>
                                                   {cerror.length > 0 && cerror.filter((e) => e.name == fieldKey).map((sh) => {
                                                     return (
-                                                      <span style={{ color: 'red' }} >This field is required</span>
+                                                      <span style={{ color: 'red' }} >This field is required.</span>
                                                     )
                                                   })}
                                                 </>
