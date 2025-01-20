@@ -954,7 +954,7 @@ const checkData = async (formData, apiData) => {
                 // Check if the field type is URL and validate it
                 if (plugin.fields[key].type === "url" && !isValidUrl(trimmedValue)) {
                     credError = true;
-                    push.push({ name: key, error: "Invalid URL" });
+                    push.push({ name: key, error: "The Retail Express Domain URL must be a valid URL." });
                     setLoading({ "config_loading": false });
                 } 
 
