@@ -93,40 +93,33 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
       return true;
     }
     setLoading({ "mapping": true });
+    
+    setChecked(() => {
+      // Create a new object with all values set to false
+      const newChecked = Object.keys(checked).reduce((acc, key) => {
+        acc[key] = false; // Set each key's value to false
+        return acc;
+      }, {});
+    
+      return newChecked; // Return the new object
+    });
+      
     const formattedValues = Object.entries(selectedValue)
-  .filter(([key]) => checked[key]) // Filter based on checked keys
-  .reduce((acc, [key, value]) => {
-    let newplugin = plugin;
+      .filter(([key]) => checked[key])
+      .reduce((acc, [key, value]) => {
+        let newplugin = plugin;
+        pref.filter((p) => p.value !== plugin).forEach((get) => {
+          setSelectValue(mapping?.[get.value]);
+          setPlugin2(get.label);
+          newplugin = get.value;
+        });
+        acc[key] = { [newplugin]: value };
+        handleChange(key);
+        return acc;
+      }, {});
 
-    // Iterate through pref and set select value and plugin2
-    pref.filter((p) => p.value !== plugin).forEach((get) => {
-      setSelectValue(mapping?.[get.value]);
-      setPlugin2(get.label);
-      newplugin = get.value;
-    });
-
-    // Check if selectValue is blank, empty, or null
-    const currentSelectValue = selectValue; // Assuming selectValue is defined in your scope
-    if (!currentSelectValue) {
-      handleChange(key); // Call handleChange if selectValue is blank, empty, or null
-    }
-
-    // Assign the new plugin and value to the accumulator
-    acc[key] = { [newplugin]: value };
-    return acc;
-  }, {});
-      
-      
     console.log(formattedValues, "formatting");
-    
-     
-    
-    console.log('under Mapping ', mapping);
-    setValue(mapping?.[plugin]);
-    pref.filter((p) => p.value !== plugin).forEach((get) => {
-      setSelectValue(mapping?.[get.value]);
-      setPlugin2(get.label);
-    });
+
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + token);
     myHeaders.append("Content-Type", "application/json");
