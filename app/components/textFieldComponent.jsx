@@ -135,6 +135,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
     <Text variant="headingMd" as="h6">
         {field.label}
       </Text>
+      <Text>{field.description}</Text>
       <div style={{display: "flex", gap: "12px", marginBottom: '18px'}}>
       {show && (
         <div style={{ margin: "4px" }}>
@@ -150,7 +151,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
                   name={`${field.name}_${index}`}
                   type={field.input_type}
                   required
-                  helpText={field.description}
+                //  helpText={field.description}
                   requiredIndicator={field.required}
                   error={showError ?? showError}
                 />
@@ -176,7 +177,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
               name={field.name}
               type={field.input_type}
               required
-              helpText={field.description}
+            //  helpText={field.description}
               requiredIndicator={field.required}
               error={showError ?? showError}
             />
