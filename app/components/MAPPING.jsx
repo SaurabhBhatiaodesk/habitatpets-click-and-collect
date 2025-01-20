@@ -114,7 +114,11 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
           newplugin = get.value;
         });
         acc[key] = { [newplugin]: value };
-        handleChange(key);
+        setChecked((prevChecked) => {
+          const newChecked = {
+            ...prevChecked,
+            [key]: !prevChecked[key], // Toggle checkbox state for the given id
+          };
         return acc;
       }, {});
 
