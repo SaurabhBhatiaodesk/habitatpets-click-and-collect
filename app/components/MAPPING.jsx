@@ -102,12 +102,22 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
           setPlugin2(get.label);
           newplugin = get.value;
         });
+        handleChange(key);
+        handleSelectChange(key, value);
         acc[key] = { [newplugin]: value };
         return acc;
       }, {});
 
     console.log(formattedValues, "formatting");
-
+    
+     
+    
+    console.log('under Mapping ', mapping);
+    setValue(mapping?.[plugin]);
+    pref.filter((p) => p.value !== plugin).forEach((get) => {
+      setSelectValue(mapping?.[get.value]);
+      setPlugin2(get.label);
+    });
     const myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + token);
     myHeaders.append("Content-Type", "application/json");
