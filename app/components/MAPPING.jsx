@@ -102,12 +102,16 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
           setPlugin2(get.label);
           newplugin = get.value;
         });
-        handleChange(key);
-        handleSelectChange(key, value);
+        
         acc[key] = { [newplugin]: value };
         return acc;
       }, {});
-
+      Object.entries(selectedValue)
+      .filter(([key]) => !checked[key])
+      .reduce((acc, [key, value]) => {
+        handleChange(key);
+      }, {});
+      
     console.log(formattedValues, "formatting");
     
      
