@@ -375,14 +375,16 @@ console.log("selectedItemNameselectedItemName",selectedItemName)
     console.log("handleFirstButtonClick ", data);
     setProduct(data.data);
     setNavbar(false);
+    setCheckModule([]);
     if (isFirstButtonActive) return;
-    setCheckModule(null);
+    
     setIsFirstButtonActive(true);
   }, [isFirstButtonActive]);
 
   const handleSecondButtonClick = useCallback(() => {
     setNavbar(true);
     setProduct(null);
+    setCheckModule([]);
     setNotificationMessage("");
     setSelectedItemName("Stores");
     handleItemClick("store");
