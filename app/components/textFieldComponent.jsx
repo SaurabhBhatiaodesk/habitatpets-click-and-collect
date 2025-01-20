@@ -34,7 +34,7 @@ const TextFieldComponent = ({ field, inputValues, handleconfigChange, mango, err
     }
 
     const fieldError = error?.find(e => field?.name === e?.name);
-    setShowError(fieldError ? "This field is required" : '');
+    setShowError(fieldError ? "This field is required." : '');
 
     if (!field.show_in_value) {
       return; // Exit early if `field.show_in_value` is null or undefined

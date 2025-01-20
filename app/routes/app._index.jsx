@@ -945,18 +945,18 @@ const checkData = async (formData, apiData) => {
             if (key != "stocky_token") {
                 // Trim the value
                 const trimmedValue = (formData[key] || "").trim();
-
+                if (!trimmedValue) {
+                  // General empty field check
+                  credError = true;
+                  push.push({ name: key, error: "This field is required." });
+                  setLoading({ "config_loading": false });
+              }
                 // Check if the field type is URL and validate it
                 if (plugin.fields[key].type === "url" && !isValidUrl(trimmedValue)) {
                     credError = true;
                     push.push({ name: key, error: "Invalid URL" });
                     setLoading({ "config_loading": false });
-                } else if (!trimmedValue) {
-                    // General empty field check
-                    credError = true;
-                    push.push({ name: key, error: "This field is required." });
-                    setLoading({ "config_loading": false });
-                }
+                } 
 
                 credential_values[key] = trimmedValue;
             }
@@ -1596,6 +1596,7 @@ const isValidUrl = (url) => {
                                           case "password":
                                             return (
                                               <div style={{marginBottom:"10px"}}>
+                                                <Text>{field.description}</Text>
                                                 <TextField
                                                   label={field.label}
                                                   value={formData[fieldKey]}
@@ -1605,7 +1606,7 @@ const isValidUrl = (url) => {
                                                   name={fieldKey}
                                                   type={field.type}
                                                   required={field.required}
-                                                  helpText={field.description}
+                                                 // helpText={field.description}
                                                   requiredIndicator
                                                 />
                                                 <>
