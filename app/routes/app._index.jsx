@@ -1271,7 +1271,7 @@ const isValidUrl = (url) => {
                {credentialFormStatus && (
                 <div style={{ width: "100%" }}>
                 <LegacyCard
-              title={selectedItemName ? ` ${selectedItemName}` : "Stores"} // Dynamic title
+              title={selectedItemName && !isFirstButtonActive ? ` ${selectedItemName}` : ""} // Dynamic title
                 sectioned >
                   <ButtonGroup variant="segmented">
                     <Button
