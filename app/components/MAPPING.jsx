@@ -109,7 +109,7 @@ const MAPPING = ({ mapping, plugin, preference, token, setNotificationMessage, p
     console.log(formattedValues, "formatting");
 
     const myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer " + token);
+    myHeaders.append("Authorization", "Bearer " + token); 
     myHeaders.append("Content-Type", "application/json");
 
     const raw = JSON.stringify(formattedValues);
