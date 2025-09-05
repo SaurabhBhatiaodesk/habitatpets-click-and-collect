@@ -3,12 +3,12 @@ function getCookie(name) { let cookies = document.cookie.split(";").map(cookie =
 async function fetchData(url) { try { let response = await fetch(url); if (!response.ok) throw new Error(`Failed to fetch data from ${url}`); return await response.json(); } catch (error) { console.error("Error: ", error); throw error; } }
 async function getLocations(selectedLocation = "") {
   try {
-    const pickuplcurl = `https://waves-exemption-salon-yarn.trycloudflare.comapi/pickupLocation?shop=flirt-adult-store.myshopify.com`;
+    const pickuplcurl = `https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.comapi/pickupLocation?shop=flirt-adult-store.myshopify.com`;
     const testres = await fetchData(pickuplcurl);
     const locations = testres?.data?.locations?.nodes; const destinationsArr = []; if (locations) { for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) { destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`); } } }
     if (destinationsArr.length > 0) {
       const customerLocation = getCookie("customerlocation"); document.querySelector(".location").value = customerLocation;
-      const mapUrl = `https://waves-exemption-salon-yarn.trycloudflare.comapi/distance?customerlocation=${customerLocation}&shop=flirt-adult-store.myshopify.com`;
+      const mapUrl = `https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.comapi/distance?customerlocation=${customerLocation}&shop=flirt-adult-store.myshopify.com`;
       const res = await fetchData(mapUrl);
       if (res) {
         const sortedLocations = []; var count = 0;
@@ -36,7 +36,7 @@ async function getLocations(selectedLocation = "") {
 async function getInventoryLocations(callback) {
   let productId = document.querySelector('.inventory-details').dataset.productid;
   try {
-    let response = await fetch(`https://waves-exemption-salon-yarn.trycloudflare.comapi/cart?product_id=${productId}&shop=flirt-adult-store.myshopify.com`);
+    let response = await fetch(`https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.comapi/cart?product_id=${productId}&shop=flirt-adult-store.myshopify.com`);
     if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
     let data = await response.json(); callback(null, data.data);
   } catch (error) { console.error("Error fetching inventory locations:", error); callback(error, null); }

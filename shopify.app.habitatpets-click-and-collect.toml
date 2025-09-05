@@ -3,7 +3,7 @@
 client_id = "735cff9da6c5bfa31c42f6c99837e996"
 name = "habitatpets-click-and-collect"
 handle = "habitatpets-click-and-collect"
-application_url = "https://waves-exemption-salon-yarn.trycloudflare.com"
+application_url = "https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com"
 embedded = true
 
 [build]
@@ -17,7 +17,7 @@ api_version = "2025-07"
 scopes = "read_customers,read_inventory,read_locales,read_locations,read_orders,read_product_listings,read_products,read_publications,read_script_tags,write_content,write_inventory,write_locations,write_products,write_publications,write_script_tags,write_shipping"
 
 [auth]
-redirect_urls = ["https://waves-exemption-salon-yarn.trycloudflare.com/auth/callback", "https://waves-exemption-salon-yarn.trycloudflare.com/auth/shopify/callback", "https://waves-exemption-salon-yarn.trycloudflare.com/api/auth/callback"]
+redirect_urls = ["https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/auth/callback", "https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/auth/shopify/callback", "https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/api/auth/callback"]
 
 [pos]
 embedded = false
