@@ -24,7 +24,7 @@ import {
 import { useEffect, useState, useCallback } from "react";
 import { useSubmit, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
-import { authenticate } from "../shopify.server";
+// import { authenticate } from "../shopify.server";
 import db from "../db.server";
 import NotificationBar from "../components/NotificationBar";
 import { useAppBridge } from "@shopify/app-bridge-react";
