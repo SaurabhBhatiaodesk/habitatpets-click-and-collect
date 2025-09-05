@@ -1,0 +1,32 @@
+{
+  "cart": {
+    "lines": [
+      {
+        "quantity": 1,
+        "merchandise": {
+          "product": {
+            "title": "Click & Collect Camera 4"
+          }
+        }
+      }
+    ],
+    "deliveryGroups": [
+      {
+        "deliveryOptions": [
+          {
+            "title": "Click and Collect",
+            "handle": "cde305a23d7066f42ce8acca768772ce-b5d59150f02a97f30e2320e9e2bfd61c"
+          }
+        ]
+      },
+      {
+        "deliveryOptions": [
+          {
+            "title": "Standard Shipping Melb Metro",
+            "handle": "cde305a23d7066f42ce8acca768772ce-ee021d8f614d6f6d11c64fa0c176f9c2"
+          }
+        ]
+      }
+    ]
+  }
+} 

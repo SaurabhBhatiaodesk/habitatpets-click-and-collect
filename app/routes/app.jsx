@@ -22,7 +22,8 @@ export default function App() {
         <Link to="/app" rel="home">
           Home
         </Link>
-         {/* <Link to="/app/additional">Google API</Link> */}
+         <Link to="/app/additional">Google API</Link>
+        {/* <Link to="/app/shipping">Hide Shipping</Link> */}
       </ui-nav-menu>
       <Outlet />
     </AppProvider>

@@ -4,14 +4,14 @@ async function getLocations(selectedLocation = "") {
     try { document.querySelector('.cnc-checkload').classList.add('loader');
         document.querySelector(".popup-box .address-popup").style.display = "none";
         document.querySelector(".popup-box button.setlocationbtn.popup-btn").style.display = "none";
-        const pickuplcurl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/pickupLocation?shop=${location.hostname}`;
+        const pickuplcurl = `https://waves-exemption-salon-yarn.trycloudflare.comapi/pickupLocation?shop=flirt-adult-store.myshopify.com`;
         const testres = await fetchData(pickuplcurl);
         const locations = testres?.data?.locations?.nodes;
         const destinationsArr = []; if (locations) { for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) { destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`); } } }
         if (destinationsArr.length > 0) {
             const customerLocation = getCookie("customerlocation");
             document.querySelector(".location").value = customerLocation;
-            let mapUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&shop=${location.hostname}`;
+            let mapUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&shop=flirt-adult-store.myshopify.com`;
             const res = await fetchData(mapUrl); var count = 0;
             if (res) {
                 const sortedLocations = [];
@@ -50,7 +50,7 @@ function renderLocations(locations, selectedLocation, count = 0) {
         locations.forEach(location => {
             if (location.name !== "Snow City Warehouse") {
                 const locationElement = document.createElement("div"); locationElement.classList.add("popup-inner-col");
-                locationElement.innerHTML = `<div class="add"><span><input type="radio" id="${location.id}" class="locations" data-name="${location.name}" name="locations" value="HTML" ${location.name === selectedLocation ? 'checked="checked"' : ''}><label for="${location.id}">${location.name}</label></span><h4>${location.distanceText}</h4></div><ul class="order-list"><li>${location.address.country}</li> <li>Address: ${location.address.address1}</li><li>Phone: ${location.address.phone}</li> </ul><button type="submit"> <a href="https://www.google.com/maps/dir/${location.origin}/${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}" target="_blank"> Get Directions <span class="errow"> >> </span> </a></button>`;
+                locationElement.innerHTML = `<div class="add"><span><input type="radio" id="${location.id}" class="locations" data-name="${location.name}" name="locations" value="HTML" zip_code = "${location.address.zip}" address_data = " ${location.address.address1}" ${location.name === selectedLocation ? 'checked="checked"' : ''}><label for="${location.id}">${location.name}</label></span><h4>${location.distanceText}</h4></div><ul class="order-list"><li>${location.address.country}</li> <li>Address: ${location.address.address1}</li><li>Phone: ${location.address.phone}</li> </ul><button type="submit"> <a href="https://www.google.com/maps/dir/${location.origin}/${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}" target="_blank"> Get Directions <span class="errow"> >> </span> </a></button>`;
                 locationsContainer.appendChild(locationElement);
             }
         });
@@ -73,6 +73,44 @@ if (document.querySelector(".popup-modal") && !window.location.pathname.includes
         document.querySelector(".setlocationbtn").addEventListener("click", event => {
             event.preventDefault(); const popupModal = document.querySelector(".popup-modal");
             popupModal.style.display = "none"; document.querySelector(".setlocationbtn").style.display = "none"; popupModal.classList.remove("showmodal");
+           try {
+                    // Get the stored data from localStorage
+                    const selectedZipCode = localStorage.getItem('selectedZipCode');
+                    const addressData = localStorage.getItem('addressData');
+                    const storedataName = localStorage.getItem('storedataName');
+
+                    // Ensure the data exists in localStorage before proceeding
+                    if (!selectedZipCode || !addressData || !storedataName) {
+                        throw new Error('Required data not found in localStorage');
+                    }
+
+                    // Get the elements where the data should be updated
+                    const shopLocationElement = document.querySelector('.click_and_collect-location-bar__item:nth-child(1) strong');
+                    const deliveryLocationElement = document.querySelector('.click_and_collect-location-bar__item:nth-child(2) strong');
+
+                    // Ensure elements are found in the DOM
+                    if (!shopLocationElement || !deliveryLocationElement) {
+                        throw new Error('Required DOM elements not found');
+                    }
+
+                    // Update the location information dynamically
+                    shopLocationElement.textContent = storedataName;
+                    deliveryLocationElement.textContent = `${addressData} ${selectedZipCode}`;
+                    } catch (error) {
+                    // Handle any errors that occurred during the process
+                    console.error('Error updating location data:', error.message);
+
+                    // Fallback to default values in case of error
+                    const shopLocationElement = document.querySelector('.click_and_collect-location-bar__item:nth-child(1) strong');
+                    const deliveryLocationElement = document.querySelector('.click_and_collect-location-bar__item:nth-child(2) strong');
+
+                    if (shopLocationElement && deliveryLocationElement) {
+                        shopLocationElement.textContent = 'Broadway';  // Default location
+                        deliveryLocationElement.textContent = 'Sydney 2000';  // Default location
+                    }
+                    }
+
+       
         });
         document.body.addEventListener("click", event => { if (!event.target.closest(".popup-modal")) { document.querySelector(".popup-modal").style.display = "none"; } });
         document.addEventListener("click", event => {
@@ -82,9 +120,38 @@ if (document.querySelector(".popup-modal") && !window.location.pathname.includes
                     if (selectedLocation) { getLocations(selectedLocation); } else { getLocations(''); }
                 } else { const locationsContainer = document.querySelector(".popup-box .address-popup .locationss"); locationsContainer.innerHTML = "";
                          const noStoresElement = document.createElement("div"); noStoresElement.classList.add("popup-inner-col"); noStoresElement.innerHTML = '<div class="add">Please enter the postal code </div>'; locationsContainer.appendChild(noStoresElement); } }
-        });   document.addEventListener("change", event => {
-            if (event.target.matches(".popup-modal .address-popup input.locations")) { document.querySelector(".setlocationbtn").style.display = "block"; setCookie("storelocationName", event.target.nextElementSibling.textContent); setCookie("storelocation", event.target.id); }
-        });
+        });document.addEventListener("change", event => {
+    if (event.target.matches(".popup-modal .address-popup input.locations")) {
+        // Show the "Set Store Location" button
+        document.querySelector(".setlocationbtn").style.display = "block";
+        
+        // Set cookies for store location name and store ID
+        setCookie("storelocationName", event.target.nextElementSibling.textContent);
+        setCookie("storelocation", event.target.id);
+        
+        // Get the zip_code attribute from the selected input
+        const zipCode = event.target.getAttribute('zip_code');
+        const addressData = event.target.getAttribute('address_data');
+         const storedataName = event.target.getAttribute('data-name');
+
+        // If zip_code exists, execute the code
+        if (zipCode) {
+            // Add the zip code as a custom attribute to the "Set Store Location" button
+            document.querySelector(".setlocationbtn").setAttribute('data-zipcode', zipCode);
+            
+            // Save the selected zip code to localStorage
+             localStorage.setItem('selectedZipCode', zipCode);
+             localStorage.setItem('addressData', addressData);
+             localStorage.setItem('storedataName', storedataName);
+
+            // Log the selected zip code for verification
+            console.log('Selected Zip Code: ', zipCode,addressData);
+        } else {
+            console.log('No zip_code attribute found for this location');
+        }
+    }
+});
+
     }); if (getCookie("storelocationName")) { } else { showModal(); }
 }
 async function getUserLocation() { const accessToken = '7a1891347cf4af'; try { const response = await fetch(`https://ipinfo.io/json?token=${accessToken}`);

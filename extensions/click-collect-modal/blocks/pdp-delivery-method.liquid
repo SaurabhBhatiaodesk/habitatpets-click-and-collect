@@ -1,0 +1,64 @@
+{% render 'pdp-delivery-method', section: block %}
+
+{% schema %}
+{
+    "name": "pdp-delivery-method",
+    "target": "section",
+    "stylesheet": "cnc-cart.css",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Select a Delivery Method"
+      },
+      {
+        "type": "text",
+        "id": "button_title",
+        "label": "Enter The Button title",
+        "default": "Check Stock in Store"
+      },
+      {
+        "type": "text",
+        "id": "close_button_title",
+        "label": "Enter The Close Button title",
+        "default": "Close Stock Check"
+      },
+      {
+        "type": "color",
+        "id": "sdev_check_stock_button",
+        "label": "Button check stock button Color",
+        "default": "#007bff"
+      },
+      {
+        "type": "color",
+        "id": "sdev_check_stock_button_hover",
+        "label": "Button hover check stock button Color",
+        "default": "#fff"
+      },
+      {
+        "type": "color",
+        "id": "sdev_check_stock_button_text_color",
+        "label": "Button hover check stock button text Color",
+        "default": "#fff"
+      },
+      {
+        "type": "color",
+        "id": "button_color",
+        "label": "Button Color",
+        "default": "#007bff"
+      },
+      {
+        "type": "color",
+        "id": "close_button_hover_color",
+        "label": "Close Button hover Color",
+        "default": "#007bff"
+      },
+      {
+        "type": "text",
+        "id": "pickup_location_label",
+        "label": "Pickup Location Label",
+        "default": "Please choose a pickup location:"
+      }
+    ]
+  }
+
+{% endschema %}

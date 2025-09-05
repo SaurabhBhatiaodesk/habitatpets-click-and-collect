@@ -95,6 +95,9 @@ export async function loader({ request }) {
       where: { shop },
     });
 
+        console.log('Created storestore:', store);
+
+
     if (!store) {
       throw new Error("Store connection not found");
     }

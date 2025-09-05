@@ -9,6 +9,10 @@ export async function loader({ request }) {
   const auth_session = await db.session.findFirst({
     where: { shop },
   });
+  
+  console.log("shop",shop)
+
+  console.log("auth_session?.accessToken",auth_session?.accessToken)
 
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -31,6 +35,6 @@ export async function loader({ request }) {
   
   let locationsResult= await fetch(`https://${shop}/admin/api/2024-04/graphql.json`, requestOptionslocations)
   let data=await locationsResult.json();
- 
+   console.log("data",data)
   return await cors(request, json(data));
 }

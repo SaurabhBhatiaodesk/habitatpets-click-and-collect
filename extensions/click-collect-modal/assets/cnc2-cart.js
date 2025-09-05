@@ -45,7 +45,7 @@ async function getCartLocations(selectedLocationName = "") {
 	// console.log('1111111 ')
 	try {
 		var count = 0;
-		const pickuplcurl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/pickupLocation?shop=${location.hostname}`;
+		const pickuplcurl = `https://star-legend-fabrics-swap.trycloudflare.com/api/pickupLocation?shop=flirt-adult-store.myshopify.com`;
         const testres = await fetchData(pickuplcurl); 
 
 		let arrr = localStorage.getItem("testings");
@@ -74,7 +74,7 @@ async function getCartLocations(selectedLocationName = "") {
 				// // console.log('10')
 				let customerLocation = getCookie("customerlocation");
 				document.querySelector(".location").value = customerLocation;
-				let distanceApiUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&shop=${location.hostname}`;
+				let distanceApiUrl = `https://star-legend-fabrics-swap.trycloudflare.com/api/distance?customerlocation=${customerLocation}&shop=flirt-adult-store.myshopify.com`;
 				let res = await fetchData(distanceApiUrl);		
 				// // console.log('res ',res);
 				let locationData = [];	
@@ -187,8 +187,8 @@ async function getCartLocations(selectedLocationName = "") {
 }
 async function get_inv_locations( product) {     
 	try {       
-		// // // console.log('product',product);   
-		let response = await fetch(`https://clickncollect-12d7088d53ee.herokuapp.com/api/cart?product_id=${product.product_id}&shop=${location.hostname}`);
+		console.log('product',product);   
+		let response = await fetch(`https://star-legend-fabrics-swap.trycloudflare.com/api/cart?product_id=${product.product_id}&shop=flirt-adult-store.myshopify.com`);
 		if (response.ok) {
 			let data = await response.json();
 			handle_inv_locations(null, data.data, product);   

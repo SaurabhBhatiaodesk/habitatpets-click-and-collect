@@ -1,0 +1,689 @@
+<div class="sdev-container">
+    {% comment %} <div class="sdev-header">
+        <h1 class="sdev-title">Product Stock Checker</h1>
+    </div>
+     {% endcomment %}
+    <div class="sdev-main-content">
+        <!-- Check Stock Button -->
+        <button id="sdev-check-stock-btn" class="sdev-check-stock-button">
+            <span class="sdev-button-icon"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 616 512"><path fill="currentColor" d="M602 118.6L537.1 15C531.3 5.7 521 0 510 0H106C95 0 84.7 5.7 78.9 15L14 118.6c-29.6 47.2-10 110.6 38 130.8v227.4c0 19.4 14.3 35.2 32 35.2h448c17.7 0 32-15.8 32-35.2V249.4c48-20.2 67.6-83.6 38-130.8zM516 464H100v-96h416zm-.2-144.2H100v-64.7c24-3.3 45.1-15.2 60.3-32.2 18 20.1 44.3 33.1 73.8 33.1 29.6 0 55.8-13 73.8-33.1 18 20.1 44.3 33.1 73.8 33.1 29.6 0 55.8-13 73.8-33.1 15.3 17 36.3 28.9 60.3 32.2zm47.9-133c-3.2 6.8-10.9 18.6-27 20.8-2.4.3-4.8.5-7.2.5-14.7 0-28.2-6.1-38.1-17.2L455.7 151 420 190.8c-9.9 11.1-23.5 17.2-38.1 17.2s-28.2-6.1-38.1-17.2L308 151l-35.7 39.8c-9.9 11.1-23.5 17.2-38.1 17.2-14.7 0-28.2-6.1-38.1-17.2L160.3 151l-35.7 39.8c-9.9 11.1-23.5 17.2-38.1 17.2-2.5 0-4.9-.2-7.2-.5-16-2.2-23.8-13.9-27-20.8-5-10.8-7.1-27.6 2.3-42.6L114.8 48h386.3l60.2 96.1c9.5 15.1 7.5 31.9 2.4 42.7z"></path></svg></span>
+            {{section.settings.button_title}}
+        </button>
+        
+        <!-- Stock Check Section (Inline) -->
+        <div id="sdev-stock-section" class="sdev-stock-section sdev-hidden">
+            <div class="inner_content_stock">
+                    <div class="sdev-section-header">
+                    <button id="sdev-close-section" class="sdev-close-button">
+                        ✕ {{section.settings.close_button_title}}
+                    </button>
+                </div>
+            <div class="sdev-section-content">
+                
+                
+                <div class="sdev-search-section">
+                    <input 
+                        type="text" 
+                        id="sdev-postcode-input" 
+                        class="sdev-postcode-input" 
+                        placeholder="Enter Postcode"
+                        maxlength="6"
+                    >
+                    <button id="sdev-search-btn" class="sdev-search-button">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path></svg>
+                    </button>
+                </div>
+                <div class="pickup_location_hd">
+                    <p>{{section.settings.pickup_location_label}}</p>
+                </div>
+                <div id="sdev-loading" class="sdev-loading sdev-hidden">
+                    <div class="sdev-spinner"></div>
+                    <p>Loading stock information...</p>
+                </div>
+                
+                <div id="sdev-locations-list" class="sdev-locations-list">
+                    <!-- Locations will be populated here -->
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// API endpoints
+    const API_BASE = 'https://waves-exemption-salon-yarn.trycloudflare.com/api';
+    const PICKUP_LOCATIONS_ENDPOINT = `${API_BASE}/pickupLocation`;
+    const CART_ENDPOINT = `${API_BASE}/cart`;
+
+    // Default product ID (from the original API)
+    const DEFAULT_PRODUCT_ID = '{{ product.id }}';
+
+    // DOM elements
+    const checkStockBtn = document.getElementById('sdev-check-stock-btn');
+    const stockSection = document.getElementById('sdev-stock-section');
+    const closeSectionBtn = document.getElementById('sdev-close-section');
+    const postcodeInput = document.getElementById('sdev-postcode-input');
+    const searchBtn = document.getElementById('sdev-search-btn');
+    const loading = document.getElementById('sdev-loading');
+    const locationsList = document.getElementById('sdev-locations-list');
+
+    // State
+    let allLocations = [];
+    let stockData = {};
+    let selectedLocationId = null;
+
+    // Event listeners
+    checkStockBtn.addEventListener('click', openStockSection);
+    closeSectionBtn.addEventListener('click', closeStockSection);
+    searchBtn.addEventListener('click', searchLocations);
+    postcodeInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            searchLocations();
+        }
+    });
+
+    // Functions
+    async function openStockSection() {
+        stockSection.classList.remove('sdev-hidden');
+        checkStockBtn.style.display = 'none';
+        
+        // Load initial data
+        await loadInitialData();
+    }
+
+    function closeStockSection() {
+        stockSection.classList.add('sdev-hidden');
+        checkStockBtn.style.display = 'flex';
+        
+        // Clear search input
+        postcodeInput.value = '';
+        selectedLocationId = null;
+    }
+
+    async function loadInitialData() {
+        showLoading();
+        
+        try {
+            // Load pickup locations and stock data in parallel
+            const [locationsResponse, stockResponse] = await Promise.all([
+                fetch(`${PICKUP_LOCATIONS_ENDPOINT}?shop=surjeet-test.myshopify.com`),
+                fetch(`${CART_ENDPOINT}?product_id=${DEFAULT_PRODUCT_ID}&shop=surjeet-test.myshopify.com`)
+            ]);
+            
+            if (!locationsResponse.ok || !stockResponse.ok) {
+                throw new Error('Failed to fetch data');
+            }
+            
+            const locationsData = await locationsResponse.json();
+            const stockDataResponse = await stockResponse.json();
+            
+            allLocations = locationsData.data.locations.nodes;
+            stockData = processStockData(stockDataResponse);
+            
+            displayLocations(allLocations);
+            
+        } catch (error) {
+            console.error('Error loading data:', error);
+            showError('Failed to load stock information. Please try again.');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    function processStockData(stockResponse) {
+        const stockByLocation = {};
+        
+        if (stockResponse.data && stockResponse.data.product && stockResponse.data.product.variants) {
+            const variants = stockResponse.data.product.variants.nodes;
+            
+            variants.forEach(variant => {
+                if (variant.inventoryItem && variant.inventoryItem.inventoryLevels) {
+                    variant.inventoryItem.inventoryLevels.edges.forEach(edge => {
+                        const locationName = edge.node.location.name;
+                        const quantity = edge.node.quantities.find(q => q.name === 'available')?.quantity || 0;
+                        
+                        // Sum up quantities for the same location (in case of multiple variants)
+                        if (stockByLocation[locationName]) {
+                            stockByLocation[locationName] += quantity;
+                        } else {
+                            stockByLocation[locationName] = quantity;
+                        }
+                    });
+                }
+            });
+        }
+        
+        return stockByLocation;
+    }
+
+    function searchLocations() {
+        const postcode = postcodeInput.value.trim();
+        
+        if (!postcode) {
+            displayLocations(allLocations);
+            return;
+        }
+        
+        // Filter locations by postcode (simple matching)
+        const filteredLocations = allLocations.filter(location => {
+            const locationPostcode = location.address.zip;
+            return locationPostcode.includes(postcode);
+        });
+        
+        displayLocations(filteredLocations);
+    }
+
+    function displayLocations(locations) {
+        locationsList.innerHTML = '';
+        
+        if (locations.length === 0) {
+            locationsList.innerHTML = `
+                <div class="sdev-no-results">
+                    <p>No locations found for the entered postcode.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        locations.forEach(location => {
+            const locationElement = createLocationElement(location);
+            locationsList.appendChild(locationElement);
+        });
+    }
+
+    function createLocationElement(location) {
+        const div = document.createElement('div');
+        div.className = 'sdev-location-item';
+        div.dataset.locationId = location.id;
+        
+        const stockQuantity = stockData[location.name] || 0;
+        const isInStock = stockQuantity > 0;
+        const stockStatusClass = isInStock ? 'sdev-stock-in' : 'sdev-stock-out';
+        const stockStatusText = isInStock ? 'In stock' : 'Out of stock';
+        
+        // Calculate distance (mock calculation based on postcode)
+        const distance = calculateDistance(location.address.zip);
+        
+        // Check if this location should be selected (first one with stock)
+        const isSelected = selectedLocationId === location.id || (selectedLocationId === null && isInStock);
+        if (isSelected && selectedLocationId === null) {
+            selectedLocationId = location.id;
+        }
+        
+        div.innerHTML = `
+            <div class="sdev-location-header">
+                <div class="sdev-location-name">
+                    <div class="sdev-location-selector"></div>
+                    ${location.name} <span class="sdev-location-distance">${distance}</span>
+                </div>
+                <div class="sdev-stock-status ${stockStatusClass}">
+                    <div class="sdev-stock-indicator"></div>
+                    ${stockStatusText}
+                </div>
+            </div>
+            <div class="addressed_click_cmt">
+                <div class="sdev-location-address">
+                    ${location.address.formatted.join('<br>')}
+                </div>
+            </div>
+        `;
+        
+        if (isSelected) {
+            div.classList.add('sdev-selected');
+        }
+        
+        // Add click handler for location selection
+        div.addEventListener('click', () => {
+            // Remove selection from all locations
+            document.querySelectorAll('.sdev-location-item').forEach(item => {
+                item.classList.remove('sdev-selected');
+            });
+            
+            // Select this location
+            div.classList.add('sdev-selected');
+            selectedLocationId = location.id;
+        });
+        
+        return div;
+    }
+
+    function calculateDistance(postcode) {
+        // Mock distance calculation based on postcode
+        const postcodeNum = parseInt(postcode);
+        const basePostcode = 3000; // Melbourne CBD
+        const diff = Math.abs(postcodeNum - basePostcode);
+        
+        if (diff === 0) return '0km';
+        if (diff < 10) return `${Math.floor(diff / 2)}km`;
+        if (diff < 50) return `${Math.floor(diff / 5)}km`;
+        if (diff < 100) return `${Math.floor(diff / 3)}km`;
+        return `${Math.floor(diff / 2)}km`;
+    }
+
+    function showLoading() {
+        loading.classList.remove('sdev-hidden');
+        locationsList.innerHTML = '';
+    }
+
+    function hideLoading() {
+        loading.classList.add('sdev-hidden');
+    }
+
+    function showError(message) {
+        locationsList.innerHTML = `
+            <div class="sdev-error-message" style="
+                text-align: center;
+                padding: 20px;
+                color: #e74c3c;
+                background: #fdf2f2;
+                border: 1px solid #f5c6cb;
+                border-radius: 8px;
+                margin: 10px 0;
+            ">
+                <p>${message}</p>
+            </div>
+        `;
+    }
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('Stock Checker initialized');
+    });
+
+
+</script>
+
+<style>
+/* Reset and base styles */
+/* Reset and base styles */
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+background-color: #f8f9fa;
+color: #333;
+line-height: 1.6;
+}
+div#sdev-stock-section {
+    width: 100%;
+}
+/* Container */
+.sdev-container {
+max-width: 800px;
+margin: 0 auto;
+{% comment %} padding: 20px; {% endcomment %}
+}
+
+/* Header */
+.sdev-header {
+text-align: center;
+margin-bottom: 40px;
+}
+
+.sdev-title {
+font-size: 2.5rem;
+font-weight: 700;
+color: #2c3e50;
+margin-bottom: 10px;
+}
+
+/* Main content */
+.sdev-main-content {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 20px;
+}
+.pickup_location_hd {
+background: #fff;
+padding: 0 20px  8px 20px;
+}
+.sdev-section-content {
+background: #fff;
+}
+/* Check Stock Button */
+.sdev-check-stock-button {
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 23px;
+border: 1px solid {{section.settings.sdev_check_stock_button}};
+height: 48px;
+color: {{section.settings.sdev_check_stock_button}};
+font-size: 19px;
+line-height: 22px;
+padding: 10px 20px;
+font-weight:600;
+background: #fff;
+cursor: pointer;
+width: 100%;
+transition: ease-in-out 0.5s;
+}
+.sdev-button-icon svg {
+width: auto;
+height: 16px;
+padding-right: 8px;
+}
+.sdev-check-stock-button:hover{
+background-color:{{section.settings.sdev_check_stock_button_hover}};
+color:{{section.settings.sdev_check_stock_button_text_color}};
+}
+
+{% comment %} .sdev-button-icon {
+font-size: 1.2rem;
+} {% endcomment %}
+
+/* Stock Section (Inline) */
+{% comment %} .sdev-stock-section {
+width: 100%;
+max-width: 600px;
+background: white;
+border-radius: 16px;
+box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+overflow: hidden;
+transition: all 0.3s ease;
+animation: slideIn 0.3s ease;
+} {% endcomment %}
+
+.sdev-stock-section.sdev-hidden {
+display: none;
+}
+
+@keyframes slideIn {
+from {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+to {
+    opacity: 1;
+    transform: translateY(0);
+}
+}
+
+{% comment %} .sdev-section-content {
+padding: 24px;
+} {% endcomment %}
+
+/* Section Header */
+.sdev-section-header {
+margin-bottom: 20px;
+}
+
+.sdev-close-button {
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 23px;
+border: 1px solid {{section.settings.button_color}};
+height: 48px;
+color: {{section.settings.button_color}};
+font-size: 19px;
+line-height: 22px;
+padding: 10px 20px;
+font-weight: 700;
+background: #fff;
+cursor: pointer;
+width: 100%;
+transition: ease-in-out 0.5s;
+}
+.sdev-close-button:hover{
+background-color:#fff;
+color:{{section.settings.close_button_hover_color}};
+}
+
+/* Search Section */
+.sdev-search-section {
+display: flex;
+align-items: center;
+padding: 20px;
+}
+
+.sdev-postcode-input {
+border-radius: 3px 0 0 3px;
+border: 1px solid #E1E1E1;
+border-right: none;
+width: calc(100% - 48px);
+height: 46px;
+font-size: 15px;
+color: #111;
+padding: 10px 20px;
+}
+
+.sdev-postcode-input:focus {
+outline: none;
+border-color:inherit;
+background: white;
+box-shadow: none;
+}
+
+.sdev-search-button {
+background: {{section.settings.sdev_check_stock_button}};
+color: white;
+border: none;
+padding: 14.5px 18px;
+border-radius:0;
+cursor: pointer;
+transition: all 0.3s ease;
+min-width: 50px;
+}
+
+{% comment %} .sdev-search-button:hover {
+background: #229954;
+transform: translateY(-1px);
+} {% endcomment %}
+
+/* Loading */
+.sdev-loading {
+text-align: center;
+padding: 40px 20px;
+color: #7f8c8d;
+}
+
+.sdev-loading.sdev-hidden {
+display: none;
+}
+
+.sdev-spinner {
+width: 40px;
+height: 40px;
+border: 4px solid #ecf0f1;
+border-top: 4px solid #3498db;
+border-radius: 50%;
+animation: spin 1s linear infinite;
+margin: 0 auto 16px;
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+/* Locations List */
+.sdev-locations-list {
+display: flex;
+flex-direction: column;
+gap:0;
+}
+
+.sdev-location-item {
+border-radius:0px;
+padding: 16px;
+transition: all 0.3s ease;
+cursor: pointer;
+position: relative;
+background: #fff;
+border-bottom:1px solid #ddd;
+}
+
+{% comment %} .sdev-location-item:hover {
+background: #e8f4fd;
+border-color: #3498db;
+transform: translateY(-1px);
+box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
+} {% endcomment %}
+
+{% comment %} .sdev-location-item.sdev-selected {
+background: #e8f5e8;
+border-color: #27ae60;
+box-shadow: 0 4px 12px rgba(39, 174, 96, 0.15);
+} {% endcomment %}
+
+.sdev-location-header {
+display: flex;
+justify-content: space-between;
+align-items: end;
+}
+
+.sdev-location-name {
+font-weight: 600;
+font-size: 15px;
+line-height: 21px;
+color:#000;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+{% comment %} .sdev-location-distance {
+font-size: 0.9rem;
+color:#000;
+font-weight: 500;
+} {% endcomment %}
+.sdev-location-address br{
+display:none;
+}
+.sdev-location-address {
+color: #5a6c7d;
+color:#000;
+padding: 12px 0;
+display:none;
+line-height: 1.4;
+}
+.sdev-location-item.sdev-selected .addressed_click_cmt .sdev-location-address{
+display:block;
+}
+.sdev-location-item.sdev-selected .sdev-location-name:before{
+border: 6px solid {{section.settings.sdev_check_stock_button}};
+}
+.sdev-location-name:before {
+border: 1px solid #E4E4E4;
+content: "";
+width: 20px;
+height: 20px;
+display: inline-block;
+border-radius: 50%;
+margin-right: 8px;
+}
+.addressed_click_cmt {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 0;
+}
+.sdev-stock-status {
+display: flex;
+align-items: center;
+gap: 8px;
+font-weight: 600;
+font-size: 14px;
+}
+.sdev-stock-indicator {
+width: 12px;
+height: 12px;
+border-radius: 50%;
+}
+
+.sdev-stock-in {
+color: #27ae60;
+}
+
+.sdev-stock-in .sdev-stock-indicator {
+background: #27ae60;
+}
+
+.sdev-stock-out {
+color: #e74c3c;
+}
+
+.sdev-stock-out .sdev-stock-indicator {
+background: #e74c3c;
+}
+
+/* Location selection indicator */
+.sdev-location-selector {
+width: 20px;
+height: 20px;
+border: 2px solid #e1e8ed;
+border-radius: 50%;
+background: white;
+position: relative;
+transition: all 0.3s ease;
+}
+
+.sdev-location-item.sdev-selected .sdev-location-selector {
+border-color: #27ae60;
+background: #27ae60;
+}
+
+.sdev-location-item.sdev-selected .sdev-location-selector::after {
+content: '';
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 8px;
+height: 8px;
+background: white;
+border-radius: 50%;
+}
+
+/* Utility classes */
+.sdev-hidden {
+display: none !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+.sdev-container {
+    {% comment %} padding: 15px; {% endcomment %}
+}
+
+.sdev-title {
+    font-size: 2rem;
+}
+
+.sdev-stock-section {
+    margin: 20px;
+    width: calc(100% - 40px);
+}
+
+.sdev-section-content {
+    padding: 20px;
+}
+
+.sdev-check-stock-button {
+    min-width: 200px;
+    padding: 14px 28px;
+    font-size: 1rem;
+}
+
+.sdev-search-section {
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sdev-postcode-input,
+.sdev-search-button {
+    width: 100%;
+}
+
+.sdev-locations-list {
+    max-height: 300px;
+}
+}
+</style> 

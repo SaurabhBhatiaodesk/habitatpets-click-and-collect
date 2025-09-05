@@ -3,24 +3,8 @@
 client_id = "31ef8dcd9586021f76d3de78510465c8"
 name = "Retail Express-Click & Collect"
 handle = "retail-express-click-collect"
-application_url = "https://clickncollect-12d7088d53ee.herokuapp.com/"
-embedded = false
-
-[build]
-automatically_update_urls_on_dev = false
-dev_store_url = "click-collolect.myshopify.com"
-
-[access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_inventory,read_locales,read_locations,read_product_listings,read_products,read_publications,read_script_tags,write_content,write_inventory,write_locations,write_products,write_publications,write_script_tags,write_shipping"
-
-[auth]
-redirect_urls = [
-  "https://clickncollect-12d7088d53ee.herokuapp.com/auth/callback",
-  "https://clickncollect-12d7088d53ee.herokuapp.com/auth/shopify/callback",
-  "https://clickncollect-12d7088d53ee.herokuapp.com/api/auth/callback",
-  "https://clickncollect-12d7088d53ee.herokuapp.com/api/auth"
-]
+application_url = "https://waves-exemption-salon-yarn.trycloudflare.com/"
+embedded = true
 
 [webhooks]
 api_version = "2024-10"
@@ -29,8 +13,24 @@ api_version = "2024-10"
   uri = "/webhooks"
   compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
 
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_inventory,read_locales,read_locations,read_product_listings,read_products,read_publications,read_script_tags,write_content,write_inventory,write_locations,write_products,write_publications,write_script_tags,write_shipping"
+
+[auth]
+redirect_urls = [
+  "https://waves-exemption-salon-yarn.trycloudflare.com/auth/callback",
+  "https://waves-exemption-salon-yarn.trycloudflare.com/auth/shopify/callback",
+  "https://waves-exemption-salon-yarn.trycloudflare.com/api/auth/callback",
+  "https://waves-exemption-salon-yarn.trycloudflare.com/api/auth"
+]
+
 [pos]
 embedded = false
 
 [app_preferences]
-url = "https://clickncollect-12d7088d53ee.herokuapp.com/"
+url = "https://waves-exemption-salon-yarn.trycloudflare.com/"
+
+[build]
+automatically_update_urls_on_dev = false
+include_config_on_deploy = true

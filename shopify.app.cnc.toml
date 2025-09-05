@@ -1,0 +1,24 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "b542238c525a93e7b47304952ac2ed17"
+name = "cnc"
+handle = "cnc-6"
+application_url = "https://waves-exemption-salon-yarn.trycloudflare.com"
+embedded = true
+
+[webhooks]
+api_version = "2025-07"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_customers,read_inventory,read_locales,read_locations,read_orders,read_product_listings,read_products,read_publications,read_script_tags,write_content,write_delivery_customizations,write_inventory,write_locations,write_products,write_publications,write_script_tags,write_shipping"
+
+[auth]
+redirect_urls = ["https://waves-exemption-salon-yarn.trycloudflare.com/auth/callback", "https://waves-exemption-salon-yarn.trycloudflare.com/auth/shopify/callback", "https://waves-exemption-salon-yarn.trycloudflare.com/api/auth/callback"]
+
+[pos]
+embedded = false
+
+[build]
+automatically_update_urls_on_dev = true
+include_config_on_deploy = true

@@ -1,0 +1,1107 @@
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .same-day-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .delivery-method {
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: #000;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+        .delivery-method svg{
+            width:22px;
+            height:22px;
+        }
+        .delivery-method.active svg{
+            fill:{{section.settings.title_tab_color}};
+            stroke:{{section.settings.title_tab_color}};
+        }
+        .click-collect .icon svg{
+             width:22px;
+            height:22px;
+        }
+        .delivery-method.active span{
+            color:{{section.settings.title_tab_color}};
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .sdev_hide_click-amp-collect {
+            display: none;
+        }
+        .delivery-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius:0px;
+            box-shadow: none;
+            overflow: hidden;
+        }
+
+        .delivery-header {
+            padding: 20px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .delivery-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 16px;
+        }
+
+        .delivery-methods {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        {% comment %} .delivery-method {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        } {% endcomment %}
+
+        {% comment %} .delivery-method:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        } {% endcomment %}
+
+        {% comment %} .delivery-method.active {
+            border-color: {{section.settings.title_tab_color}};
+            background: #e8f5e8;
+            color: {{section.settings.title_tab_color}};
+        } {% endcomment %}
+
+        .delivery-method .icon {
+            font-size: 1.2rem;
+        }
+
+        .click-collect .icon {
+            color: #8b4513;
+        }
+
+        .home-delivery .icon {
+            color: {{section.settings.title_tab_color}};
+        }
+
+        .delivery-method.active .icon {
+            color: {{section.settings.title_tab_color}};
+        }
+
+        .postcode-section {
+            margin-bottom: 20px;
+        }
+
+        .postcode-label {
+            font-size: 16px;
+            margin-bottom: 8px;
+            font-weight:400;
+            color: #000;
+        }
+
+        .postcode-input-container {
+            display: flex;
+            gap:0px;
+        }
+
+        .postcode-input {
+            border-radius:0;
+            border: 1px solid #E1E1E1;
+            border-right: none;
+            width: calc(100% - 48px);
+            height: 46px;
+            font-size: 15px;
+            color: #111;
+            padding: 10px 20px;
+        }
+
+        .postcode-input:focus {
+            outline: none;
+            {% comment %} border-color: {{section.settings.title_tab_color}}; {% endcomment %}
+            box-shadow:none;
+        }
+
+        .search-button {
+            background: {{section.settings.button_color}};
+            color: white;
+            border: none;
+            padding: 14px 18px;
+            border-radius: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 50px;
+        }
+
+        .search-button:hover {
+            background: {{section.settings.hover_button_color}};
+            outline: none;
+            box-shadow: none;
+        }
+
+        .checkout-section {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .checkout-button {
+            width: 100%;
+            background: #bdc3c7;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: not-allowed;
+            margin-bottom: 12px;
+        }
+
+        .checkout-button.enabled {
+            background: {{section.settings.title_tab_color}};
+            cursor: pointer;
+        }
+
+        .checkout-button.enabled:hover {
+            background: #229954;
+        }
+
+        .continue-shopping {
+            color: {{section.settings.title_tab_color}};
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-bottom: 1px solid {{section.settings.title_tab_color}};
+        }
+
+        .continue-shopping:hover {
+            color: #229954;
+            border-bottom-color: #229954;
+        }
+
+        .options-section {
+            padding: 0 20px 20px;
+            display: none;
+        }
+
+        .options-section.show {
+            display: block;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .option-item:last-child {
+            border-bottom: none;
+        }
+
+        .option-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #e1e8ed;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .option-checkbox.checked {
+            background: {{section.settings.title_tab_color}};
+            border-color: {{section.settings.title_tab_color}};
+        }
+
+        .option-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .shipping-text,
+        .option-text {
+            flex: 1;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 15px;
+            line-height: 21px;
+            color: #000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .option-link {
+            color: {{section.settings.title_tab_color}};
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: capitalize;
+        }
+
+        .option-link:hover {
+            text-decoration: underline;
+        }
+
+        .shipping-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+        }
+
+        .radio-button {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #e1e8ed;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .radio-button.selected {
+            border-color: {{section.settings.title_tab_color}};
+        }
+
+        .radio-button.selected::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: {{section.settings.title_tab_color}};
+            border-radius: 50%;
+        }
+
+        {% comment %} .shipping-text {
+            flex: 1;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+
+        .shipping-price {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c3e50;
+        } {% endcomment %}
+
+        {% comment %} .same-day-info {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        } {% endcomment %}
+
+        .info-icon {
+            color: #3498db;
+            font-size: 1rem;
+        }
+
+        /* Location selection interface */
+        .location-section {
+            padding: 20px;
+            {% comment %} border-top: 1px solid #e1e8ed; {% endcomment %}
+            display: none;
+        }
+
+        .location-section.active {
+            display: block;
+        }
+
+        .location-selection-label {
+            {% comment %} font-size: 0.9rem;
+            color: #2c3e50; {% endcomment %}
+            margin: 0 0 16px;
+        }
+
+        .location-item {
+            background: #f8f9fa;
+            border: 1px solid #e1e8ed;
+            border-radius: 0;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        {% comment %} .location-item:hover {
+            background: #e8f4fd;
+            border-color: #3498db;
+        } {% endcomment %}
+
+        .location-item.selected {
+            {% comment %} background: {{section.settings.title_tab_color}}; {% endcomment %}
+            border-color: {{section.settings.title_tab_color}};
+        }
+
+        .location-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+
+        .location-radio {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 50%;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .location-item.selected .location-radio {
+            border-color: {{section.settings.title_tab_color}};
+        }
+
+        .location-item.selected .location-radio::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 6px;
+            background: {{section.settings.title_tab_color}};
+            border-radius: 50%;
+        }
+
+        .location-name {
+            font-weight: 600;
+            color: #2c3e50;
+            flex: 1;
+        }
+
+        .location-distance {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        .location-stock {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .stock-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: {{section.settings.title_tab_color}};
+        }
+
+        .stock-indicator.out-of-stock {
+            background: #e74c3c;
+        }
+
+        .stock-text {
+            color: {{section.settings.title_tab_color}};
+            font-weight: 500;
+        }
+
+        .stock-text.out-of-stock {
+            color: #e74c3c;
+        }
+
+        {% comment %} .location-address {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            margin-top: 4px;
+            margin-left: 28px;
+        } {% endcomment %}
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+
+        .loading.hidden {
+            display: none;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #ecf0f1;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 20px;
+            color: #e74c3c;
+            background: #fdf2f2;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+
+        @media (max-width: 768px) {
+            .delivery-container {
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .delivery-methods {
+                flex-direction: column;
+            }
+            
+            .postcode-input-container {
+                flex-direction: column;
+            }
+            
+            .search-button {
+                width: 100%;
+            }
+        }
+
+    
+    .sdev-location-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+    }
+
+    .sdev-location-name {
+        font-weight: 600;
+        font-size: 15px;
+        line-height: 21px;
+        color:#000;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    {% comment %} .sdev-location-distance {
+        font-size: 0.9rem;
+        color:#000;
+        font-weight: 500;
+    } {% endcomment %}
+    .sdev-location-address br{
+        display:none;
+    }
+    .sdev-location-address {
+        color: #5a6c7d;
+        color:#000;
+        padding: 12px 0;
+        display:none;
+        line-height: 1.4;
+    }
+    .sdev-location-item.sdev-selected .addressed_click_cmt .sdev-location-address{
+        display:block;
+    }
+    .location-item.selected .sdev-location-name:before{
+        border: 6px solid {{section.settings.title_tab_color}};
+    }
+    .sdev-location-name:before {
+        border: 1px solid #E4E4E4;
+        content: "";
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+    .addressed_click_cmt {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0;
+    }
+    .sdev-stock-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        color:green;
+    }
+    </style>
+
+    
+
+    <div class="delivery-container">
+        <!-- Delivery Method Selection -->
+        <div class="delivery-header">
+            <h2 class="delivery-title">{{section.settings.main_title}}</h2>
+            
+            <div class="delivery-methods">
+                <div class="delivery-method click-collect active" data-method="collect">
+                    <span class="icon">
+                            <svg fill="#000000" height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                viewBox="0 0 512 512" xml:space="preserve">
+                            <g>
+                                <g>
+                                    <g>
+                                        <path d="M128.011,320h-64c-5.888,0-10.667,4.779-10.667,10.667v64c0,5.888,4.779,10.667,10.667,10.667h64
+                                            c5.888,0,10.667-4.779,10.667-10.667v-64C138.677,324.779,133.899,320,128.011,320z M117.344,384H74.677v-42.667h42.667V384z"/>
+                                        <path d="M128.011,192h-64c-5.888,0-10.667,4.779-10.667,10.667v64c0,5.888,4.779,10.667,10.667,10.667h64
+                                            c5.888,0,10.667-4.779,10.667-10.667v-64C138.677,196.779,133.899,192,128.011,192z M117.344,256H74.677v-42.667h42.667V256z"/>
+                                        <path d="M496.395,150.997L261.728,1.664c-3.499-2.219-7.957-2.219-11.456,0L15.605,150.997c-3.051,1.963-4.928,5.355-4.928,9.003
+                                            v341.333c0,5.888,4.779,10.667,10.667,10.667h469.333c5.888,0,10.667-4.779,10.645-10.667V160
+                                            C501.344,156.352,499.467,152.96,496.395,150.997z M309.344,490.667H202.677V416c0-29.397,23.936-53.333,53.333-53.333
+                                            s53.333,23.936,53.333,53.333V490.667z M480.011,490.667H330.677V416c0-41.173-33.493-74.667-74.667-74.667
+                                            S181.344,374.827,181.344,416v74.667H32.011V165.845l224-142.549l224,142.549V490.667z"/>
+                                        <path d="M202.677,202.667V288c0,5.888,4.779,10.667,10.667,10.667h85.333c5.888,0,10.667-4.779,10.667-10.667v-85.333
+                                            c0-5.888-4.779-10.667-10.667-10.667h-85.333C207.456,192,202.677,196.779,202.677,202.667z M224.011,213.333h64v64h-64V213.333z
+                                            "/>
+                                        <path d="M384.011,277.333h64c5.888,0,10.667-4.779,10.667-10.667v-64c0-5.888-4.779-10.667-10.667-10.667h-64
+                                            c-5.888,0-10.667,4.779-10.667,10.667v64C373.344,272.555,378.123,277.333,384.011,277.333z M394.677,213.333h42.667V256h-42.667
+                                            V213.333z"/>
+                                        <path d="M224.011,117.333c0,17.643,14.379,32,32,32c17.643,0,32-14.357,32-32c0-17.643-14.336-32-32-32
+                                            C238.389,85.333,224.011,99.691,224.011,117.333z M266.677,117.333c0,5.888-4.779,10.667-10.667,10.667
+                                            s-10.667-4.779-10.667-10.667s4.779-10.667,10.667-10.667S266.677,111.445,266.677,117.333z"/>
+                                        <path d="M384.011,405.333h64c5.888,0,10.667-4.779,10.667-10.667v-64c0-5.888-4.779-10.667-10.667-10.667h-64
+                                            c-5.888,0-10.667,4.779-10.667,10.667v64C373.344,400.555,378.123,405.333,384.011,405.333z M394.677,341.333h42.667V384h-42.667
+                                            V341.333z"/>
+                                    </g>
+                                </g>
+                            </g>
+                            </svg>
+                    </span>
+                    <span>{{section.settings.clc_title}}</span>
+                </div>
+                <div class="delivery-method home-delivery" data-method="delivery">
+                    <span class="icon">
+                            <svg fill="#000000" height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                viewBox="0 0 512 512" xml:space="preserve">
+                            <g>
+                                <g>
+                                    <g>
+                                        <path d="M96.003,277.333h85.333c5.888,0,10.667-4.779,10.667-10.667v-85.333c0-5.888-4.779-10.667-10.667-10.667H96.003
+                                            c-5.888,0-10.667,4.779-10.667,10.667v85.333C85.336,272.555,90.115,277.333,96.003,277.333z M106.67,192h64v64h-64V192z"/>
+                                        <path d="M511.235,113.365L468.568,6.699C466.947,2.667,463.043,0,458.67,0H53.336c-4.352,0-8.277,2.645-9.899,6.699
+                                            L0.771,113.365c-1.323,3.285-0.917,7.019,1.067,9.941C3.822,126.229,7.128,128,10.67,128h10.667v373.333
+                                            c0,5.888,4.779,10.667,10.667,10.667h448c5.888,0,10.667-4.779,10.667-10.667V128h10.667c3.541,0,6.848-1.771,8.832-4.693
+                                            C512.131,120.384,512.558,116.651,511.235,113.365z M298.67,490.667h-85.333V384h85.333V490.667z M469.336,490.667H320.003
+                                            V373.333c0-5.888-4.779-10.667-10.667-10.667H202.67c-5.888,0-10.667,4.779-10.667,10.667v117.333H42.67V128h426.667V490.667z
+                                            M26.414,106.667l34.133-85.333h390.891l34.133,85.333H26.414z"/>
+                                        <path d="M330.67,277.333h85.333c5.888,0,10.667-4.779,10.667-10.667v-85.333c0-5.888-4.779-10.667-10.667-10.667H330.67
+                                            c-5.888,0-10.667,4.779-10.667,10.667v85.333C320.003,272.555,324.782,277.333,330.67,277.333z M341.336,192h64v64h-64V192z"/>
+                                    </g>
+                                </g>
+                            </g>
+                            </svg>
+                    </span>
+                    <span>{{section.settings.clc_home_title}}</span>
+                </div>
+            </div>
+
+            <!-- Postcode Input -->
+            <div class="postcode-section" id="postcode-section">
+                <div class="postcode-label" id="postcode-label">{{section.settings.clc_search_title}}</div>
+                <div class="postcode-input-container">
+                    <input type="text" class="postcode-input" placeholder="Enter Postcode" maxlength="6" id="postcode-input">
+                    <button class="search-button" id="search-button"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path></svg></button>
+                </div>
+            </div>
+        </div>
+        <div>
+                   <!-- Location Selection (for Click & Collect) -->
+            <div class="location-section" id="location-section">
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Loading stock information...</p>
+            </div>
+
+            <div class="location-selection-label">Please choose a pickup location:</div>
+
+            <div id="locations-list">
+                <!-- Locations will be populated here via API -->
+            </div>
+            </div>
+            <div class="checkout-section" id="checkout-section" style="display:none !important">
+            <button class="checkout-button" disabled>CHECK OUT</button>
+            <a href="#" class="continue-shopping">Continue Shopping</a>
+            </div>
+        </div>
+        <!-- Checkout Section (Initial State) -->
+
+
+        <!-- Options Section (for Home Delivery) -->
+        <div class="options-section" id="options-section">
+            <div class="option-item">
+                <div class="option-checkbox" id="authority-checkbox"></div>
+                <div class="option-text">{{section.settings.authority_to_leave}}</div>
+                <a href="#" class="option-link">{{section.settings.more_info}}</a>
+            </div>
+            
+            <div class="shipping-option">
+                <div class="radio-button selected" id="standard-radio"></div>
+                <div class="shipping-text">{{section.settings.standard_ship_title}}</div>
+                <div class="shipping-price">{{section.settings.standard_ship_price}}</div>
+            </div>
+            
+            <div class="same-day-info">
+                <span>{{section.settings.looking_for_delivery}}</span>
+                  <span class="info-icon">
+                    <svg class="open" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z" stroke="#01AF67" stroke-linecap="round" stroke-linejoin="round"></path><path d="M7.5 7.5H8V11H8.5" stroke="#01AF67" stroke-linecap="round" stroke-linejoin="round"></path><path d="M7.875 6C8.28921 6 8.625 5.66421 8.625 5.25C8.625 4.83579 8.28921 4.5 7.875 4.5C7.46079 4.5 7.125 4.83579 7.125 5.25C7.125 5.66421 7.46079 6 7.875 6Z" fill="#01AF67"></path>
+                </svg>
+                  </span>
+            </div>
+        </div>
+
+ 
+    </div>
+
+    <script>
+        // API endpoints - using the same structure as the original code
+        const API_BASE = 'https://waves-exemption-salon-yarn.trycloudflare.com/api';
+        const PICKUP_LOCATIONS_ENDPOINT = `${API_BASE}/pickupLocation`;
+        const CART_ENDPOINT = `${API_BASE}/cart`;
+
+        // Default product ID (from the original API)
+        const DEFAULT_PRODUCT_ID = '{{ cart.items.first.product.id }}';
+        const SHOP_DOMAIN = '{{shop.domain}}';
+
+        // DOM elements
+        const deliveryMethods = document.querySelectorAll('.delivery-method');
+        const postcodeLabel = document.getElementById('postcode-label');
+        const postcodeInput = document.getElementById('postcode-input');
+        const searchButton = document.getElementById('search-button');
+        const checkoutSection = document.getElementById('checkout-section');
+        const checkoutButton = document.querySelector('.checkout-button');
+        const optionsSection = document.getElementById('options-section');
+        const locationSection = document.getElementById('location-section');
+        const authorityCheckbox = document.getElementById('authority-checkbox');
+        const loading = document.getElementById('loading');
+        const locationsList = document.getElementById('locations-list');
+
+        // State
+        let selectedMethod = 'collect';
+        let selectedLocationId = null;
+        let allLocations = [];
+        let stockData = {};
+        let hasSearched = false;
+
+        // Initialize
+        function init() {
+            updateInterface();
+            addEventListeners();
+        }
+
+        function addEventListeners() {
+            // Delivery method selection
+            deliveryMethods.forEach(method => {
+                method.addEventListener('click', () => {
+                    deliveryMethods.forEach(m => m.classList.remove('active'));
+                    method.classList.add('active');
+                    selectedMethod = method.dataset.method;
+                    hasSearched = false; // Reset search state
+                    selectedLocationId = null; // Reset selected location
+                    setTimeout(() => {
+                  // Get the button element
+                            const checkoutButton1 = document.querySelector('#checkout');
+
+                            // To enable the button:
+                            checkoutButton1.disabled = false; // Removes the disabled attribute
+
+                            // Optionally add a class to style it (if you use an 'enabled' class for styling):
+                            checkoutButton1.classList.add('enabled');
+
+                    }, 3000);
+                    updateInterface();
+                });
+            });
+
+            // Authority checkbox
+            authorityCheckbox.addEventListener('click', () => {
+                authorityCheckbox.classList.toggle('checked');
+            });
+
+            // Search functionality
+            searchButton.addEventListener('click', searchLocations);
+            postcodeInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchLocations();
+                }
+            });
+        }
+
+        function updateInterface() {
+            if (selectedMethod === 'collect') {
+                postcodeLabel.textContent = 'Search for a location to pick up your order:';
+                postcodeInput.placeholder = 'Enter Postcode';
+                
+                if (hasSearched) {
+                //    checkoutSection.style.display = 'none';
+                    setTimeout(() => {
+                        const checkoutButton1 = document.querySelector('#checkout');
+
+                        // To enable the button:
+                        checkoutButton1.disabled = false; // Removes the disabled attribute
+
+                        // Optionally add a class to style it (if you use an 'enabled' class for styling):
+                        checkoutButton1.classList.add('enabled');
+                    }, 5000); 
+                    optionsSection.classList.remove('show');
+                    locationSection.classList.add('active');
+                } else {
+                    checkoutSection.style.display = 'none';
+                    optionsSection.classList.remove('show');
+                    locationSection.classList.remove('active');
+                }
+            } else {
+                postcodeLabel.textContent = 'Enter postcode for postage estimate:';
+                postcodeInput.placeholder = '3000';
+                checkoutSection.style.display = 'none';
+                optionsSection.classList.add('show');
+                locationSection.classList.remove('active');
+            }
+            updateCheckoutButtonState();
+        }
+
+        async function searchLocations() {
+            const postcode = postcodeInput.value.trim();
+            
+            if (!postcode) {
+                alert('Please enter a postcode');
+                return;
+            }
+
+            if (selectedMethod === 'collect') {
+                hasSearched = true;
+                updateInterface();
+                await loadLocationData(postcode);
+            } else {
+                // For home delivery, just show a message or update pricing
+                console.log('Searching delivery options for postcode:', postcode);
+            }
+        }
+
+        async function loadLocationData(postcode = '') {
+            showLoading();
+            
+            try {
+                // Load pickup locations and stock data in parallel
+                const [locationsResponse, stockResponse] = await Promise.all([
+                    fetch(`${PICKUP_LOCATIONS_ENDPOINT}?shop=${SHOP_DOMAIN}`),
+                    fetch(`${CART_ENDPOINT}?product_id=${DEFAULT_PRODUCT_ID}&shop=${SHOP_DOMAIN}`)
+                ]);
+                
+                if (!locationsResponse.ok || !stockResponse.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                
+                const locationsData = await locationsResponse.json();
+                const stockDataResponse = await stockResponse.json();
+                
+                allLocations = locationsData.data.locations.nodes;
+                stockData = processStockData(stockDataResponse);
+                
+                // Filter by postcode if provided
+                let filteredLocations = allLocations;
+                if (postcode) {
+                    filteredLocations = allLocations.filter(location => {
+                        const locationPostcode = location.address.zip;
+                        return locationPostcode.includes(postcode);
+                    });
+                }
+                
+                displayLocations(filteredLocations);
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showError('Failed to load stock information. Please try again.');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function processStockData(stockResponse) {
+            const stockByLocation = {};
+            
+            if (stockResponse.data && stockResponse.data.product && stockResponse.data.product.variants) {
+                const variants = stockResponse.data.product.variants.nodes;
+                
+                variants.forEach(variant => {
+                    if (variant.inventoryItem && variant.inventoryItem.inventoryLevels) {
+                        variant.inventoryItem.inventoryLevels.edges.forEach(edge => {
+                            const locationName = edge.node.location.name;
+                            const quantity = edge.node.quantities.find(q => q.name === 'available')?.quantity || 0;
+                            
+                            // Sum up quantities for the same location (in case of multiple variants)
+                            if (stockByLocation[locationName]) {
+                                stockByLocation[locationName] += quantity;
+                            } else {
+                                stockByLocation[locationName] = quantity;
+                            }
+                        });
+                    }
+                });
+            }
+            
+            return stockByLocation;
+        }
+
+        function displayLocations(locations) {
+            locationsList.innerHTML = '';
+            
+            if (locations.length === 0) {
+                locationsList.innerHTML = `
+                    <div class="no-results">
+                        <p>No locations found for the entered postcode.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            locations.forEach(location => {
+                const locationElement = createLocationElement(location);
+                locationsList.appendChild(locationElement);
+            });
+        }
+
+        function createLocationElement(location) {
+            const div = document.createElement('div');
+            
+            const stockQuantity = stockData[location.name] || 0;
+            const isInStock = stockQuantity > 0;
+            const stockStatusClass = isInStock ? '' : 'out-of-stock';
+            const stockStatusText = isInStock ? 'In stock' : 'out-of-stock';
+        
+            // Add base + stock class
+            div.className = `location-item ${stockStatusClass}`;
+            div.dataset.locationId = location.id;
+        
+            // Calculate distance (mock calculation based on postcode)
+            const distance = calculateDistance(location.address.zip);
+        
+            // Check if this location should be selected (first one with stock)
+            const isSelected = selectedLocationId === location.id || (selectedLocationId === null && isInStock);
+            if (isSelected && selectedLocationId === null) {
+                selectedLocationId = location.id;
+            }
+        
+            div.innerHTML = `
+                <div class="sdev-location-header">
+                    <div class="sdev-location-name">
+                        <div class="sdev-location-selector"></div>
+                        ${location.name} <span class="sdev-location-distance">${distance}</span>
+                    </div>
+                    <div class="sdev-stock-status ${stockStatusClass}">
+                        <div class="sdev-stock-indicator"></div>
+                        ${stockStatusText}
+                    </div>
+                </div>
+                <div class="addressed_click_cmt">
+                    <div class="sdev-location-address">
+                        ${location.address.formatted.join('<br>')}
+                    </div>
+                </div>
+            `;
+        
+            // Add click handler for location selection
+            div.addEventListener('click', () => {
+                document.querySelectorAll('.location-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+        
+                div.classList.add('selected');
+                selectedLocationId = location.id;
+        
+                addToCartWithLocation(location);
+            });
+        
+            return div;
+        }
+        
+
+        function addToCartWithLocation(location) {
+            const data = {
+                id: "46950237503744", // The variant ID for the product
+                quantity: 1, // The quantity of the product
+                properties: {
+                    Address: `${location.address.formatted.join(', ')}`, // Location address as custom property
+                    'Pickup Location': location.name,
+                    'Location ID': location.id
+                }
+            };
+
+            fetch('/cart/add.js', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(() => {
+                console.log('Item added to cart with location:', location.name);
+                // Optionally redirect to cart or show success message
+                localStorage.setItem("lastAddedVariant", '46950237503744');
+                // window.location.href = '/cart';
+            })
+            .catch(error => {
+                console.error('Error adding item to cart:', error);
+            });
+        }
+
+        function calculateDistance(postcode) {
+            // Mock distance calculation based on postcode (same as original)
+            const postcodeNum = parseInt(postcode);
+            const basePostcode = 3000; // Melbourne CBD
+            const diff = Math.abs(postcodeNum - basePostcode);
+            
+            if (diff === 0) return '0km';
+            if (diff < 10) return `${Math.floor(diff / 2)}km`;
+            if (diff < 50) return `${Math.floor(diff / 5)}km`;
+            if (diff < 100) return `${Math.floor(diff / 3)}km`;
+            return `${Math.floor(diff / 2)}km`;
+        }
+
+        function showLoading() {
+            loading.classList.remove('hidden');
+            locationsList.innerHTML = '';
+        }
+
+        function hideLoading() {
+            loading.classList.add('hidden');
+        }
+
+        function showError(message) {
+            locationsList.innerHTML = `
+                <div class="error-message">
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        function updateCheckoutButtonState() {
+            if (selectedMethod === 'collect') {
+                // Enable if a location is selected AND locations are displayed
+                if (selectedLocationId !== null && hasSearched) {
+                    checkoutButton.classList.add('enabled');
+                    checkoutButton.disabled = false;
+                } else {
+                    checkoutButton.classList.remove('enabled');
+                    checkoutButton.disabled = false;
+                }
+            } else { // Home Delivery
+                // Always enabled for home delivery once selected
+                checkoutButton.classList.add('enabled');
+                checkoutButton.disabled = false;
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Delivery Method Selection initialized');
+            init();
+        });
+
+        window.addEventListener("beforeunload", function () {
+            const targetVariantId = "46950237503744"; // your variant id
+            fetch('/cart.js')
+                .then(res => res.json())
+                .then(cart => {
+                    const updates = {};
+        
+                    cart.items.forEach(item => {
+                        if (item.variant_id == targetVariantId) {
+                            updates[item.key] = 0; // remove this item
+                        }
+                    });
+        
+                    if (Object.keys(updates).length > 0) {
+                        return fetch('/cart/update.js', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ updates })
+                        });
+                    }
+                })
+                .catch(err => console.error("Error removing target item:", err));
+        });
+        if (localStorage.getItem("lastAddedVariant") === "46950237503744") {
+            localStorage.removeItem("lastAddedVariant");
+            setTimeout(() => {
+                window.location.href = window.location.href.split('#')[0] + '?reload=' + new Date().getTime();
+              }, 2000);
+              
+        }
+        
+    </script>
+<script>
+    document.addEventListener("click", function (e) {
+        const selectedItem = e.target.closest(".location-item");
+      
+        if (selectedItem) {
+          // remove "selected" from all items
+          document.querySelectorAll(".location-item").forEach(item => {
+            item.classList.remove("selected");
+          });
+      
+          // add "selected" to clicked item
+          selectedItem.classList.add("selected");
+      
+          const checkoutBtn = document.getElementById("checkout");
+      
+          // check if out of stock
+          if (selectedItem.querySelector(".sdev-stock-status").classList.contains("out-of-stock")) {
+            //alert("This location is out of stock!");
+            checkoutBtn.disabled = true;         // disable checkout
+            checkoutBtn.classList.add("disabled");
+          } else {
+            checkoutBtn.disabled = false;        // enable checkout if in stock
+            checkoutBtn.classList.remove("disabled");
+          }
+        }
+      });
+</script>

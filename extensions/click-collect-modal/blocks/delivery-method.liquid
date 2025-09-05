@@ -1,0 +1,105 @@
+{% render 'delivery-method', section: block %}
+<script>
+    const deliveryContainer = document.querySelector('.delivery-container');
+    const checkoutButton1 = document.querySelector('.{{block.settings.cart__ctas}}');
+
+    // Ensure deliveryContainer is not a child of checkoutButton
+    if (deliveryContainer !== null && checkoutButton1 !== null && !checkoutButton1.contains(deliveryContainer)) {
+    // Insert the delivery container before the checkout button
+    checkoutButton1.parentNode.insertBefore(deliveryContainer, checkoutButton1);
+    } else {
+    console.error("Error: deliveryContainer cannot be inserted before checkoutButton.");
+    }
+</script>
+{% schema %}
+{
+    "name": "delivery method",
+    "target": "section",
+    "stylesheet": "cnc-cart.css",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Select a Delivery Method"
+      },
+      {
+        "type": "text",
+        "id": "cart__ctas",
+        "label": "Please put the name of the class before append this widget.",
+        "default": "cart__ctas"
+      },
+      {
+        "type": "text",
+        "id": "main_title",
+        "label": "Title",
+        "default": "SELECT A DELIVERY METHOD:"
+      },
+      {
+        "type": "text",
+        "id": "clc_title",
+        "label": "Enter the title",
+        "default": "Click & Collect"
+      },
+      {
+        "type": "text",
+        "id": "clc_home_title",
+        "label": "Enter the title",
+        "default": "Home Delivery"
+      },
+      {
+        "type": "text",
+        "id": "clc_search_title",
+        "label": "Enter the Search for a location title",
+        "default": "Search for a location to pick up your order:"
+      },
+      {
+        "type": "color",
+        "id": "button_color",
+        "label": "Button Color",
+        "default": "#007bff"
+      },
+      {
+        "type": "color",
+        "id": "hover_button_color",
+        "label": "Button Color",
+        "default": "#007bff"
+      },
+      {
+        "type": "color",
+        "id": "title_tab_color",
+        "label": "Button Color",
+        "default": "#007bff"
+      },
+      {
+        "type": "text",
+        "id": "looking_for_delivery",
+        "label": "Enter the Title",
+        "default": "Looking for Same Day Delivery?"
+      },
+      {
+        "type": "text",
+        "id": "standard_ship_title",
+        "label": "Pickup Location Label",
+        "default": "Standard Shipping Melb Metro"
+      },
+      {
+        "type": "text",
+        "id": "standard_ship_price",
+        "label": "Enter the Price Shipping",
+        "default": "$6.00"
+      },
+      {
+        "type": "text",
+        "id": "authority_to_leave",
+        "label": "Enter the Title",
+        "default": "Authority to leave"
+      },
+      {
+        "type": "text",
+        "id": "more_info",
+        "label": "Enter the Title",
+        "default": "more info"
+      }
+    ]
+  }
+
+{% endschema %}

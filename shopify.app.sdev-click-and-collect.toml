@@ -1,10 +1,14 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "6cbc0fd9456a9eccf28967912c76b0da"
-name = "click&collect"
-handle = "click-collect-14"
+client_id = "511a7091545642e9583302831a7bdebf"
+name = "sdev-click-and-collect"
+handle = "sdev-click-and-collect-2"
 application_url = "https://star-legend-fabrics-swap.trycloudflare.com"
 embedded = true
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true
 
 [webhooks]
 api_version = "2025-07"
@@ -18,7 +22,3 @@ redirect_urls = ["https://star-legend-fabrics-swap.trycloudflare.com/auth/callba
 
 [pos]
 embedded = false
-
-[build]
-automatically_update_urls_on_dev = true
-include_config_on_deploy = true
