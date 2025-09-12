@@ -846,9 +846,9 @@
                 // Filter by postcode if provided
                 let filteredLocations = allLocations;
                 if (postcode) {
-                    filteredLocations = allLocations.filter(location => {
-                        const locationPostcode = location.address.zip;
-                        return locationPostcode.includes(postcode);
+                    filteredLocations = allLocations?.filter(location => {
+                        const locationPostcode = location?.address.zip;
+                        return locationPostcode?.includes(postcode);
                     });
                 }
                 

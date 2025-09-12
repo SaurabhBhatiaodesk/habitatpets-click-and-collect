@@ -12,6 +12,14 @@ export async function loader({ request }) {
       where: { shop },
     });
 
+
+
+ console.log(token,'tokentokentokentoken')
+
+
+
+
+ 
     if (!token) {
       throw new Error("Shop token not found");
     }
@@ -89,6 +97,8 @@ export async function loader({ request }) {
       throw new Error("Store connection not found");
     }
 
+
+    console.log("store.token",store.token);
     const myHeadersqty = new Headers();
     myHeadersqty.append("Authorization", "Bearer " + store.token);
 

@@ -4,14 +4,14 @@ async function getLocations(selectedLocation = "") {
     try { document.querySelector('.cnc-checkload').classList.add('loader');
         document.querySelector(".popup-box .address-popup").style.display = "none";
         document.querySelector(".popup-box button.setlocationbtn.popup-btn").style.display = "none";
-        const pickuplcurl = `https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.comapi/pickupLocation?shop=flirt-adult-store.myshopify.com`;
+        const pickuplcurl = `https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/api/pickupLocation?shop=flirt-adult-store.myshopify.com`;
         const testres = await fetchData(pickuplcurl);
         const locations = testres?.data?.locations?.nodes;
         const destinationsArr = []; if (locations) { for (const location of locations) { if (location.address.zip && location?.localPickupSettingsV2 != null) { destinationsArr.push(`${location.address.address1} ${location.address.city} ${location.address.zip} ${location.address.province} ${location.address.country}`); } } }
         if (destinationsArr.length > 0) {
             const customerLocation = getCookie("customerlocation");
             document.querySelector(".location").value = customerLocation;
-            let mapUrl = `https://clickncollect-12d7088d53ee.herokuapp.com/api/distance?customerlocation=${customerLocation}&shop=flirt-adult-store.myshopify.com`;
+            let mapUrl = `https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/api/distance?customerlocation=${customerLocation}&shop=flirt-adult-store.myshopify.com`;
             const res = await fetchData(mapUrl); var count = 0;
             if (res) {
                 const sortedLocations = [];

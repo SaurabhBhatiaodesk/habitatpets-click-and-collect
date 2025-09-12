@@ -107,8 +107,8 @@
         try {
             // Load pickup locations and stock data in parallel
             const [locationsResponse, stockResponse] = await Promise.all([
-                fetch(`${PICKUP_LOCATIONS_ENDPOINT}?shop=surjeet-test.myshopify.com`),
-                fetch(`${CART_ENDPOINT}?product_id=${DEFAULT_PRODUCT_ID}&shop=surjeet-test.myshopify.com`)
+                fetch(`${PICKUP_LOCATIONS_ENDPOINT}?shop={{shop.domain}}`),
+                fetch(`${CART_ENDPOINT}?product_id=${DEFAULT_PRODUCT_ID}&shop={{shop.domain}}`)
             ]);
             
             if (!locationsResponse.ok || !stockResponse.ok) {
@@ -166,9 +166,9 @@
         }
         
         // Filter locations by postcode (simple matching)
-        const filteredLocations = allLocations.filter(location => {
-            const locationPostcode = location.address.zip;
-            return locationPostcode.includes(postcode);
+        const filteredLocations = allLocations?.filter(location => {
+            const locationPostcode = location?.address?.zip;
+            return locationPostcode?.includes(postcode);
         });
         
         displayLocations(filteredLocations);

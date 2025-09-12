@@ -3,7 +3,7 @@
 client_id = "b542238c525a93e7b47304952ac2ed17"
 name = "cnc"
 handle = "cnc-6"
-application_url = "https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com"
+application_url = "https://mediterranean-adam-apt-prescription.trycloudflare.com"
 embedded = true
 
 [webhooks]
