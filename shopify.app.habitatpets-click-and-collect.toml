@@ -3,12 +3,8 @@
 client_id = "735cff9da6c5bfa31c42f6c99837e996"
 name = "habitatpets-click-and-collect"
 handle = "habitatpets-click-and-collect"
-application_url = "https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com"
+application_url = "https://unemployment-heights-nine-admitted.trycloudflare.com"
 embedded = true
-
-[build]
-include_config_on_deploy = true
-automatically_update_urls_on_dev = true
 
 [webhooks]
 api_version = "2025-07"
@@ -18,7 +14,10 @@ api_version = "2025-07"
 scopes = "read_customers,read_inventory,read_locales,read_locations,read_orders,read_product_listings,read_products,read_publications,read_script_tags,write_content,write_inventory,write_locations,write_products,write_publications,write_script_tags,write_shipping"
 
 [auth]
-redirect_urls = ["https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/auth/callback", "https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/auth/shopify/callback", "https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/api/auth/callback"]
+redirect_urls = ["https://unemployment-heights-nine-admitted.trycloudflare.com/auth/callback", "https://unemployment-heights-nine-admitted.trycloudflare.com/auth/shopify/callback", "https://unemployment-heights-nine-admitted.trycloudflare.com/api/auth/callback"]
 
 [pos]
 embedded = false
+
+[build]
+automatically_update_urls_on_dev = true

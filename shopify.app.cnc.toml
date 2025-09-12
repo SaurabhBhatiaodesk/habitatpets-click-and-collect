@@ -3,7 +3,7 @@
 client_id = "b542238c525a93e7b47304952ac2ed17"
 name = "cnc"
 handle = "cnc-6"
-application_url = "https://mediterranean-adam-apt-prescription.trycloudflare.com"
+application_url = "https://awesome-functionality-slope-courier.trycloudflare.com"
 embedded = true
 
 [webhooks]
@@ -14,7 +14,7 @@ api_version = "2025-07"
 scopes = "read_customers,read_inventory,read_locales,read_locations,read_orders,read_product_listings,read_products,read_publications,read_script_tags,write_content,write_delivery_customizations,write_inventory,write_locations,write_products,write_publications,write_script_tags,write_shipping"
 
 [auth]
-redirect_urls = ["https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/auth/callback", "https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/auth/shopify/callback", "https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/api/auth/callback"]
+redirect_urls = ["https://awesome-functionality-slope-courier.trycloudflare.com/auth/callback", "https://awesome-functionality-slope-courier.trycloudflare.com/auth/shopify/callback", "https://awesome-functionality-slope-courier.trycloudflare.com/api/auth/callback"]
 
 [pos]
 embedded = false
