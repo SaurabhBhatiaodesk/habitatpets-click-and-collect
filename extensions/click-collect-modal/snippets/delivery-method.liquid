@@ -963,7 +963,7 @@
 
         function addToCartWithLocation(location) {
             const data = {
-                id: "46950237503744", // The variant ID for the product
+                id: "47230794858751", // The variant ID for the product
                 quantity: 1, // The quantity of the product
                 properties: {
                     Address: `${location.address.formatted.join(', ')}`, // Location address as custom property
@@ -983,7 +983,7 @@
             .then(() => {
                 console.log('Item added to cart with location:', location.name);
                 // Optionally redirect to cart or show success message
-                localStorage.setItem("lastAddedVariant", '46950237503744');
+                localStorage.setItem("lastAddedVariant", '47230794858751');
                 // window.location.href = '/cart';
             })
             .catch(error => {
@@ -1045,7 +1045,7 @@
         });
 
         window.addEventListener("beforeunload", function () {
-            const targetVariantId = "46950237503744"; // your variant id
+            const targetVariantId = "47230794858751"; // your variant id
             fetch('/cart.js')
                 .then(res => res.json())
                 .then(cart => {
@@ -1069,7 +1069,7 @@
                 })
                 .catch(err => console.error("Error removing target item:", err));
         });
-        if (localStorage.getItem("lastAddedVariant") === "46950237503744") {
+        if (localStorage.getItem("lastAddedVariant") === "47230794858751") {
             localStorage.removeItem("lastAddedVariant");
             setTimeout(() => {
                 window.location.href = window.location.href.split('#')[0] + '?reload=' + new Date().getTime();
