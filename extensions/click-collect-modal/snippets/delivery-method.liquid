@@ -494,21 +494,21 @@
                 margin: 0;
                 border-radius: 0;
             }
-            
+
             .delivery-methods {
                 flex-direction: column;
             }
-            
+
             .postcode-input-container {
                 flex-direction: column;
             }
-            
+
             .search-button {
                 width: 100%;
             }
         }
 
-    
+
     .sdev-location-header {
         display: flex;
         justify-content: space-between;
@@ -571,17 +571,17 @@
     }
     </style>
 
-    
+
 
     <div class="delivery-container">
         <!-- Delivery Method Selection -->
         <div class="delivery-header">
             <h2 class="delivery-title">{{section.settings.main_title}}</h2>
-            
+
             <div class="delivery-methods">
                 <div class="delivery-method click-collect active" data-method="collect">
                     <span class="icon">
-                            <svg fill="#000000" height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                            <svg fill="#000000" height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                 viewBox="0 0 512 512" xml:space="preserve">
                             <g>
                                 <g>
@@ -616,7 +616,7 @@
                 </div>
                 <div class="delivery-method home-delivery" data-method="delivery">
                     <span class="icon">
-                            <svg fill="#000000" height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                            <svg fill="#000000" height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                 viewBox="0 0 512 512" xml:space="preserve">
                             <g>
                                 <g>
@@ -678,13 +678,13 @@
                 <div class="option-text">{{section.settings.authority_to_leave}}</div>
                 <a href="#" class="option-link">{{section.settings.more_info}}</a>
             </div>
-            
+
             <div class="shipping-option">
                 <div class="radio-button selected" id="standard-radio"></div>
                 <div class="shipping-text">{{section.settings.standard_ship_title}}</div>
                 <div class="shipping-price">{{section.settings.standard_ship_price}}</div>
             </div>
-            
+
             <div class="same-day-info">
                 <span>{{section.settings.looking_for_delivery}}</span>
                   <span class="info-icon">
@@ -695,18 +695,18 @@
             </div>
         </div>
 
- 
+
     </div>
 
     <script>
         // API endpoints - using the same structure as the original code
-        const API_BASE = 'https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/api';
-        const PICKUP_LOCATIONS_ENDPOINT = `${API_BASE}/pickupLocation`;
-        const CART_ENDPOINT = `${API_BASE}/cart`;
+        const API_BASE = 'https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com';
+
+
 
         // Default product ID (from the original API)
         const DEFAULT_PRODUCT_ID = '{{ cart.items.first.product.id }}';
-        const SHOP_DOMAIN = '{{shop.domain}}';
+        const SHOP_DOMAIN = '{{shop.permanent_domain}}';
 
         // DOM elements
         const deliveryMethods = document.querySelectorAll('.delivery-method');
@@ -776,7 +776,7 @@
             if (selectedMethod === 'collect') {
                 postcodeLabel.textContent = 'Search for a location to pick up your order:';
                 postcodeInput.placeholder = 'Enter Postcode';
-                
+
                 if (hasSearched) {
                 //    checkoutSection.style.display = 'none';
                     setTimeout(() => {
@@ -787,7 +787,7 @@
 
                         // Optionally add a class to style it (if you use an 'enabled' class for styling):
                         checkoutButton1.classList.add('enabled');
-                    }, 5000); 
+                    }, 5000);
                     optionsSection.classList.remove('show');
                     locationSection.classList.add('active');
                 } else {
@@ -807,7 +807,7 @@
 
         async function searchLocations() {
             const postcode = postcodeInput.value.trim();
-            
+
             if (!postcode) {
                 alert('Please enter a postcode');
                 return;
@@ -825,24 +825,24 @@
 
         async function loadLocationData(postcode = '') {
             showLoading();
-            
+
             try {
                 // Load pickup locations and stock data in parallel
                 const [locationsResponse, stockResponse] = await Promise.all([
-                    fetch(`${PICKUP_LOCATIONS_ENDPOINT}?shop=${SHOP_DOMAIN}`),
-                    fetch(`${CART_ENDPOINT}?product_id=${DEFAULT_PRODUCT_ID}&shop=${SHOP_DOMAIN}`)
+                    fetch(`${API_BASE}/api/pickupLocation?shop=${SHOP_DOMAIN}`),
+                    fetch(`${API_BASE}/api/cart?product_id=${DEFAULT_PRODUCT_ID}&shop=${SHOP_DOMAIN}`)
                 ]);
-                
+
                 if (!locationsResponse.ok || !stockResponse.ok) {
                     throw new Error('Failed to fetch data');
                 }
-                
+
                 const locationsData = await locationsResponse.json();
                 const stockDataResponse = await stockResponse.json();
-                
+
                 allLocations = locationsData.data.locations.nodes;
                 stockData = processStockData(stockDataResponse);
-                
+
                 // Filter by postcode if provided
                 let filteredLocations = allLocations;
                 if (postcode) {
@@ -851,9 +851,9 @@
                         return locationPostcode?.includes(postcode);
                     });
                 }
-                
+
                 displayLocations(filteredLocations);
-                
+
             } catch (error) {
                 console.error('Error loading data:', error);
                 showError('Failed to load stock information. Please try again.');
@@ -864,16 +864,16 @@
 
         function processStockData(stockResponse) {
             const stockByLocation = {};
-            
+
             if (stockResponse.data && stockResponse.data.product && stockResponse.data.product.variants) {
                 const variants = stockResponse.data.product.variants.nodes;
-                
+
                 variants.forEach(variant => {
                     if (variant.inventoryItem && variant.inventoryItem.inventoryLevels) {
                         variant.inventoryItem.inventoryLevels.edges.forEach(edge => {
                             const locationName = edge.node.location.name;
                             const quantity = edge.node.quantities.find(q => q.name === 'available')?.quantity || 0;
-                            
+
                             // Sum up quantities for the same location (in case of multiple variants)
                             if (stockByLocation[locationName]) {
                                 stockByLocation[locationName] += quantity;
@@ -884,13 +884,13 @@
                     }
                 });
             }
-            
+
             return stockByLocation;
         }
 
         function displayLocations(locations) {
             locationsList.innerHTML = '';
-            
+
             if (locations.length === 0) {
                 locationsList.innerHTML = `
                     <div class="no-results">
@@ -899,7 +899,7 @@
                 `;
                 return;
             }
-            
+
             locations.forEach(location => {
                 const locationElement = createLocationElement(location);
                 locationsList.appendChild(locationElement);
@@ -908,25 +908,25 @@
 
         function createLocationElement(location) {
             const div = document.createElement('div');
-            
+
             const stockQuantity = stockData[location.name] || 0;
             const isInStock = stockQuantity > 0;
             const stockStatusClass = isInStock ? '' : 'out-of-stock';
             const stockStatusText = isInStock ? 'In stock' : 'out-of-stock';
-        
+
             // Add base + stock class
             div.className = `location-item ${stockStatusClass}`;
             div.dataset.locationId = location.id;
-        
+
             // Calculate distance (mock calculation based on postcode)
             const distance = calculateDistance(location.address.zip);
-        
+
             // Check if this location should be selected (first one with stock)
             const isSelected = selectedLocationId === location.id || (selectedLocationId === null && isInStock);
             if (isSelected && selectedLocationId === null) {
                 selectedLocationId = location.id;
             }
-        
+
             div.innerHTML = `
                 <div class="sdev-location-header">
                     <div class="sdev-location-name">
@@ -944,26 +944,26 @@
                     </div>
                 </div>
             `;
-        
+
             // Add click handler for location selection
             div.addEventListener('click', () => {
                 document.querySelectorAll('.location-item').forEach(item => {
                     item.classList.remove('selected');
                 });
-        
+
                 div.classList.add('selected');
                 selectedLocationId = location.id;
-        
+
                 addToCartWithLocation(location);
             });
-        
+
             return div;
         }
-        
+
 
         function addToCartWithLocation(location) {
             const data = {
-                id: "47230794858751", // The variant ID for the product
+                id: "44325972607010", // The variant ID for the product
                 quantity: 1, // The quantity of the product
                 properties: {
                     Address: `${location.address.formatted.join(', ')}`, // Location address as custom property
@@ -983,7 +983,7 @@
             .then(() => {
                 console.log('Item added to cart with location:', location.name);
                 // Optionally redirect to cart or show success message
-                localStorage.setItem("lastAddedVariant", '47230794858751');
+                localStorage.setItem("lastAddedVariant", '44325972607010');
                 // window.location.href = '/cart';
             })
             .catch(error => {
@@ -996,7 +996,7 @@
             const postcodeNum = parseInt(postcode);
             const basePostcode = 3000; // Melbourne CBD
             const diff = Math.abs(postcodeNum - basePostcode);
-            
+
             if (diff === 0) return '0km';
             if (diff < 10) return `${Math.floor(diff / 2)}km`;
             if (diff < 50) return `${Math.floor(diff / 5)}km`;
@@ -1044,19 +1044,19 @@
             init();
         });
 
-        window.addEventListener("beforeunload", function () {
-            const targetVariantId = "47230794858751"; // your variant id
+        {% comment %} window.addEventListener("beforeunload", function () {
+            const targetVariantId = "44325972607010"; // your variant id
             fetch('/cart.js')
                 .then(res => res.json())
                 .then(cart => {
                     const updates = {};
-        
+
                     cart.items.forEach(item => {
                         if (item.variant_id == targetVariantId) {
                             updates[item.key] = 0; // remove this item
                         }
                     });
-        
+
                     if (Object.keys(updates).length > 0) {
                         return fetch('/cart/update.js', {
                             method: 'POST',
@@ -1069,30 +1069,30 @@
                 })
                 .catch(err => console.error("Error removing target item:", err));
         });
-        if (localStorage.getItem("lastAddedVariant") === "47230794858751") {
+        if (localStorage.getItem("lastAddedVariant") === "44325972607010") {
             localStorage.removeItem("lastAddedVariant");
             setTimeout(() => {
                 window.location.href = window.location.href.split('#')[0] + '?reload=' + new Date().getTime();
               }, 2000);
-              
-        }
-        
+
+        } {% endcomment %}
+
     </script>
 <script>
     document.addEventListener("click", function (e) {
         const selectedItem = e.target.closest(".location-item");
-      
+
         if (selectedItem) {
           // remove "selected" from all items
           document.querySelectorAll(".location-item").forEach(item => {
             item.classList.remove("selected");
           });
-      
+
           // add "selected" to clicked item
           selectedItem.classList.add("selected");
-      
-          const checkoutBtn = document.getElementById("checkout");
-      
+
+          const checkoutBtn = document.querySelector('[name="checkout"]');
+
           // check if out of stock
           if (selectedItem.querySelector(".sdev-stock-status").classList.contains("out-of-stock")) {
             //alert("This location is out of stock!");
