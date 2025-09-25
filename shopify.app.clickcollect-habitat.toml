@@ -1,0 +1,24 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "03520dff2ab0a780ee68847e3f7c28dd"
+name = "click&collect-habitat"
+application_url = "https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com"
+embedded = true
+handle = "click-collect-habitat"
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2025-07"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_customers,read_inventory,read_locales,read_locations,read_orders,read_product_listings,read_products,read_publications,read_script_tags,write_content,write_inventory,write_locations,write_products,write_publications,write_script_tags,write_shipping"
+
+[auth]
+redirect_urls = ["https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/auth/callback", "https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/auth/shopify/callback", "https://habitatpets-click-and-collect-301a63b52d8d.herokuapp.com/api/auth/callback"]
+
+[pos]
+embedded = false
