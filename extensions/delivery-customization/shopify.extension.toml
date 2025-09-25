@@ -3,6 +3,9 @@ api_version = "2025-07"
 [[extensions]]
 name = "t:name"
 handle = "delivery-customization"
+
+uid = "7caef09d-bc92-c4fe-9c8c-5e43dc1b38bce5a7fa55"
+
 type = "function"
 
 description = "t:description"

@@ -1,0 +1,20 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "daa14c66b3b0677c63207b3ff80c78da"
+name = "fluart-adult-cnc"
+application_url = "https://example.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+include_config_on_deploy = true
+
+[webhooks]
+api_version = "2025-10"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_customers,read_inventory,read_locales,read_locations,read_orders,read_product_listings,read_products,read_publications,read_script_tags,write_content,write_inventory,write_locations,write_products,write_publications,write_script_tags,write_shipping"
+
+[auth]
+redirect_urls = [ "https://example.com/api/auth" ]

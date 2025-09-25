@@ -1,4 +1,7 @@
 name = "local-pickup-generator"
+
+uid = "21e2d9bc-269b-5950-13db-8b2521c1e540e886572c"
+
 type = "local_pickup_delivery_option_generator"
 
 api_version = "unstable"
